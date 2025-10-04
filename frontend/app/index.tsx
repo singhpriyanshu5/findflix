@@ -259,6 +259,11 @@ export default function SearchScreen() {
                   </Text>
                   <View style={styles.historyTags}>
                     <Text style={styles.historyScopeTag}>{item.scope}</Text>
+                    {item.genre && (
+                      <Text style={styles.historyGenreTag}>
+                        {getGenreName(item.genre)}
+                      </Text>
+                    )}
                     {item.language && (
                       <Text style={styles.historyLanguageTag}>
                         {getLanguageName(item.language)}
