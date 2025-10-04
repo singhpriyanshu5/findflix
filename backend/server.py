@@ -169,11 +169,15 @@ async def search_titles(request: SearchRequest):
         
         if request.scope == SearchScope.TITLE:
             # Multi-search for titles
-            data = await fetch_tmdb_data("search/multi", {
+            search_params = {
                 "query": request.query,
                 "page": request.page,
                 "include_adult": False
-            })
+            }
+            if request.language:
+                search_params["language"] = request.language
+            
+            data = await fetch_tmdb_data("search/multi", search_params)
             results = data.get("results", [])
             total_pages = data.get("total_pages", 1)
             
@@ -188,11 +192,15 @@ async def search_titles(request: SearchRequest):
             
             if matching_genre:
                 # Discover movies with this genre
-                data = await fetch_tmdb_data("discover/movie", {
+                discover_params = {
                     "with_genres": matching_genre["id"],
                     "page": request.page,
                     "sort_by": "popularity.desc"
-                })
+                }
+                if request.language:
+                    discover_params["with_original_language"] = request.language
+                
+                data = await fetch_tmdb_data("discover/movie", discover_params)
                 results = data.get("results", [])
                 total_pages = data.get("total_pages", 1)
             else:
