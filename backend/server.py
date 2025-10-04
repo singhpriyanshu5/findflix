@@ -349,6 +349,12 @@ async def search_titles(request: SearchRequest):
                 elif request.content_type == "tv" and media_type != "tv":
                     continue
             
+            # Filter by genre if specified
+            if request.genre:
+                item_genres = item.get("genre_ids", [])
+                if int(request.genre) not in item_genres:
+                    continue
+            
             # Filter by language if specified
             if request.language:
                 item_language = item.get("original_language", "")
