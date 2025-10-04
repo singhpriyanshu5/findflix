@@ -221,7 +221,14 @@ export default function SearchScreen() {
                   <Text style={styles.historyText} numberOfLines={1}>
                     {item.query}
                   </Text>
-                  <Text style={styles.historyScopeTag}>{item.scope}</Text>
+                  <View style={styles.historyTags}>
+                    <Text style={styles.historyScopeTag}>{item.scope}</Text>
+                    {item.language && (
+                      <Text style={styles.historyLanguageTag}>
+                        {getLanguageName(item.language)}
+                      </Text>
+                    )}
+                  </View>
                 </TouchableOpacity>
               ))}
             </View>
