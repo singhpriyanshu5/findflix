@@ -603,6 +603,14 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     borderRadius: 4,
   },
+  historyGenreTag: {
+    color: '#ffa500',
+    fontSize: 12,
+    backgroundColor: '#2a2a2a',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 4,
+  },
   popularGrid: {
     marginHorizontal: -16,
     paddingHorizontal: 16,
