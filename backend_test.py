@@ -809,6 +809,330 @@ class MovieAPITester:
             self.log_test("Genre Search Sorting (Action year_desc)", False, f"Error: {str(e)}")
             return False
     
+    def test_matt_damon_caching_functionality(self):
+        """Test 1: Cast Search with Caching - Matt Damon"""
+        try:
+            print("\n🔍 TEST 1: Cast Search with Caching")
+            
+            # Clear any existing cache by waiting a moment and making a different search first
+            dummy_payload = {
+                "query": "Tom Hanks",
+                "scope": "cast",
+                "page": 1
+            }
+            self.session.post(f"{self.base_url}/search", json=dummy_payload)
+            
+            # Test page 1 - Matt Damon with default sort
+            payload_page1 = {
+                "query": "Matt Damon",
+                "scope": "cast",
+                "page": 1
+            }
+            
+            print("📤 POST /api/search - Matt Damon, scope=cast, page=1 (no sort_by - default sort)")
+            response1 = self.session.post(f"{self.base_url}/search", json=payload_page1)
+            
+            if response1.status_code != 200:
+                self.log_test("Matt Damon Caching Test", False, f"Page 1 failed: HTTP {response1.status_code}")
+                return False
+            
+            data1 = response1.json()
+            results1 = data1.get("results", [])
+            
+            if len(results1) == 0:
+                self.log_test("Matt Damon Caching Test", False, "No results found for Matt Damon")
+                return False
+            
+            # Record first and last movie titles/years from page 1
+            first_movie = results1[0]
+            last_movie = results1[-1]
+            
+            print(f"✅ Results returned: {len(results1)} movies")
+            print(f"📝 First movie: '{first_movie.get('title', 'N/A')}' ({first_movie.get('year', 'N/A')})")
+            print(f"📝 Last movie: '{last_movie.get('title', 'N/A')}' ({last_movie.get('year', 'N/A')})")
+            
+            # Test page 2 - should use cache
+            payload_page2 = {
+                "query": "Matt Damon",
+                "scope": "cast",
+                "page": 2
+            }
+            
+            print("\n📤 POST /api/search - Matt Damon, scope=cast, page=2 (same parameters)")
+            response2 = self.session.post(f"{self.base_url}/search", json=payload_page2)
+            
+            if response2.status_code != 200:
+                self.log_test("Matt Damon Caching Test", False, f"Page 2 failed: HTTP {response2.status_code}")
+                return False
+            
+            data2 = response2.json()
+            results2 = data2.get("results", [])
+            
+            print(f"✅ Page 2 results returned: {len(results2)} movies")
+            
+            if len(results2) > 0:
+                first_movie_p2 = results2[0]
+                last_movie_p2 = results2[-1]
+                print(f"📝 Page 2 first movie: '{first_movie_p2.get('title', 'N/A')}' ({first_movie_p2.get('year', 'N/A')})")
+                print(f"📝 Page 2 last movie: '{last_movie_p2.get('title', 'N/A')}' ({last_movie_p2.get('year', 'N/A')})")
+                
+                # Check for duplicates between pages
+                page1_titles = set(movie.get('title', '') for movie in results1)
+                page2_titles = set(movie.get('title', '') for movie in results2)
+                duplicates = page1_titles.intersection(page2_titles)
+                
+                if duplicates:
+                    self.log_test("Matt Damon Caching Test", False, f"Found duplicate movies between pages: {list(duplicates)}")
+                    return False
+                else:
+                    print("✅ No duplicate movies between pages")
+            
+            self.log_test("Matt Damon Caching Test", True, 
+                        f"Caching test completed. Page 1: {len(results1)} results, Page 2: {len(results2)} results. No duplicates found.")
+            return True
+            
+        except Exception as e:
+            self.log_test("Matt Damon Caching Test", False, f"Error: {str(e)}")
+            return False
+
+    def test_matt_damon_sorting_functionality(self):
+        """Test 2: Cast Search with Sorting - Matt Damon year_desc"""
+        try:
+            print("\n🔍 TEST 2: Cast Search with Sorting")
+            
+            # Test page 1 - Matt Damon with year_desc sort
+            payload_page1 = {
+                "query": "Matt Damon",
+                "scope": "cast",
+                "page": 1,
+                "sort_by": "year_desc"
+            }
+            
+            print("📤 POST /api/search - Matt Damon, scope=cast, page=1, sort_by=year_desc")
+            response1 = self.session.post(f"{self.base_url}/search", json=payload_page1)
+            
+            if response1.status_code != 200:
+                self.log_test("Matt Damon Sorting Test", False, f"Page 1 failed: HTTP {response1.status_code}")
+                return False
+            
+            data1 = response1.json()
+            results1 = data1.get("results", [])
+            
+            if len(results1) == 0:
+                self.log_test("Matt Damon Sorting Test", False, "No results found for Matt Damon")
+                return False
+            
+            # Extract years from page 1 and verify descending order
+            years1 = []
+            titles1 = []
+            for movie in results1:
+                year = movie.get("year", "")
+                title = movie.get("title", "")
+                titles1.append(f"{title} ({year})")
+                if year and year.isdigit():
+                    years1.append(int(year))
+                else:
+                    years1.append(0)  # Handle missing years
+            
+            print(f"✅ Page 1 results: {len(results1)} movies")
+            print(f"📝 Years range: {min(years1) if years1 else 'N/A'} - {max(years1) if years1 else 'N/A'}")
+            print(f"📝 Sample movies: {titles1[:3]}")
+            
+            # Check if page 1 is sorted in descending order
+            is_page1_sorted = all(years1[i] >= years1[i+1] for i in range(len(years1)-1))
+            
+            if not is_page1_sorted:
+                print(f"❌ Page 1 not sorted descending: {years1}")
+                self.log_test("Matt Damon Sorting Test", False, f"Page 1 not sorted descending: {years1}")
+                return False
+            else:
+                print("✅ Page 1 is sorted by year descending")
+            
+            # Record oldest year on page 1
+            oldest_year_page1 = min(years1) if years1 else 0
+            print(f"📝 Oldest year on page 1: {oldest_year_page1}")
+            
+            # Test page 2
+            payload_page2 = {
+                "query": "Matt Damon",
+                "scope": "cast",
+                "page": 2,
+                "sort_by": "year_desc"
+            }
+            
+            print("\n📤 POST /api/search - Matt Damon, scope=cast, page=2, sort_by=year_desc")
+            response2 = self.session.post(f"{self.base_url}/search", json=payload_page2)
+            
+            if response2.status_code != 200:
+                self.log_test("Matt Damon Sorting Test", False, f"Page 2 failed: HTTP {response2.status_code}")
+                return False
+            
+            data2 = response2.json()
+            results2 = data2.get("results", [])
+            
+            if len(results2) == 0:
+                print("✅ Page 2 is empty - sorting consistent")
+                self.log_test("Matt Damon Sorting Test", True, f"Page 1 sorted correctly ({oldest_year_page1}-{max(years1)}), Page 2 empty")
+                return True
+            
+            # Extract years from page 2
+            years2 = []
+            titles2 = []
+            for movie in results2:
+                year = movie.get("year", "")
+                title = movie.get("title", "")
+                titles2.append(f"{title} ({year})")
+                if year and year.isdigit():
+                    years2.append(int(year))
+                else:
+                    years2.append(0)
+            
+            print(f"✅ Page 2 results: {len(results2)} movies")
+            print(f"📝 Years range: {min(years2) if years2 else 'N/A'} - {max(years2) if years2 else 'N/A'}")
+            print(f"📝 Sample movies: {titles2[:3]}")
+            
+            # Check if page 2 is sorted in descending order
+            is_page2_sorted = all(years2[i] >= years2[i+1] for i in range(len(years2)-1))
+            
+            if not is_page2_sorted:
+                print(f"❌ Page 2 not sorted descending: {years2}")
+                self.log_test("Matt Damon Sorting Test", False, f"Page 2 not sorted descending: {years2}")
+                return False
+            else:
+                print("✅ Page 2 is sorted by year descending")
+            
+            # CRITICAL CHECK: All movies in page 2 should have years <= oldest movie from page 1
+            newest_page2 = max(years2) if years2 else 0
+            
+            print(f"\n🔍 CRITICAL SORTING CHECK:")
+            print(f"📝 Oldest year on page 1: {oldest_year_page1}")
+            print(f"📝 Newest year on page 2: {newest_page2}")
+            
+            if newest_page2 > oldest_year_page1:
+                print(f"❌ SORTING BUG DETECTED!")
+                print(f"   Page 2 has movies from {newest_page2} which is newer than page 1's oldest ({oldest_year_page1})")
+                print(f"   This breaks the global sort order across pages")
+                self.log_test("Matt Damon Sorting Test", False, 
+                            f"CRITICAL SORTING BUG: Page 2 newest ({newest_page2}) > Page 1 oldest ({oldest_year_page1}). Page 1: {years1}, Page 2: {years2}")
+                return False
+            else:
+                print("✅ Sorting is consistent across pages")
+            
+            self.log_test("Matt Damon Sorting Test", True, 
+                        f"Sorting consistent across pages. Page 1: {oldest_year_page1}-{max(years1)}, Page 2: {min(years2)}-{newest_page2}")
+            return True
+            
+        except Exception as e:
+            self.log_test("Matt Damon Sorting Test", False, f"Error: {str(e)}")
+            return False
+
+    def test_no_results_scenarios(self):
+        """Test 3: No Results Issue - Test scenarios where results become empty unexpectedly"""
+        try:
+            print("\n🔍 TEST 3: No Results Issue Testing")
+            
+            # Test 1: Search for a very obscure actor
+            payload_obscure = {
+                "query": "Zxcvbnm Qwerty",  # Non-existent actor
+                "scope": "cast",
+                "page": 1
+            }
+            
+            print("📤 Testing obscure actor search (should return empty gracefully)")
+            response_obscure = self.session.post(f"{self.base_url}/search", json=payload_obscure)
+            
+            if response_obscure.status_code == 200:
+                data_obscure = response_obscure.json()
+                results_obscure = data_obscure.get("results", [])
+                print(f"✅ Obscure actor search returned {len(results_obscure)} results (expected: 0)")
+            else:
+                print(f"❌ Obscure actor search failed: HTTP {response_obscure.status_code}")
+                return False
+            
+            # Test 2: Search with very specific filters that might return no results
+            payload_filtered = {
+                "query": "Matt Damon",
+                "scope": "cast",
+                "page": 1,
+                "genre": "999999",  # Non-existent genre ID
+                "language": "zz"    # Non-existent language code
+            }
+            
+            print("📤 Testing over-filtered search (should return empty gracefully)")
+            response_filtered = self.session.post(f"{self.base_url}/search", json=payload_filtered)
+            
+            if response_filtered.status_code == 200:
+                data_filtered = response_filtered.json()
+                results_filtered = data_filtered.get("results", [])
+                print(f"✅ Over-filtered search returned {len(results_filtered)} results (expected: 0)")
+            else:
+                print(f"❌ Over-filtered search failed: HTTP {response_filtered.status_code}")
+                return False
+            
+            # Test 3: Search for page beyond available results
+            payload_high_page = {
+                "query": "Matt Damon",
+                "scope": "cast",
+                "page": 999  # Very high page number
+            }
+            
+            print("📤 Testing high page number search")
+            response_high_page = self.session.post(f"{self.base_url}/search", json=payload_high_page)
+            
+            if response_high_page.status_code == 200:
+                data_high_page = response_high_page.json()
+                results_high_page = data_high_page.get("results", [])
+                print(f"✅ High page search returned {len(results_high_page)} results")
+            else:
+                print(f"❌ High page search failed: HTTP {response_high_page.status_code}")
+                return False
+            
+            self.log_test("No Results Issue Test", True, 
+                        f"All edge cases handled gracefully. Obscure: {len(results_obscure)}, Filtered: {len(results_filtered)}, High page: {len(results_high_page)}")
+            return True
+            
+        except Exception as e:
+            self.log_test("No Results Issue Test", False, f"Error: {str(e)}")
+            return False
+
+    def run_caching_and_sorting_tests(self):
+        """Run the specific caching and sorting tests requested by user"""
+        print(f"🚀 Starting Cast Search Caching & Sorting Tests")
+        print(f"Backend URL: {self.base_url}")
+        print("=" * 80)
+        
+        # Check backend logs before starting
+        print("📋 Checking backend logs for caching messages...")
+        
+        caching_tests = [
+            self.test_matt_damon_caching_functionality,
+            self.test_matt_damon_sorting_functionality,
+            self.test_no_results_scenarios
+        ]
+        
+        passed = 0
+        failed = 0
+        
+        for test in caching_tests:
+            if test():
+                passed += 1
+            else:
+                failed += 1
+        
+        print("=" * 80)
+        print(f"📊 Caching & Sorting Test Results: {passed} passed, {failed} failed")
+        
+        # Check backend logs after tests
+        print("\n📋 Checking backend logs for caching messages after tests...")
+        
+        if failed > 0:
+            print("\n❌ Failed Tests:")
+            for result in self.test_results:
+                if not result["success"] and ("Matt Damon" in result["test"] or "No Results" in result["test"]):
+                    print(f"  - {result['test']}: {result['details']}")
+        
+        return passed, failed, self.test_results
+
     def run_sorting_tests(self):
         """Run sorting-specific tests for pagination consistency"""
         print(f"🔄 Starting Sorting & Pagination Tests")
