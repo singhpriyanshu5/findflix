@@ -355,7 +355,8 @@ async def get_title_details(tmdb_id: int, media_type: str = Query("movie", regex
             "overview": tmdb_data.get("overview", ""),
             "genres": [g["name"] for g in tmdb_data.get("genres", [])],
             "ratings": ratings,
-            "tagline": tmdb_data.get("tagline", "")
+            "tagline": tmdb_data.get("tagline", ""),
+            "original_language": tmdb_data.get("original_language", "")
         }
         
         # Add movie-specific data
