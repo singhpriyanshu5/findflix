@@ -373,33 +373,33 @@ export default function DetailsScreen() {
         </View>
 
         {/* Cast & Crew */}
-        {titleData.cast.length > 0 && (
+        {titleData.cast && titleData.cast.length > 0 && (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Cast</Text>
             {titleData.cast.map((member, idx) => (
               <View key={idx} style={styles.castItem}>
-                <Text style={styles.castName}>{member.name}</Text>
-                <Text style={styles.castCharacter}>{member.character}</Text>
+                <Text style={styles.castName}>{member.name || 'Unknown'}</Text>
+                <Text style={styles.castCharacter}>{member.character || 'Unknown role'}</Text>
               </View>
             ))}
           </View>
         )}
 
-        {titleData.directors.length > 0 && (
+        {titleData.directors && titleData.directors.length > 0 && (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Director(s)</Text>
             <Text style={styles.crewText}>{titleData.directors.join(', ')}</Text>
           </View>
         )}
 
-        {titleData.producers.length > 0 && (
+        {titleData.producers && titleData.producers.length > 0 && (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Producer(s)</Text>
             <Text style={styles.crewText}>{titleData.producers.join(', ')}</Text>
           </View>
         )}
 
-        {titleData.production_companies.length > 0 && (
+        {titleData.production_companies && titleData.production_companies.length > 0 && (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Production</Text>
             <Text style={styles.crewText}>
