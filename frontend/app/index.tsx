@@ -332,6 +332,49 @@ export default function SearchScreen() {
           </View>
         </View>
       </Modal>
+
+      {/* Content Type Selection Modal */}
+      <Modal
+        visible={showContentTypeModal}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setShowContentTypeModal(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Select Content Type</Text>
+              <TouchableOpacity onPress={() => setShowContentTypeModal(false)}>
+                <Ionicons name="close" size={24} color="#fff" />
+              </TouchableOpacity>
+            </View>
+            <ScrollView style={styles.modalScroll}>
+              {[
+                { value: '', label: 'All Content' },
+                { value: 'movie', label: 'Movies' },
+                { value: 'tv', label: 'TV Shows' },
+              ].map((type) => (
+                <TouchableOpacity
+                  key={type.value}
+                  style={[
+                    styles.languageOption,
+                    selectedContentType === type.value && styles.languageOptionActive,
+                  ]}
+                  onPress={() => {
+                    setSelectedContentType(type.value);
+                    setShowContentTypeModal(false);
+                  }}
+                >
+                  <Text style={styles.languageOptionText}>{type.label}</Text>
+                  {selectedContentType === type.value && (
+                    <Ionicons name="checkmark" size={20} color="#e50914" />
+                  )}
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
