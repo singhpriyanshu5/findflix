@@ -78,6 +78,10 @@ agenthub/agents/youtube/db
 
 # Mobile development
 android-sdk/ -e 
+.expo/
+.expo-shared/
+web-build/
+
 # Environment files
 *.env
 *.env.*
