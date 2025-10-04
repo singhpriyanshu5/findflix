@@ -42,6 +42,7 @@ interface TitleDetails {
     google_users: number | null;
   };
   original_language: string;
+  imdb_id: string | null;
   tagline: string;
   runtime?: number;
   budget?: number;
