@@ -29,6 +29,7 @@ interface SearchHistoryItem {
   id: string;
   query: string;
   scope: SearchScope;
+  language: string | null;
   timestamp: string;
 }
 
