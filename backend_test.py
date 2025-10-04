@@ -887,7 +887,9 @@ class MovieAPITester:
 
 if __name__ == "__main__":
     tester = MovieAPITester()
-    passed, failed, results = tester.run_all_tests()
+    
+    # Run sorting tests specifically as requested
+    passed, failed, results = tester.run_sorting_tests()
     
     # Exit with error code if tests failed
     sys.exit(1 if failed > 0 else 0)
