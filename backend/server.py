@@ -230,6 +230,37 @@ def calculate_hit_flop(budget: Optional[int], revenue: Optional[int]) -> str:
     else:
         return "Average"
 
+def get_tmdb_sort_param(sort_by: Optional[str]) -> str:
+    """Map frontend sort_by to TMDB sort_by parameter"""
+    if not sort_by:
+        return "popularity.desc"
+    
+    sort_map = {
+        "rating_desc": "vote_average.desc",
+        "rating_asc": "vote_average.asc",
+        "year_desc": "primary_release_date.desc",
+        "year_asc": "primary_release_date.asc"
+    }
+    
+    return sort_map.get(sort_by, "popularity.desc")
+
+def apply_manual_sort(results: List[Dict], sort_by: Optional[str]) -> List[Dict]:
+    """Apply sorting to a list of results (for manual pagination)"""
+    if not sort_by:
+        # Default: sort by popularity
+        results.sort(key=lambda x: x.get("popularity", 0), reverse=True)
+    elif sort_by == "rating_desc":
+        results.sort(key=lambda x: x.get("vote_average", 0), reverse=True)
+    elif sort_by == "rating_asc":
+        results.sort(key=lambda x: x.get("vote_average", 0))
+    elif sort_by == "year_desc":
+        # Sort by release_date or first_air_date
+        results.sort(key=lambda x: (x.get("release_date") or x.get("first_air_date") or ""), reverse=True)
+    elif sort_by == "year_asc":
+        results.sort(key=lambda x: (x.get("release_date") or x.get("first_air_date") or ""))
+    
+    return results
+
 # ===== API Routes =====
 @api_router.post("/search")
 async def search_titles(request: SearchRequest):
