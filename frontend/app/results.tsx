@@ -166,8 +166,30 @@ export default function ResultsScreen() {
     );
   }
 
+  const sortOptions = [
+    { value: '', label: 'Default' },
+    { value: 'rating_desc', label: 'Rating: High to Low' },
+    { value: 'rating_asc', label: 'Rating: Low to High' },
+    { value: 'year_desc', label: 'Year: Newest First' },
+    { value: 'year_asc', label: 'Year: Oldest First' },
+  ];
+
+  const selectedSortLabel = sortOptions.find(opt => opt.value === sortBy)?.label || 'Default';
+
   return (
     <SafeAreaView style={styles.container} edges={['bottom']}>
+      {/* Sort Button Header */}
+      <View style={styles.header}>
+        <TouchableOpacity
+          style={styles.sortButton}
+          onPress={() => setShowSortModal(true)}
+        >
+          <Ionicons name="funnel-outline" size={20} color="#fff" />
+          <Text style={styles.sortButtonText}>{selectedSortLabel}</Text>
+          <Ionicons name="chevron-down" size={16} color="#888" />
+        </TouchableOpacity>
+      </View>
+
       <FlashList
         data={data?.results || []}
         renderItem={renderItem}
