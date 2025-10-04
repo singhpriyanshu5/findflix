@@ -511,6 +511,47 @@ async def get_streaming_availability(tmdb_id: int, media_type: str = Query("movi
             "error": "Streaming availability temporarily unavailable"
         }
 
+@api_router.get("/streaming/compare/{tmdb_id}")
+async def compare_streaming_apis(tmdb_id: int, media_type: str = Query("movie", regex="^(movie|tv)$")):
+    """Compare streaming data from both RapidAPI and WatchMode"""
+    try:
+        # Get IMDb ID first
+        endpoint = f"{media_type}/{tmdb_id}"
+        tmdb_data = await fetch_tmdb_data(endpoint, {"append_to_response": "external_ids"})
+        imdb_id = tmdb_data.get("external_ids", {}).get("imdb_id")
+        
+        if not imdb_id:
+            return {
+                "error": "No IMDb ID found for this title",
+                "rapidapi": None,
+                "watchmode": None
+            }
+        
+        # Fetch from both APIs simultaneously
+        rapidapi_data = await fetch_streaming_availability(tmdb_id, media_type)
+        watchmode_data = await fetch_watchmode_streaming(imdb_id)
+        
+        return {
+            "title": tmdb_data.get("title") or tmdb_data.get("name"),
+            "imdb_id": imdb_id,
+            "rapidapi": {
+                "available": rapidapi_data is not None,
+                "data": rapidapi_data if rapidapi_data else {"stream": [], "rent": [], "buy": []}
+            },
+            "watchmode": {
+                "available": watchmode_data is not None,
+                "data": watchmode_data if watchmode_data else {"stream": [], "rent": [], "buy": []}
+            }
+        }
+        
+    except Exception as e:
+        logger.error(f"Compare streaming error: {str(e)}")
+        return {
+            "error": str(e),
+            "rapidapi": None,
+            "watchmode": None
+        }
+
 @api_router.get("/popular")
 async def get_popular_titles(page: int = 1):
     """Get popular/trending titles"""
