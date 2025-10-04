@@ -343,6 +343,14 @@ export default function DetailsScreen() {
         {/* Facts */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Facts</Text>
+          {titleData.original_language && (
+            <View style={styles.factItem}>
+              <Ionicons name="language-outline" size={20} color="#888" />
+              <Text style={styles.factText}>
+                Original Language: {getLanguageName(titleData.original_language)}
+              </Text>
+            </View>
+          )}
           {titleData.media_type === 'movie' ? (
             <View style={styles.factsList}>
               {titleData.runtime && (
