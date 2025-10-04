@@ -192,6 +192,18 @@ export default function SearchScreen() {
             ))}
           </View>
 
+          {/* Genre Selector */}
+          <TouchableOpacity
+            style={styles.languageSelector}
+            onPress={() => setShowGenreModal(true)}
+          >
+            <Ionicons name="film-outline" size={20} color="#fff" />
+            <Text style={styles.languageSelectorText}>
+              {selectedGenreObj?.name || 'All Genres'}
+            </Text>
+            <Ionicons name="chevron-down" size={16} color="#888" />
+          </TouchableOpacity>
+
           {/* Language Selector */}
           <TouchableOpacity
             style={styles.languageSelector}
