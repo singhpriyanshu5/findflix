@@ -809,6 +809,40 @@ class MovieAPITester:
             self.log_test("Genre Search Sorting (Action year_desc)", False, f"Error: {str(e)}")
             return False
     
+    def run_sorting_tests(self):
+        """Run sorting-specific tests for pagination consistency"""
+        print(f"🔄 Starting Sorting & Pagination Tests")
+        print(f"Backend URL: {self.base_url}")
+        print("=" * 60)
+        
+        sorting_tests = [
+            self.test_cast_search_sorting_year_desc,
+            self.test_cast_search_sorting_year_asc,
+            self.test_cast_search_sorting_rating_desc,
+            self.test_director_search_sorting_year_desc,
+            self.test_genre_search_sorting_year_desc
+        ]
+        
+        passed = 0
+        failed = 0
+        
+        for test in sorting_tests:
+            if test():
+                passed += 1
+            else:
+                failed += 1
+        
+        print("=" * 60)
+        print(f"📊 Sorting Test Results: {passed} passed, {failed} failed")
+        
+        if failed > 0:
+            print("\n❌ Failed Sorting Tests:")
+            for result in self.test_results:
+                if not result["success"] and "Sorting" in result["test"]:
+                    print(f"  - {result['test']}: {result['details']}")
+        
+        return passed, failed, self.test_results
+
     def run_all_tests(self):
         """Run all tests"""
         print(f"🚀 Starting Movie Recommendation API Tests")
