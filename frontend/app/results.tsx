@@ -260,8 +260,6 @@ export default function ResultsScreen() {
                   onPress={() => {
                     setSortBy(option.value);
                     setShowSortModal(false);
-                    setPage(1);
-                    setAllResults([]);
                   }}
                 >
                   <Text style={styles.sortOptionText}>{option.label}</Text>
