@@ -101,7 +101,11 @@ export default function SearchScreen() {
   const handleHistoryItemClick = (item: SearchHistoryItem) => {
     router.push({
       pathname: '/results',
-      params: { query: item.query, scope: item.scope },
+      params: { 
+        query: item.query, 
+        scope: item.scope,
+        language: item.language || ''
+      },
     });
   };
 
