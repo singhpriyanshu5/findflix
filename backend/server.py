@@ -407,9 +407,11 @@ async def search_titles(request: SearchRequest):
                 persons.sort(key=lambda x: x.get("popularity", 0), reverse=True)
                 person_id = persons[0]["id"]
                 
-                # Use discover API if genre filter is applied, otherwise use combined_credits
-                if request.genre:
-                    # Use discover API with both director and genre filters
+                # Use discover API if possible (only for movies), otherwise use combined_credits
+                use_discover = request.genre and (not request.content_type or request.content_type == "movie")
+                
+                if use_discover:
+                    # Use discover API with director, genre, and language filters
                     discover_params = {
                         "with_crew": person_id,
                         "page": request.page,
@@ -417,21 +419,51 @@ async def search_titles(request: SearchRequest):
                     }
                     if request.genre:
                         discover_params["with_genres"] = request.genre
+                    if request.language:
+                        discover_params["with_original_language"] = request.language
                     
                     data = await fetch_tmdb_data("discover/movie", discover_params)
                     results = data.get("results", [])
                     total_pages = data.get("total_pages", 1)
                 else:
-                    # Get crew credits
+                    # Get crew credits and apply filters manually
                     credits = await fetch_tmdb_data(f"person/{person_id}/combined_credits")
                     crew_results = [c for c in credits.get("crew", []) if c.get("job") == "Director"]
                     
+                    # Apply filters BEFORE sorting and pagination
+                    filtered_results = []
+                    for item in crew_results:
+                        media_type = item.get("media_type", "movie")
+                        if media_type not in ["movie", "tv"]:
+                            continue
+                        
+                        # Filter by content type
+                        if request.content_type:
+                            if request.content_type == "movie" and media_type != "movie":
+                                continue
+                            elif request.content_type == "tv" and media_type != "tv":
+                                continue
+                        
+                        # Filter by genre
+                        if request.genre:
+                            item_genres = item.get("genre_ids", [])
+                            if int(request.genre) not in item_genres:
+                                continue
+                        
+                        # Filter by language
+                        if request.language:
+                            item_language = item.get("original_language", "")
+                            if item_language != request.language:
+                                continue
+                        
+                        filtered_results.append(item)
+                    
                     # Apply user's requested sort and paginate
-                    crew_results = apply_manual_sort(crew_results, request.sort_by)
+                    filtered_results = apply_manual_sort(filtered_results, request.sort_by)
                     start_idx = (request.page - 1) * 20
                     end_idx = start_idx + 20
-                    results = crew_results[start_idx:end_idx]
-                    total_pages = (len(crew_results) + 19) // 20
+                    results = filtered_results[start_idx:end_idx]
+                    total_pages = (len(filtered_results) + 19) // 20
             else:
                 results = []
                 total_pages = 1
