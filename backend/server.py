@@ -231,7 +231,7 @@ async def search_titles(request: SearchRequest):
     """Search for movies/TV shows with filters"""
     try:
         # Save to search history
-        history_item = SearchHistoryItem(query=request.query, scope=request.scope)
+        history_item = SearchHistoryItem(query=request.query, scope=request.scope, language=request.language)
         await db.search_history.insert_one(history_item.dict())
         
         results = []
