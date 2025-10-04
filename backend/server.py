@@ -356,7 +356,26 @@ async def get_title_details(tmdb_id: int, media_type: str = Query("movie", regex
             result["seasons"] = tmdb_data.get("number_of_seasons", 0)
             result["episodes"] = tmdb_data.get("number_of_episodes", 0)
             episode_runtimes = tmdb_data.get("episode_run_time", [])
-            result["episode_runtime"] = episode_runtimes[0] if episode_runtimes else None
+            
+            # If episode_run_time is empty, try to fetch from first episode
+            if not episode_runtimes:
+                try:
+                    season_data = await fetch_tmdb_data(f"tv/{tmdb_id}/season/1")
+                    episodes = season_data.get("episodes", [])
+                    if episodes:
+                        # Calculate average runtime from first season
+                        runtimes = [ep.get("runtime") for ep in episodes if ep.get("runtime")]
+                        if runtimes:
+                            result["episode_runtime"] = int(sum(runtimes) / len(runtimes))
+                        else:
+                            result["episode_runtime"] = None
+                    else:
+                        result["episode_runtime"] = None
+                except Exception as e:
+                    logger.error(f"Error fetching season data: {str(e)}")
+                    result["episode_runtime"] = None
+            else:
+                result["episode_runtime"] = episode_runtimes[0]
         
         # Add cast and crew
         credits = tmdb_data.get("credits", {})
