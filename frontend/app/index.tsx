@@ -127,8 +127,9 @@ export default function SearchScreen() {
     });
   };
 
-  const scopes: SearchScope[] = ['title', 'genre', 'cast', 'director'];
+  const scopes: SearchScope[] = ['title', 'cast', 'director'];
   const selectedLanguageObj = POPULAR_LANGUAGES.find(l => l.code === selectedLanguage);
+  const selectedGenreObj = POPULAR_GENRES.find(g => g.id === selectedGenre);
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
