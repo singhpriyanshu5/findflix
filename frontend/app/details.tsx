@@ -586,6 +586,11 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#888',
   },
+  ratingVotes: {
+    fontSize: 10,
+    color: '#666',
+    marginTop: 4,
+  },
   providerGroup: {
     marginBottom: 16,
   },
