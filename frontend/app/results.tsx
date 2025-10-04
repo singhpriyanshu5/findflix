@@ -95,7 +95,16 @@ export default function ResultsScreen() {
             </View>
           </View>
 
-          <Text style={styles.year}>{item.year}</Text>
+          <View style={styles.metaRow}>
+            <Text style={styles.year}>{item.year}</Text>
+            {item.original_language && (
+              <View style={styles.languageBadge}>
+                <Text style={styles.languageBadgeText}>
+                  {getLanguageName(item.original_language)}
+                </Text>
+              </View>
+            )}
+          </View>
 
           <Text style={styles.overview} numberOfLines={3}>
             {item.overview}
