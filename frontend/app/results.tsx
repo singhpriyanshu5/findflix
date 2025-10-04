@@ -27,6 +27,7 @@ interface SearchResult {
   genres: number[];
   vote_average: number;
   overview: string;
+  original_language: string;
 }
 
 export default function ResultsScreen() {
