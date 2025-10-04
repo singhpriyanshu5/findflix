@@ -295,20 +295,37 @@ backend:
           comment: "Hit/Flop calculation working correctly. Inception correctly calculated as 'Hit' (revenue $839M vs budget $160M = 5.24x ratio)"
 
 frontend:
-  # No frontend testing performed as per instructions
+  - task: "Search Results Sorting with Pagination"
+    implemented: true
+    working: true
+    file: "frontend/app/results.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: false
+          agent: "user"
+          comment: "User reported that sorting broke across paginated results - newer movies appeared after older ones when scrolling"
+        - working: true
+          agent: "main"
+          comment: "Fixed infinite scroll result accumulation. Added allResults state to accumulate results across pages, added useEffect to reset on parameter changes, and updated FlashList to use accumulated results"
 
 metadata:
   created_by: "testing_agent"
-  version: "1.0"
-  test_sequence: 1
+  version: "1.1"
+  test_sequence: 2
   run_ui: false
 
 test_plan:
-  current_focus: []
+  current_focus:
+    - "Search by Cast"
+    - "Search Results Sorting with Pagination"
   stuck_tasks: []
-  test_all: true
+  test_all: false
   test_priority: "high_first"
 
 agent_communication:
     - agent: "testing"
       message: "Completed comprehensive backend API testing. All 13 test cases passed after fixing TV show episode_runtime handling. All external API integrations (TMDB, OMDb, Streaming) working correctly with proper error handling. MongoDB integration for search history working. Hit/Flop calculation accurate. Streaming API has rate limits but graceful fallback implemented."
+    - agent: "main"
+      message: "Fixed critical sorting bug reported by user. Issue was that sorting was applied per-page instead of globally, causing inconsistent sort order across pagination. Backend now passes sort parameters to TMDB API before pagination (for Discover API calls) and sorts globally before manual pagination (for combined_credits). Frontend now properly accumulates results across pages for infinite scroll. Changes made to server.py (added get_tmdb_sort_param, apply_manual_sort functions, updated cast/director/genre search logic) and results.tsx (added allResults state, useEffect for resets, proper result accumulation). Needs backend and e2e testing to verify sort order consistency across all search types and pagination scenarios."
