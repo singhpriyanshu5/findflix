@@ -209,14 +209,16 @@ export default function DetailsScreen() {
         </View>
 
         {/* Tagline */}
-        {titleData.tagline && (
+        {titleData.tagline && titleData.tagline.trim() !== '' && (
           <Text style={styles.tagline}>"{titleData.tagline}"</Text>
         )}
 
         {/* Overview */}
-        <View style={styles.section}>
-          <Text style={styles.overview}>{titleData.overview}</Text>
-        </View>
+        {titleData.overview && titleData.overview.trim() !== '' && (
+          <View style={styles.section}>
+            <Text style={styles.overview}>{titleData.overview}</Text>
+          </View>
+        )}
 
         {/* Ratings */}
         <View style={styles.section}>
