@@ -203,7 +203,7 @@ export default function ResultsScreen() {
       </View>
 
       <FlashList
-        data={data?.results || []}
+        data={allResults}
         renderItem={renderItem}
         keyExtractor={(item) => `${item.id}-${item.media_type}`}
         estimatedItemSize={150}
@@ -216,6 +216,7 @@ export default function ResultsScreen() {
             refreshing={false}
             onRefresh={() => {
               setPage(1);
+              setAllResults([]);
               refetch();
             }}
             tintColor="#fff"
