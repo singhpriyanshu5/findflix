@@ -1212,8 +1212,8 @@ class MovieAPITester:
 if __name__ == "__main__":
     tester = MovieAPITester()
     
-    # Run sorting tests specifically as requested
-    passed, failed, results = tester.run_sorting_tests()
+    # Run the specific caching and sorting tests requested by user
+    passed, failed, results = tester.run_caching_and_sorting_tests()
     
     # Exit with error code if tests failed
     sys.exit(1 if failed > 0 else 0)
