@@ -148,7 +148,7 @@ backend:
     implemented: true
     working: false
     file: "backend/server.py"
-    stuck_count: 1
+    stuck_count: 2
     priority: "high"
     needs_retesting: false
     status_history:
@@ -164,6 +164,9 @@ backend:
         - working: false
           agent: "testing"
           comment: "CRITICAL SORTING BUG CONFIRMED: Tested Christian Bale cast search with year_desc, year_asc, and rating_desc sorting. All failed pagination consistency tests. Page 2 contains movies with years/ratings that should appear on Page 1. Examples: year_desc - Page 2 has 2026 movie while Page 1 oldest is 1981; rating_desc - Page 2 has 7.8 rating while Page 1 lowest is 3.6. The apply_manual_sort() function appears correct, but sorting is not being applied globally before pagination. Issue affects cast search using combined_credits API path."
+        - working: false
+          agent: "testing"
+          comment: "RE-TESTED AFTER COMPREHENSIVE FIX: Sorting bug persists. Cast search (Christian Bale) fails all sorting tests: year_desc shows 'The Bride!' (2026) on page 2 while page 1 starts with 'Thor: Love and Thunder' (2022); year_asc shows 1994 movie on page 2 while page 1 ends with 2022; rating_desc shows 7.8 rating on page 2 while page 1 lowest is 3.6. The apply_manual_sort() function exists but is not working correctly. Root cause: combined_credits API data is not being sorted globally before pagination despite the fix attempts."
 
   - task: "Search by Director"
     implemented: true
