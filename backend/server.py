@@ -50,6 +50,7 @@ class SearchRequest(BaseModel):
     query: str
     scope: SearchScope = SearchScope.TITLE
     page: int = 1
+    language: Optional[str] = None  # ISO 639-1 language code (e.g., "en", "hi", "te")
 
 # ===== Helper Functions =====
 async def fetch_tmdb_data(endpoint: str, params: Dict = None):
