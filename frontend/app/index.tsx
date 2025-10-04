@@ -95,7 +95,8 @@ export default function SearchScreen() {
         params: { 
           query: searchQuery, 
           scope: selectedScope,
-          language: selectedLanguage 
+          language: selectedLanguage,
+          contentType: selectedContentType
         },
       });
     }
@@ -107,7 +108,8 @@ export default function SearchScreen() {
       params: { 
         query: item.query, 
         scope: item.scope,
-        language: item.language || ''
+        language: item.language || '',
+        contentType: item.content_type || ''
       },
     });
   };
