@@ -383,6 +383,7 @@ async def get_title_details(tmdb_id: int, media_type: str = Query("movie", regex
         ratings = {
             "tmdb": tmdb_data.get("vote_average", 0),
             "imdb": tmdb_data.get("vote_average", 0),  # Default to TMDB, will be overridden by OMDb
+            "imdb_votes": None,
             "rotten_tomatoes_critics": None,
             "rotten_tomatoes_audience": None,
             "metacritic": None,
@@ -405,10 +406,15 @@ async def get_title_details(tmdb_id: int, media_type: str = Query("movie", regex
                     if "/" in value:
                         ratings["metacritic"] = int(value.split("/")[0])
             
-            # Get IMDb rating from OMDb (more precise)
+            # Get IMDb rating and vote count from OMDb (more precise)
             imdb_rating = omdb_data.get("imdbRating")
             if imdb_rating and imdb_rating != "N/A":
                 ratings["imdb"] = float(imdb_rating)
+            
+            imdb_votes = omdb_data.get("imdbVotes")
+            if imdb_votes and imdb_votes != "N/A":
+                # Remove commas and convert to string for display
+                ratings["imdb_votes"] = imdb_votes
         
         # Build response
         title = tmdb_data.get("title") or tmdb_data.get("name", "")
