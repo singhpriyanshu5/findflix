@@ -211,6 +211,46 @@ export default function ResultsScreen() {
         }
         contentContainerStyle={styles.listContent}
       />
+
+      {/* Sort Modal */}
+      <Modal
+        visible={showSortModal}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setShowSortModal(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Sort By</Text>
+              <TouchableOpacity onPress={() => setShowSortModal(false)}>
+                <Ionicons name="close" size={24} color="#fff" />
+              </TouchableOpacity>
+            </View>
+            <ScrollView style={styles.modalScroll}>
+              {sortOptions.map((option) => (
+                <TouchableOpacity
+                  key={option.value}
+                  style={[
+                    styles.sortOption,
+                    sortBy === option.value && styles.sortOptionActive,
+                  ]}
+                  onPress={() => {
+                    setSortBy(option.value);
+                    setShowSortModal(false);
+                    setPage(1);
+                  }}
+                >
+                  <Text style={styles.sortOptionText}>{option.label}</Text>
+                  {sortBy === option.value && (
+                    <Ionicons name="checkmark" size={20} color="#e50914" />
+                  )}
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
