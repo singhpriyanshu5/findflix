@@ -38,14 +38,16 @@ export default function ResultsScreen() {
 
   const query = params.query as string;
   const scope = params.scope as string;
+  const language = params.language as string || '';
 
   const { data, isLoading, isFetching, refetch } = useQuery({
-    queryKey: ['search', query, scope, page],
+    queryKey: ['search', query, scope, language, page],
     queryFn: async () => {
       const response = await axios.post(`${BACKEND_URL}/api/search`, {
         query,
         scope,
         page,
+        language: language || undefined,
       });
       return response.data;
     },
