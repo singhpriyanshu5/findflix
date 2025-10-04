@@ -45,6 +45,7 @@ class SearchHistoryItem(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     query: str
     scope: SearchScope
+    language: Optional[str] = None
     timestamp: datetime = Field(default_factory=datetime.utcnow)
 
 class SearchRequest(BaseModel):
