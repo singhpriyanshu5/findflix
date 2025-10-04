@@ -306,7 +306,7 @@ async def search_titles(request: SearchRequest):
                 discover_params = {
                     "with_genres": matching_genre["id"],
                     "page": request.page,
-                    "sort_by": "popularity.desc"
+                    "sort_by": get_tmdb_sort_param(request.sort_by)
                 }
                 if request.language:
                     discover_params["with_original_language"] = request.language
