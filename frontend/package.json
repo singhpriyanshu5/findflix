@@ -54,7 +54,7 @@
     "typescript": "~5.8.3"
   },
   "resolutions": {
-    "@react-native/dev-middleware": "0.81.3"
+    "@react-native/dev-middleware": "0.76.2"
   },
   "engines": {
     "node": ">=20.19.0"
