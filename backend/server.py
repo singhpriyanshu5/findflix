@@ -342,16 +342,32 @@ async def search_titles(request: SearchRequest):
                 # Select the most popular person with matching name
                 persons.sort(key=lambda x: x.get("popularity", 0), reverse=True)
                 person_id = persons[0]["id"]
-                # Get crew credits
-                credits = await fetch_tmdb_data(f"person/{person_id}/combined_credits")
-                crew_results = [c for c in credits.get("crew", []) if c.get("job") == "Director"]
                 
-                # Sort by popularity and paginate
-                crew_results.sort(key=lambda x: x.get("popularity", 0), reverse=True)
-                start_idx = (request.page - 1) * 20
-                end_idx = start_idx + 20
-                results = crew_results[start_idx:end_idx]
-                total_pages = (len(crew_results) + 19) // 20
+                # Use discover API if genre filter is applied, otherwise use combined_credits
+                if request.genre:
+                    # Use discover API with both director and genre filters
+                    discover_params = {
+                        "with_crew": person_id,
+                        "page": request.page,
+                        "sort_by": "popularity.desc"
+                    }
+                    if request.genre:
+                        discover_params["with_genres"] = request.genre
+                    
+                    data = await fetch_tmdb_data("discover/movie", discover_params)
+                    results = data.get("results", [])
+                    total_pages = data.get("total_pages", 1)
+                else:
+                    # Get crew credits
+                    credits = await fetch_tmdb_data(f"person/{person_id}/combined_credits")
+                    crew_results = [c for c in credits.get("crew", []) if c.get("job") == "Director"]
+                    
+                    # Sort by popularity and paginate
+                    crew_results.sort(key=lambda x: x.get("popularity", 0), reverse=True)
+                    start_idx = (request.page - 1) * 20
+                    end_idx = start_idx + 20
+                    results = crew_results[start_idx:end_idx]
+                    total_pages = (len(crew_results) + 19) // 20
             else:
                 results = []
                 total_pages = 1
