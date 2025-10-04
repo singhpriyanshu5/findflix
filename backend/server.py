@@ -267,6 +267,42 @@ def apply_manual_sort(results: List[Dict], sort_by: Optional[str]) -> List[Dict]
     
     return results
 
+def get_cache_key(person_id: int, filters: Dict[str, Any]) -> str:
+    """Generate a cache key for search results"""
+    key_parts = [str(person_id)]
+    if filters.get("genre"):
+        key_parts.append(f"g:{filters['genre']}")
+    if filters.get("language"):
+        key_parts.append(f"l:{filters['language']}")
+    if filters.get("content_type"):
+        key_parts.append(f"c:{filters['content_type']}")
+    if filters.get("sort_by"):
+        key_parts.append(f"s:{filters['sort_by']}")
+    return "|".join(key_parts)
+
+def get_cached_results(cache_key: str) -> Optional[List[Dict]]:
+    """Get cached results if still valid"""
+    if cache_key in search_results_cache:
+        cached_data = search_results_cache[cache_key]
+        cache_time = cached_data["timestamp"]
+        current_time = datetime.now(timezone.utc)
+        
+        # Check if cache is still valid
+        if (current_time - cache_time).total_seconds() < CACHE_TTL_SECONDS:
+            return cached_data["results"]
+        else:
+            # Cache expired, remove it
+            del search_results_cache[cache_key]
+    
+    return None
+
+def cache_results(cache_key: str, results: List[Dict]):
+    """Cache sorted results"""
+    search_results_cache[cache_key] = {
+        "results": results,
+        "timestamp": datetime.now(timezone.utc)
+    }
+
 # ===== API Routes =====
 @api_router.post("/search")
 async def search_titles(request: SearchRequest):
