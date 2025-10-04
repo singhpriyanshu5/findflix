@@ -24,6 +24,7 @@ db = client[os.environ['DB_NAME']]
 TMDB_API_KEY = os.environ['TMDB_API_KEY']
 RAPIDAPI_KEY = os.environ['RAPIDAPI_KEY']
 OMDB_API_KEY = os.environ['OMDB_API_KEY']
+WATCHMODE_API_KEY = os.environ['WATCHMODE_API_KEY']
 
 # Create the main app
 app = FastAPI()
