@@ -143,11 +143,11 @@ backend:
 
   - task: "Search by Cast"
     implemented: true
-    working: true
+    working: false
     file: "backend/server.py"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: true
           agent: "testing"
@@ -158,6 +158,9 @@ backend:
         - working: true
           agent: "main"
           comment: "Fixed pagination sorting issue. Root cause: sorting was applied AFTER pagination on each page independently. Solution: 1) Added get_tmdb_sort_param() to map frontend sort to TMDB sort params 2) Pass sort_by to TMDB Discover API for cast/director/genre searches 3) Added apply_manual_sort() for combined_credits searches before pagination 4) Removed client-side sorting that was re-sorting each page 5) Fixed frontend to accumulate results across pages for proper infinite scroll. Now sorting is applied globally before pagination."
+        - working: false
+          agent: "testing"
+          comment: "CRITICAL SORTING BUG CONFIRMED: Tested Christian Bale cast search with year_desc, year_asc, and rating_desc sorting. All failed pagination consistency tests. Page 2 contains movies with years/ratings that should appear on Page 1. Examples: year_desc - Page 2 has 2026 movie while Page 1 oldest is 1981; rating_desc - Page 2 has 7.8 rating while Page 1 lowest is 3.6. The apply_manual_sort() function appears correct, but sorting is not being applied globally before pagination. Issue affects cast search using combined_credits API path."
 
   - task: "Search by Director"
     implemented: true
