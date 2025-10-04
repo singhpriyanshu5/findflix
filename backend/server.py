@@ -278,6 +278,7 @@ async def search_titles(request: SearchRequest):
         await db.search_history.insert_one(history_item.dict())
         
         results = []
+        needs_post_filtering = False  # Track if we need to apply filters after getting results
         
         if request.scope == SearchScope.TITLE:
             # Multi-search for titles
