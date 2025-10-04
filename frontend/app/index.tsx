@@ -48,8 +48,10 @@ interface PopularTitle {
 export default function SearchScreen() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedScope, setSelectedScope] = useState<SearchScope>('title');
+  const [selectedGenre, setSelectedGenre] = useState('');
   const [selectedLanguage, setSelectedLanguage] = useState('');
   const [selectedContentType, setSelectedContentType] = useState('');
+  const [showGenreModal, setShowGenreModal] = useState(false);
   const [showLanguageModal, setShowLanguageModal] = useState(false);
   const [showContentTypeModal, setShowContentTypeModal] = useState(false);
   const router = useRouter();
