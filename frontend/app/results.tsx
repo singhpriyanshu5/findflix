@@ -76,7 +76,7 @@ export default function ResultsScreen() {
         setAllResults((prev) => [...prev, ...data.results]);
       }
     }
-  }, [data, page]);
+  }, [data]);
 
   // Reset to page 1 when search parameters change (but not page itself)
   useEffect(() => {
