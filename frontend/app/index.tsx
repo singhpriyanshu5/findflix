@@ -51,13 +51,20 @@ export default function SearchScreen() {
   const queryClient = useQueryClient();
 
   // Fetch search history
-  const { data: searchHistory } = useQuery<SearchHistoryItem[]>({
+  const { data: searchHistory, refetch: refetchHistory } = useQuery<SearchHistoryItem[]>({
     queryKey: ['searchHistory'],
     queryFn: async () => {
       const response = await axios.get(`${BACKEND_URL}/api/search/history?limit=5`);
       return response.data;
     },
   });
+
+  // Refetch search history when screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      refetchHistory();
+    }, [refetchHistory])
+  );
 
   // Fetch popular titles
   const { data: popularData, isLoading: popularLoading, refetch } = useQuery({
