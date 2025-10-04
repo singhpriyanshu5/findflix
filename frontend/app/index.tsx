@@ -394,6 +394,45 @@ export default function SearchScreen() {
           </View>
         </View>
       </Modal>
+
+      {/* Genre Selection Modal */}
+      <Modal
+        visible={showGenreModal}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setShowGenreModal(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Select Genre</Text>
+              <TouchableOpacity onPress={() => setShowGenreModal(false)}>
+                <Ionicons name="close" size={24} color="#fff" />
+              </TouchableOpacity>
+            </View>
+            <ScrollView style={styles.modalScroll}>
+              {POPULAR_GENRES.map((genre) => (
+                <TouchableOpacity
+                  key={genre.id}
+                  style={[
+                    styles.languageOption,
+                    selectedGenre === genre.id && styles.languageOptionActive,
+                  ]}
+                  onPress={() => {
+                    setSelectedGenre(genre.id);
+                    setShowGenreModal(false);
+                  }}
+                >
+                  <Text style={styles.languageOptionText}>{genre.name}</Text>
+                  {selectedGenre === genre.id && (
+                    <Ionicons name="checkmark" size={20} color="#e50914" />
+                  )}
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
