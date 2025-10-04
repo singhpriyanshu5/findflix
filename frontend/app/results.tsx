@@ -40,6 +40,7 @@ export default function ResultsScreen() {
   const [page, setPage] = useState(1);
   const [sortBy, setSortBy] = useState('');
   const [showSortModal, setShowSortModal] = useState(false);
+  const [allResults, setAllResults] = useState<SearchResult[]>([]);
 
   const query = params.query as string;
   const scope = params.scope as string;
@@ -62,6 +63,15 @@ export default function ResultsScreen() {
       return response.data;
     },
     enabled: !!query,
+    onSuccess: (newData) => {
+      if (page === 1) {
+        // Reset results for first page or when sort changes
+        setAllResults(newData.results || []);
+      } else {
+        // Append results for subsequent pages
+        setAllResults((prev) => [...prev, ...(newData.results || [])]);
+      }
+    },
   });
 
   const handleItemPress = (item: SearchResult) => {
