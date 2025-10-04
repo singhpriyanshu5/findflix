@@ -227,7 +227,6 @@ export default function ResultsScreen() {
             onRefresh={() => {
               setPage(1);
               setAllResults([]);
-              refetch();
             }}
             tintColor="#fff"
           />
