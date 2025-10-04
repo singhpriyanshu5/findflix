@@ -48,7 +48,7 @@ export default function ResultsScreen() {
   const language = params.language as string || '';
   const contentType = params.contentType as string || '';
 
-  const { data, isLoading, isFetching, refetch } = useQuery({
+  const { data, isLoading, isFetching } = useQuery({
     queryKey: ['search', query, scope, genre, language, contentType, sortBy, page],
     queryFn: async () => {
       const response = await axios.post(`${BACKEND_URL}/api/search`, {
@@ -63,18 +63,22 @@ export default function ResultsScreen() {
       return response.data;
     },
     enabled: !!query,
-    onSuccess: (newData) => {
-      if (page === 1) {
-        // Reset results for first page or when sort changes
-        setAllResults(newData.results || []);
-      } else {
-        // Append results for subsequent pages
-        setAllResults((prev) => [...prev, ...(newData.results || [])]);
-      }
-    },
   });
 
-  // Reset results when search parameters change
+  // Handle data updates - accumulate results for pagination
+  useEffect(() => {
+    if (data?.results) {
+      if (page === 1) {
+        // First page - replace all results
+        setAllResults(data.results);
+      } else {
+        // Subsequent pages - append results
+        setAllResults((prev) => [...prev, ...data.results]);
+      }
+    }
+  }, [data, page]);
+
+  // Reset to page 1 when search parameters change (but not page itself)
   useEffect(() => {
     setPage(1);
     setAllResults([]);
