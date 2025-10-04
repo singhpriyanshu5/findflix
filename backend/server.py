@@ -141,7 +141,74 @@ async def fetch_streaming_availability(tmdb_id: int, media_type: str):
             
             return grouped
         except Exception as e:
-            logger.error(f"Streaming API error: {str(e)}")
+            logger.error(f"Streaming API (RapidAPI) error: {str(e)}")
+            return None
+
+async def fetch_watchmode_streaming(imdb_id: str):
+    """Fetch US streaming availability from WatchMode API"""
+    async with httpx.AsyncClient(timeout=10.0) as client:
+        try:
+            # First, search for the title to get WatchMode ID
+            search_response = await client.get(
+                "https://api.watchmode.com/v1/search/",
+                params={
+                    "apiKey": WATCHMODE_API_KEY,
+                    "search_field": "imdb_id",
+                    "search_value": imdb_id
+                }
+            )
+            search_response.raise_for_status()
+            search_data = search_response.json()
+            
+            if not search_data.get("title_results"):
+                logger.info(f"WatchMode: No results for IMDb ID {imdb_id}")
+                return None
+            
+            watchmode_id = search_data["title_results"][0]["id"]
+            
+            # Get sources (streaming availability)
+            sources_response = await client.get(
+                f"https://api.watchmode.com/v1/title/{watchmode_id}/sources/",
+                params={
+                    "apiKey": WATCHMODE_API_KEY,
+                    "regions": "US"
+                }
+            )
+            sources_response.raise_for_status()
+            sources = sources_response.json()
+            
+            # Group by type: stream (subscription/free), rent, buy
+            grouped = {"stream": [], "rent": [], "buy": []}
+            seen_services = {"stream": set(), "rent": set(), "buy": set()}
+            
+            for source in sources:
+                source_name = source.get("name", "")
+                source_id = str(source.get("source_id", ""))
+                source_type = source.get("type", "").lower()
+                web_url = source.get("web_url", "")
+                
+                # Map type to our categories
+                if source_type in ["sub", "free", "tve"]:
+                    category = "stream"
+                elif source_type == "rent":
+                    category = "rent"
+                elif source_type == "buy":
+                    category = "buy"
+                else:
+                    continue
+                
+                # Avoid duplicates
+                if source_id not in seen_services[category]:
+                    grouped[category].append({
+                        "name": source_name,
+                        "id": source_id,
+                        "link": web_url
+                    })
+                    seen_services[category].add(source_id)
+            
+            return grouped
+        except Exception as e:
+            logger.error(f"WatchMode API error: {str(e)}")
             return None
 
 def calculate_hit_flop(budget: Optional[int], revenue: Optional[int]) -> str:
