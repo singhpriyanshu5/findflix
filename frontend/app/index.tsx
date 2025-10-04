@@ -99,6 +99,7 @@ export default function SearchScreen() {
         params: { 
           query: searchQuery, 
           scope: selectedScope,
+          genre: selectedGenre,
           language: selectedLanguage,
           contentType: selectedContentType
         },
@@ -112,6 +113,7 @@ export default function SearchScreen() {
       params: { 
         query: item.query, 
         scope: item.scope,
+        genre: item.genre || '',
         language: item.language || '',
         contentType: item.content_type || ''
       },
