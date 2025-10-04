@@ -484,24 +484,26 @@ async def search_titles(request: SearchRequest):
             if media_type not in ["movie", "tv"]:
                 continue
             
-            # Filter by content type if specified
-            if request.content_type:
-                if request.content_type == "movie" and media_type != "movie":
-                    continue
-                elif request.content_type == "tv" and media_type != "tv":
-                    continue
-            
-            # Filter by genre if specified
-            if request.genre:
-                item_genres = item.get("genre_ids", [])
-                if int(request.genre) not in item_genres:
-                    continue
-            
-            # Filter by language if specified
-            if request.language:
-                item_language = item.get("original_language", "")
-                if item_language != request.language:
-                    continue
+            # Apply post-filtering only if needed (for title search with additional filters)
+            if needs_post_filtering:
+                # Filter by content type if specified
+                if request.content_type:
+                    if request.content_type == "movie" and media_type != "movie":
+                        continue
+                    elif request.content_type == "tv" and media_type != "tv":
+                        continue
+                
+                # Filter by genre if specified
+                if request.genre:
+                    item_genres = item.get("genre_ids", [])
+                    if int(request.genre) not in item_genres:
+                        continue
+                
+                # Filter by language if specified
+                if request.language:
+                    item_language = item.get("original_language", "")
+                    if item_language != request.language:
+                        continue
             
             # Get basic info
             title = item.get("title") or item.get("name", "")
