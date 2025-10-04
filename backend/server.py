@@ -262,6 +262,12 @@ async def search_titles(request: SearchRequest):
             if media_type not in ["movie", "tv"]:
                 continue
             
+            # Filter by language if specified
+            if request.language:
+                item_language = item.get("original_language", "")
+                if item_language != request.language:
+                    continue
+            
             # Get basic ratings from TMDB
             title = item.get("title") or item.get("name", "")
             year = (item.get("release_date") or item.get("first_air_date", ""))[:4]
@@ -274,7 +280,8 @@ async def search_titles(request: SearchRequest):
                 "poster_path": item.get("poster_path"),
                 "genres": item.get("genre_ids", []),
                 "vote_average": item.get("vote_average", 0),
-                "overview": item.get("overview", "")
+                "overview": item.get("overview", ""),
+                "original_language": item.get("original_language", "")
             }
             formatted_results.append(formatted_item)
         
