@@ -388,6 +388,17 @@ async def search_titles(request: SearchRequest):
             }
             formatted_results.append(formatted_item)
         
+        # Apply sorting if specified
+        if request.sort_by:
+            if request.sort_by == "rating_desc":
+                formatted_results.sort(key=lambda x: x["vote_average"], reverse=True)
+            elif request.sort_by == "rating_asc":
+                formatted_results.sort(key=lambda x: x["vote_average"])
+            elif request.sort_by == "year_desc":
+                formatted_results.sort(key=lambda x: x["year"] or "0", reverse=True)
+            elif request.sort_by == "year_asc":
+                formatted_results.sort(key=lambda x: x["year"] or "0")
+        
         return {
             "results": formatted_results,
             "page": request.page,
