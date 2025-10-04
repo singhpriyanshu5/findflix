@@ -103,7 +103,7 @@ export default function ResultsScreen() {
             <View style={styles.ratingRow}>
               <Ionicons name="star" size={16} color="#ffd700" />
               <Text style={styles.ratingText}>
-                {item.vote_average.toFixed(1)} TMDB
+                {item.vote_average.toFixed(1)}
               </Text>
             </View>
           )}
