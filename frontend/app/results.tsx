@@ -254,10 +254,26 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: '600',
   },
+  metaRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 8,
+  },
   year: {
     fontSize: 14,
     color: '#888',
-    marginBottom: 8,
+  },
+  languageBadge: {
+    backgroundColor: '#2a2a2a',
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 4,
+  },
+  languageBadgeText: {
+    color: '#aaa',
+    fontSize: 11,
+    fontWeight: '600',
   },
   overview: {
     fontSize: 13,
