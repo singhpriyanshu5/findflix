@@ -43,6 +43,8 @@ interface PopularTitle {
 export default function SearchScreen() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedScope, setSelectedScope] = useState<SearchScope>('title');
+  const [selectedLanguage, setSelectedLanguage] = useState('');
+  const [showLanguageModal, setShowLanguageModal] = useState(false);
   const router = useRouter();
   const queryClient = useQueryClient();
 
@@ -78,7 +80,11 @@ export default function SearchScreen() {
     if (searchQuery.trim()) {
       router.push({
         pathname: '/results',
-        params: { query: searchQuery, scope: selectedScope },
+        params: { 
+          query: searchQuery, 
+          scope: selectedScope,
+          language: selectedLanguage 
+        },
       });
     }
   };
@@ -98,6 +104,7 @@ export default function SearchScreen() {
   };
 
   const scopes: SearchScope[] = ['title', 'genre', 'cast', 'director'];
+  const selectedLanguageObj = POPULAR_LANGUAGES.find(l => l.code === selectedLanguage);
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
@@ -159,6 +166,18 @@ export default function SearchScreen() {
               </TouchableOpacity>
             ))}
           </View>
+
+          {/* Language Selector */}
+          <TouchableOpacity
+            style={styles.languageSelector}
+            onPress={() => setShowLanguageModal(true)}
+          >
+            <Ionicons name="language-outline" size={20} color="#fff" />
+            <Text style={styles.languageSelectorText}>
+              {selectedLanguageObj?.name || 'All Languages'}
+            </Text>
+            <Ionicons name="chevron-down" size={16} color="#888" />
+          </TouchableOpacity>
 
           <TouchableOpacity
             style={styles.searchButton}
@@ -232,6 +251,45 @@ export default function SearchScreen() {
           )}
         </View>
       </ScrollView>
+
+      {/* Language Selection Modal */}
+      <Modal
+        visible={showLanguageModal}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setShowLanguageModal(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Select Language</Text>
+              <TouchableOpacity onPress={() => setShowLanguageModal(false)}>
+                <Ionicons name="close" size={24} color="#fff" />
+              </TouchableOpacity>
+            </View>
+            <ScrollView style={styles.modalScroll}>
+              {POPULAR_LANGUAGES.map((lang) => (
+                <TouchableOpacity
+                  key={lang.code}
+                  style={[
+                    styles.languageOption,
+                    selectedLanguage === lang.code && styles.languageOptionActive,
+                  ]}
+                  onPress={() => {
+                    setSelectedLanguage(lang.code);
+                    setShowLanguageModal(false);
+                  }}
+                >
+                  <Text style={styles.languageOptionText}>{lang.name}</Text>
+                  {selectedLanguage === lang.code && (
+                    <Ionicons name="checkmark" size={20} color="#e50914" />
+                  )}
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -282,7 +340,7 @@ const styles = StyleSheet.create({
   },
   filterTabs: {
     flexDirection: 'row',
-    marginBottom: 16,
+    marginBottom: 12,
     gap: 8,
   },
   filterTab: {
@@ -303,6 +361,21 @@ const styles = StyleSheet.create({
   },
   filterTabTextActive: {
     color: '#fff',
+  },
+  languageSelector: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#1a1a1a',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    marginBottom: 12,
+    gap: 8,
+  },
+  languageSelectorText: {
+    flex: 1,
+    color: '#fff',
+    fontSize: 15,
   },
   searchButton: {
     backgroundColor: '#e50914',
@@ -395,5 +468,49 @@ const styles = StyleSheet.create({
   },
   loader: {
     marginVertical: 32,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.8)',
+    justifyContent: 'flex-end',
+  },
+  modalContent: {
+    backgroundColor: '#1a1a1a',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    maxHeight: '70%',
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: '#2a2a2a',
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: '600',
+    color: '#fff',
+  },
+  modalScroll: {
+    padding: 16,
+  },
+  languageOption: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 16,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    marginBottom: 8,
+    backgroundColor: '#0c0c0c',
+  },
+  languageOptionActive: {
+    backgroundColor: '#2a2a2a',
+  },
+  languageOptionText: {
+    color: '#fff',
+    fontSize: 16,
   },
 });
