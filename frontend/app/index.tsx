@@ -138,8 +138,8 @@ export default function SearchScreen() {
       >
         {/* Header */}
         <View style={styles.header}>
-          <Text style={styles.title}>StreamFinder</Text>
-          <Text style={styles.subtitle}>Find your next watch</Text>
+          <Text style={styles.title}>FindFlix</Text>
+          <Text style={styles.subtitle}>Find your next movie/tv show to watch</Text>
         </View>
 
         {/* Search Bar */}
