@@ -324,7 +324,7 @@ async def search_titles(request: SearchRequest):
                 results = []
                 total_pages = 1
         
-        # Format results
+        # Format results with IMDb ratings
         formatted_results = []
         for item in results:
             media_type = item.get("media_type", "movie")
@@ -337,18 +337,37 @@ async def search_titles(request: SearchRequest):
                 if item_language != request.language:
                     continue
             
-            # Get basic ratings from TMDB
+            # Get basic info
             title = item.get("title") or item.get("name", "")
             year = (item.get("release_date") or item.get("first_air_date", ""))[:4]
+            tmdb_id = item.get("id")
+            
+            # Fetch IMDb rating for this result
+            imdb_rating = item.get("vote_average", 0)  # Default to TMDB
+            try:
+                # Get external IDs to fetch IMDb ID
+                external_ids_data = await fetch_tmdb_data(f"{media_type}/{tmdb_id}/external_ids")
+                imdb_id = external_ids_data.get("imdb_id")
+                
+                if imdb_id:
+                    # Fetch IMDb rating from OMDb
+                    omdb_data = await fetch_omdb_data(imdb_id)
+                    if omdb_data:
+                        omdb_rating = omdb_data.get("imdbRating")
+                        if omdb_rating and omdb_rating != "N/A":
+                            imdb_rating = float(omdb_rating)
+            except Exception as e:
+                logger.error(f"Error fetching IMDb rating for {tmdb_id}: {str(e)}")
+                # Continue with TMDB rating as fallback
             
             formatted_item = {
-                "id": item.get("id"),
+                "id": tmdb_id,
                 "title": title,
                 "year": year,
                 "media_type": media_type,
                 "poster_path": item.get("poster_path"),
                 "genres": item.get("genre_ids", []),
-                "vote_average": item.get("vote_average", 0),
+                "vote_average": imdb_rating,
                 "overview": item.get("overview", ""),
                 "original_language": item.get("original_language", "")
             }
