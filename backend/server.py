@@ -53,6 +53,8 @@ class SearchRequest(BaseModel):
     scope: SearchScope = SearchScope.TITLE
     page: int = 1
     language: Optional[str] = None  # ISO 639-1 language code (e.g., "en", "hi", "te")
+    content_type: Optional[str] = None  # "movie" or "tv"
+    sort_by: Optional[str] = None  # "rating_desc", "rating_asc", "year_desc", "year_asc"
 
 # ===== Helper Functions =====
 async def fetch_tmdb_data(endpoint: str, params: Dict = None):
