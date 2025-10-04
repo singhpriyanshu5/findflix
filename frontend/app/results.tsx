@@ -38,19 +38,24 @@ export default function ResultsScreen() {
   const params = useLocalSearchParams();
   const router = useRouter();
   const [page, setPage] = useState(1);
+  const [sortBy, setSortBy] = useState('');
+  const [showSortModal, setShowSortModal] = useState(false);
 
   const query = params.query as string;
   const scope = params.scope as string;
   const language = params.language as string || '';
+  const contentType = params.contentType as string || '';
 
   const { data, isLoading, isFetching, refetch } = useQuery({
-    queryKey: ['search', query, scope, language, page],
+    queryKey: ['search', query, scope, language, contentType, sortBy, page],
     queryFn: async () => {
       const response = await axios.post(`${BACKEND_URL}/api/search`, {
         query,
         scope,
         page,
         language: language || undefined,
+        content_type: contentType || undefined,
+        sort_by: sortBy || undefined,
       });
       return response.data;
     },
