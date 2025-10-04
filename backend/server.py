@@ -339,6 +339,13 @@ async def search_titles(request: SearchRequest):
             if media_type not in ["movie", "tv"]:
                 continue
             
+            # Filter by content type if specified
+            if request.content_type:
+                if request.content_type == "movie" and media_type != "movie":
+                    continue
+                elif request.content_type == "tv" and media_type != "tv":
+                    continue
+            
             # Filter by language if specified
             if request.language:
                 item_language = item.get("original_language", "")
