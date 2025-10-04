@@ -10,12 +10,14 @@ import {
   ActivityIndicator,
   Image,
   RefreshControl,
+  Modal,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
+import { POPULAR_LANGUAGES } from '../utils/languages';
 
 const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL || '';
 const TMDB_IMAGE_BASE = 'https://image.tmdb.org/t/p/w500';
