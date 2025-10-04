@@ -382,6 +382,432 @@ class MovieAPITester:
         except Exception as e:
             self.log_test("Genres", False, f"Error: {str(e)}")
             return False
+
+    def test_cast_search_sorting_year_desc(self):
+        """Test cast search with Christian Bale sorted by year_desc across pages"""
+        try:
+            # Test page 1
+            payload_page1 = {
+                "query": "Christian Bale",
+                "scope": "cast",
+                "page": 1,
+                "sort_by": "year_desc"
+            }
+            response1 = self.session.post(f"{self.base_url}/search", json=payload_page1)
+            
+            if response1.status_code != 200:
+                self.log_test("Cast Search Sorting (Christian Bale year_desc)", False, f"Page 1 failed: HTTP {response1.status_code}")
+                return False
+            
+            data1 = response1.json()
+            results1 = data1.get("results", [])
+            
+            if len(results1) == 0:
+                self.log_test("Cast Search Sorting (Christian Bale year_desc)", False, "No results found for Christian Bale")
+                return False
+            
+            # Extract years from page 1 and verify descending order
+            years1 = []
+            for movie in results1:
+                year = movie.get("year", "")
+                if year and year.isdigit():
+                    years1.append(int(year))
+                else:
+                    years1.append(0)  # Handle missing years
+            
+            # Check if page 1 is sorted in descending order
+            is_page1_sorted = all(years1[i] >= years1[i+1] for i in range(len(years1)-1))
+            
+            if not is_page1_sorted:
+                self.log_test("Cast Search Sorting (Christian Bale year_desc)", False, f"Page 1 not sorted descending: {years1}")
+                return False
+            
+            # Test page 2
+            payload_page2 = {
+                "query": "Christian Bale",
+                "scope": "cast",
+                "page": 2,
+                "sort_by": "year_desc"
+            }
+            response2 = self.session.post(f"{self.base_url}/search", json=payload_page2)
+            
+            if response2.status_code != 200:
+                self.log_test("Cast Search Sorting (Christian Bale year_desc)", False, f"Page 2 failed: HTTP {response2.status_code}")
+                return False
+            
+            data2 = response2.json()
+            results2 = data2.get("results", [])
+            
+            if len(results2) == 0:
+                self.log_test("Cast Search Sorting (Christian Bale year_desc)", True, f"Page 1 sorted correctly ({min(years1)}-{max(years1)}), Page 2 empty")
+                return True
+            
+            # Extract years from page 2
+            years2 = []
+            for movie in results2:
+                year = movie.get("year", "")
+                if year and year.isdigit():
+                    years2.append(int(year))
+                else:
+                    years2.append(0)
+            
+            # Check if page 2 is sorted in descending order
+            is_page2_sorted = all(years2[i] >= years2[i+1] for i in range(len(years2)-1))
+            
+            if not is_page2_sorted:
+                self.log_test("Cast Search Sorting (Christian Bale year_desc)", False, f"Page 2 not sorted descending: {years2}")
+                return False
+            
+            # CRITICAL CHECK: All movies in page 2 should have years <= oldest movie from page 1
+            oldest_page1 = min(years1) if years1 else 0
+            newest_page2 = max(years2) if years2 else 0
+            
+            if newest_page2 > oldest_page1:
+                self.log_test("Cast Search Sorting (Christian Bale year_desc)", False, 
+                            f"SORTING BUG: Page 2 newest ({newest_page2}) > Page 1 oldest ({oldest_page1}). Page 1: {years1}, Page 2: {years2}")
+                return False
+            
+            self.log_test("Cast Search Sorting (Christian Bale year_desc)", True, 
+                        f"Sorting consistent across pages. Page 1: {oldest_page1}-{max(years1)}, Page 2: {min(years2)}-{newest_page2}")
+            return True
+            
+        except Exception as e:
+            self.log_test("Cast Search Sorting (Christian Bale year_desc)", False, f"Error: {str(e)}")
+            return False
+
+    def test_cast_search_sorting_year_asc(self):
+        """Test cast search with Christian Bale sorted by year_asc across pages"""
+        try:
+            # Test page 1
+            payload_page1 = {
+                "query": "Christian Bale",
+                "scope": "cast",
+                "page": 1,
+                "sort_by": "year_asc"
+            }
+            response1 = self.session.post(f"{self.base_url}/search", json=payload_page1)
+            
+            if response1.status_code != 200:
+                self.log_test("Cast Search Sorting (Christian Bale year_asc)", False, f"Page 1 failed: HTTP {response1.status_code}")
+                return False
+            
+            data1 = response1.json()
+            results1 = data1.get("results", [])
+            
+            if len(results1) == 0:
+                self.log_test("Cast Search Sorting (Christian Bale year_asc)", False, "No results found for Christian Bale")
+                return False
+            
+            # Extract years from page 1
+            years1 = []
+            for movie in results1:
+                year = movie.get("year", "")
+                if year and year.isdigit():
+                    years1.append(int(year))
+                else:
+                    years1.append(9999)  # Handle missing years for ascending sort
+            
+            # Check if page 1 is sorted in ascending order
+            is_page1_sorted = all(years1[i] <= years1[i+1] for i in range(len(years1)-1))
+            
+            if not is_page1_sorted:
+                self.log_test("Cast Search Sorting (Christian Bale year_asc)", False, f"Page 1 not sorted ascending: {years1}")
+                return False
+            
+            # Test page 2
+            payload_page2 = {
+                "query": "Christian Bale",
+                "scope": "cast",
+                "page": 2,
+                "sort_by": "year_asc"
+            }
+            response2 = self.session.post(f"{self.base_url}/search", json=payload_page2)
+            
+            if response2.status_code != 200:
+                self.log_test("Cast Search Sorting (Christian Bale year_asc)", False, f"Page 2 failed: HTTP {response2.status_code}")
+                return False
+            
+            data2 = response2.json()
+            results2 = data2.get("results", [])
+            
+            if len(results2) == 0:
+                self.log_test("Cast Search Sorting (Christian Bale year_asc)", True, f"Page 1 sorted correctly ({min(years1)}-{max(years1)}), Page 2 empty")
+                return True
+            
+            # Extract years from page 2
+            years2 = []
+            for movie in results2:
+                year = movie.get("year", "")
+                if year and year.isdigit():
+                    years2.append(int(year))
+                else:
+                    years2.append(9999)
+            
+            # CRITICAL CHECK: All movies in page 2 should have years >= newest movie from page 1
+            newest_page1 = max(years1) if years1 else 9999
+            oldest_page2 = min(years2) if years2 else 0
+            
+            if oldest_page2 < newest_page1:
+                self.log_test("Cast Search Sorting (Christian Bale year_asc)", False, 
+                            f"SORTING BUG: Page 2 oldest ({oldest_page2}) < Page 1 newest ({newest_page1}). Page 1: {years1}, Page 2: {years2}")
+                return False
+            
+            self.log_test("Cast Search Sorting (Christian Bale year_asc)", True, 
+                        f"Sorting consistent across pages. Page 1: {min(years1)}-{newest_page1}, Page 2: {oldest_page2}-{max(years2)}")
+            return True
+            
+        except Exception as e:
+            self.log_test("Cast Search Sorting (Christian Bale year_asc)", False, f"Error: {str(e)}")
+            return False
+
+    def test_cast_search_sorting_rating_desc(self):
+        """Test cast search with Christian Bale sorted by rating_desc across pages"""
+        try:
+            # Test page 1
+            payload_page1 = {
+                "query": "Christian Bale",
+                "scope": "cast",
+                "page": 1,
+                "sort_by": "rating_desc"
+            }
+            response1 = self.session.post(f"{self.base_url}/search", json=payload_page1)
+            
+            if response1.status_code != 200:
+                self.log_test("Cast Search Sorting (Christian Bale rating_desc)", False, f"Page 1 failed: HTTP {response1.status_code}")
+                return False
+            
+            data1 = response1.json()
+            results1 = data1.get("results", [])
+            
+            if len(results1) == 0:
+                self.log_test("Cast Search Sorting (Christian Bale rating_desc)", False, "No results found for Christian Bale")
+                return False
+            
+            # Extract ratings from page 1
+            ratings1 = []
+            for movie in results1:
+                rating = movie.get("vote_average", 0)
+                ratings1.append(float(rating) if rating else 0)
+            
+            # Check if page 1 is sorted in descending order
+            is_page1_sorted = all(ratings1[i] >= ratings1[i+1] for i in range(len(ratings1)-1))
+            
+            if not is_page1_sorted:
+                self.log_test("Cast Search Sorting (Christian Bale rating_desc)", False, f"Page 1 not sorted descending: {ratings1}")
+                return False
+            
+            # Test page 2
+            payload_page2 = {
+                "query": "Christian Bale",
+                "scope": "cast",
+                "page": 2,
+                "sort_by": "rating_desc"
+            }
+            response2 = self.session.post(f"{self.base_url}/search", json=payload_page2)
+            
+            if response2.status_code != 200:
+                self.log_test("Cast Search Sorting (Christian Bale rating_desc)", False, f"Page 2 failed: HTTP {response2.status_code}")
+                return False
+            
+            data2 = response2.json()
+            results2 = data2.get("results", [])
+            
+            if len(results2) == 0:
+                self.log_test("Cast Search Sorting (Christian Bale rating_desc)", True, f"Page 1 sorted correctly ({min(ratings1):.1f}-{max(ratings1):.1f}), Page 2 empty")
+                return True
+            
+            # Extract ratings from page 2
+            ratings2 = []
+            for movie in results2:
+                rating = movie.get("vote_average", 0)
+                ratings2.append(float(rating) if rating else 0)
+            
+            # CRITICAL CHECK: All movies in page 2 should have ratings <= lowest rating from page 1
+            lowest_page1 = min(ratings1) if ratings1 else 0
+            highest_page2 = max(ratings2) if ratings2 else 0
+            
+            if highest_page2 > lowest_page1:
+                self.log_test("Cast Search Sorting (Christian Bale rating_desc)", False, 
+                            f"SORTING BUG: Page 2 highest ({highest_page2:.1f}) > Page 1 lowest ({lowest_page1:.1f}). Page 1: {ratings1}, Page 2: {ratings2}")
+                return False
+            
+            self.log_test("Cast Search Sorting (Christian Bale rating_desc)", True, 
+                        f"Sorting consistent across pages. Page 1: {lowest_page1:.1f}-{max(ratings1):.1f}, Page 2: {min(ratings2):.1f}-{highest_page2:.1f}")
+            return True
+            
+        except Exception as e:
+            self.log_test("Cast Search Sorting (Christian Bale rating_desc)", False, f"Error: {str(e)}")
+            return False
+
+    def test_director_search_sorting_year_desc(self):
+        """Test director search with Christopher Nolan sorted by year_desc across pages"""
+        try:
+            # Test page 1
+            payload_page1 = {
+                "query": "Christopher Nolan",
+                "scope": "director",
+                "page": 1,
+                "sort_by": "year_desc"
+            }
+            response1 = self.session.post(f"{self.base_url}/search", json=payload_page1)
+            
+            if response1.status_code != 200:
+                self.log_test("Director Search Sorting (Christopher Nolan year_desc)", False, f"Page 1 failed: HTTP {response1.status_code}")
+                return False
+            
+            data1 = response1.json()
+            results1 = data1.get("results", [])
+            
+            if len(results1) == 0:
+                self.log_test("Director Search Sorting (Christopher Nolan year_desc)", False, "No results found for Christopher Nolan")
+                return False
+            
+            # Extract years from page 1
+            years1 = []
+            for movie in results1:
+                year = movie.get("year", "")
+                if year and year.isdigit():
+                    years1.append(int(year))
+                else:
+                    years1.append(0)
+            
+            # Check if page 1 is sorted in descending order
+            is_page1_sorted = all(years1[i] >= years1[i+1] for i in range(len(years1)-1))
+            
+            if not is_page1_sorted:
+                self.log_test("Director Search Sorting (Christopher Nolan year_desc)", False, f"Page 1 not sorted descending: {years1}")
+                return False
+            
+            # Test page 2
+            payload_page2 = {
+                "query": "Christopher Nolan",
+                "scope": "director",
+                "page": 2,
+                "sort_by": "year_desc"
+            }
+            response2 = self.session.post(f"{self.base_url}/search", json=payload_page2)
+            
+            if response2.status_code != 200:
+                self.log_test("Director Search Sorting (Christopher Nolan year_desc)", False, f"Page 2 failed: HTTP {response2.status_code}")
+                return False
+            
+            data2 = response2.json()
+            results2 = data2.get("results", [])
+            
+            if len(results2) == 0:
+                self.log_test("Director Search Sorting (Christopher Nolan year_desc)", True, f"Page 1 sorted correctly ({min(years1)}-{max(years1)}), Page 2 empty")
+                return True
+            
+            # Extract years from page 2
+            years2 = []
+            for movie in results2:
+                year = movie.get("year", "")
+                if year and year.isdigit():
+                    years2.append(int(year))
+                else:
+                    years2.append(0)
+            
+            # CRITICAL CHECK: All movies in page 2 should have years <= oldest movie from page 1
+            oldest_page1 = min(years1) if years1 else 0
+            newest_page2 = max(years2) if years2 else 0
+            
+            if newest_page2 > oldest_page1:
+                self.log_test("Director Search Sorting (Christopher Nolan year_desc)", False, 
+                            f"SORTING BUG: Page 2 newest ({newest_page2}) > Page 1 oldest ({oldest_page1}). Page 1: {years1}, Page 2: {years2}")
+                return False
+            
+            self.log_test("Director Search Sorting (Christopher Nolan year_desc)", True, 
+                        f"Sorting consistent across pages. Page 1: {oldest_page1}-{max(years1)}, Page 2: {min(years2)}-{newest_page2}")
+            return True
+            
+        except Exception as e:
+            self.log_test("Director Search Sorting (Christopher Nolan year_desc)", False, f"Error: {str(e)}")
+            return False
+
+    def test_genre_search_sorting_year_desc(self):
+        """Test genre search with action sorted by year_desc across pages"""
+        try:
+            # Test page 1
+            payload_page1 = {
+                "query": "action",
+                "scope": "genre",
+                "page": 1,
+                "sort_by": "year_desc"
+            }
+            response1 = self.session.post(f"{self.base_url}/search", json=payload_page1)
+            
+            if response1.status_code != 200:
+                self.log_test("Genre Search Sorting (Action year_desc)", False, f"Page 1 failed: HTTP {response1.status_code}")
+                return False
+            
+            data1 = response1.json()
+            results1 = data1.get("results", [])
+            
+            if len(results1) == 0:
+                self.log_test("Genre Search Sorting (Action year_desc)", False, "No results found for action genre")
+                return False
+            
+            # Extract years from page 1
+            years1 = []
+            for movie in results1:
+                year = movie.get("year", "")
+                if year and year.isdigit():
+                    years1.append(int(year))
+                else:
+                    years1.append(0)
+            
+            # Check if page 1 is sorted in descending order
+            is_page1_sorted = all(years1[i] >= years1[i+1] for i in range(len(years1)-1))
+            
+            if not is_page1_sorted:
+                self.log_test("Genre Search Sorting (Action year_desc)", False, f"Page 1 not sorted descending: {years1}")
+                return False
+            
+            # Test page 2
+            payload_page2 = {
+                "query": "action",
+                "scope": "genre",
+                "page": 2,
+                "sort_by": "year_desc"
+            }
+            response2 = self.session.post(f"{self.base_url}/search", json=payload_page2)
+            
+            if response2.status_code != 200:
+                self.log_test("Genre Search Sorting (Action year_desc)", False, f"Page 2 failed: HTTP {response2.status_code}")
+                return False
+            
+            data2 = response2.json()
+            results2 = data2.get("results", [])
+            
+            if len(results2) == 0:
+                self.log_test("Genre Search Sorting (Action year_desc)", True, f"Page 1 sorted correctly ({min(years1)}-{max(years1)}), Page 2 empty")
+                return True
+            
+            # Extract years from page 2
+            years2 = []
+            for movie in results2:
+                year = movie.get("year", "")
+                if year and year.isdigit():
+                    years2.append(int(year))
+                else:
+                    years2.append(0)
+            
+            # CRITICAL CHECK: All movies in page 2 should have years <= oldest movie from page 1
+            oldest_page1 = min(years1) if years1 else 0
+            newest_page2 = max(years2) if years2 else 0
+            
+            if newest_page2 > oldest_page1:
+                self.log_test("Genre Search Sorting (Action year_desc)", False, 
+                            f"SORTING BUG: Page 2 newest ({newest_page2}) > Page 1 oldest ({oldest_page1}). Page 1: {years1}, Page 2: {years2}")
+                return False
+            
+            self.log_test("Genre Search Sorting (Action year_desc)", True, 
+                        f"Sorting consistent across pages. Page 1: {oldest_page1}-{max(years1)}, Page 2: {min(years2)}-{newest_page2}")
+            return True
+            
+        except Exception as e:
+            self.log_test("Genre Search Sorting (Action year_desc)", False, f"Error: {str(e)}")
+            return False
     
     def run_all_tests(self):
         """Run all tests"""
