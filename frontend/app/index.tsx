@@ -197,6 +197,18 @@ export default function SearchScreen() {
             <Ionicons name="chevron-down" size={16} color="#888" />
           </TouchableOpacity>
 
+          {/* Content Type Selector */}
+          <TouchableOpacity
+            style={styles.languageSelector}
+            onPress={() => setShowContentTypeModal(true)}
+          >
+            <Ionicons name="film-outline" size={20} color="#fff" />
+            <Text style={styles.languageSelectorText}>
+              {selectedContentType === 'movie' ? 'Movies' : selectedContentType === 'tv' ? 'TV Shows' : 'All Content'}
+            </Text>
+            <Ionicons name="chevron-down" size={16} color="#888" />
+          </TouchableOpacity>
+
           <TouchableOpacity
             style={styles.searchButton}
             onPress={handleSearch}
