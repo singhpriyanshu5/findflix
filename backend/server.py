@@ -293,6 +293,7 @@ async def search_titles(request: SearchRequest):
             data = await fetch_tmdb_data("search/multi", search_params)
             results = data.get("results", [])
             total_pages = data.get("total_pages", 1)
+            needs_post_filtering = True  # Title search needs post-filtering for genre/content_type
             
         elif request.scope == SearchScope.GENRE:
             # Search by genre - get genre ID first
