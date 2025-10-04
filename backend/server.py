@@ -238,7 +238,8 @@ async def search_titles(request: SearchRequest):
         # Save to search history
         history_item = SearchHistoryItem(
             query=request.query, 
-            scope=request.scope, 
+            scope=request.scope,
+            genre=request.genre,
             language=request.language,
             content_type=request.content_type
         )
