@@ -303,7 +303,7 @@ async def search_titles(request: SearchRequest):
             matching_genre = next((g for g in all_genres if request.query.lower() in g["name"].lower()), None)
             
             if matching_genre:
-                # Discover movies with this genre
+                # Discover movies/TV with this genre
                 discover_params = {
                     "with_genres": matching_genre["id"],
                     "page": request.page,
@@ -312,7 +312,14 @@ async def search_titles(request: SearchRequest):
                 if request.language:
                     discover_params["with_original_language"] = request.language
                 
-                data = await fetch_tmdb_data("discover/movie", discover_params)
+                # Choose endpoint based on content_type
+                if request.content_type == "tv":
+                    endpoint = "discover/tv"
+                else:
+                    # Default to movies or use movie endpoint if content_type is "movie" or not specified
+                    endpoint = "discover/movie"
+                
+                data = await fetch_tmdb_data(endpoint, discover_params)
                 results = data.get("results", [])
                 total_pages = data.get("total_pages", 1)
             else:
