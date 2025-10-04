@@ -236,10 +236,21 @@ export default function DetailsScreen() {
               </View>
             )}
             {titleData.ratings.imdb > 0 && (
-              <View style={styles.ratingCard}>
+              <TouchableOpacity
+                style={styles.ratingCard}
+                onPress={() => {
+                  if (titleData.imdb_id) {
+                    Linking.openURL(`https://www.imdb.com/title/${titleData.imdb_id}/`);
+                  }
+                }}
+                disabled={!titleData.imdb_id}
+              >
                 <Text style={styles.ratingValue}>{titleData.ratings.imdb.toFixed(1)}</Text>
                 <Text style={styles.ratingLabel}>IMDb</Text>
-              </View>
+                {titleData.ratings.imdb_votes && (
+                  <Text style={styles.ratingVotes}>{titleData.ratings.imdb_votes} votes</Text>
+                )}
+              </TouchableOpacity>
             )}
             <View style={styles.ratingCard}>
               <Text style={styles.ratingValue}>
