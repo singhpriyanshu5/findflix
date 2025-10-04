@@ -299,6 +299,7 @@ async def search_titles(request: SearchRequest):
                 # Select the most popular person with matching name
                 persons.sort(key=lambda x: x.get("popularity", 0), reverse=True)
                 person_id = persons[0]["id"]
+                logger.info(f"Selected person ID: {person_id} with popularity: {persons[0].get('popularity')}")
                 # Get credits for this person
                 credits = await fetch_tmdb_data(f"person/{person_id}/combined_credits")
                 cast_results = credits.get("cast", [])
