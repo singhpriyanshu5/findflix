@@ -15,14 +15,9 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { useQuery } from '@tantml:invoke>
-<invoke name="finish">
-<parameter name="summary">## ✅ Language Feature + Rating Updates Complete!
-
-**Implemented Features:**
-
-### 1. ✅ Language Selector (Search Screen)
-- Added language dropdown with modal picker
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
+import { getLanguageName } from '../utils/languages';
 - Shows "All Languages" by default
 - Includes 9 popular languages: All, English, Hindi, Telugu, Tamil, Spanish, French, Japanese, Korean
 - Plus 30+ more languages in the picker
