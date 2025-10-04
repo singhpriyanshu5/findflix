@@ -35,11 +35,13 @@ interface TitleDetails {
   ratings: {
     tmdb: number;
     imdb: number;
+    imdb_votes: string | null;
     rotten_tomatoes_critics: number | null;
     rotten_tomatoes_audience: number | null;
     metacritic: number | null;
     google_users: number | null;
   };
+  original_language: string;
   tagline: string;
   runtime?: number;
   budget?: number;
