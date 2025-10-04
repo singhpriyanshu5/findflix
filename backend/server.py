@@ -403,39 +403,60 @@ async def search_titles(request: SearchRequest):
                     total_pages = data.get("total_pages", 1)
                 else:
                     # Get all credits for this person and apply filters manually
-                    credits = await fetch_tmdb_data(f"person/{person_id}/combined_credits")
-                    cast_results = credits.get("cast", [])
+                    # Use caching to ensure consistent pagination across requests
+                    cache_key = get_cache_key(person_id, {
+                        "genre": request.genre,
+                        "language": request.language,
+                        "content_type": request.content_type,
+                        "sort_by": request.sort_by
+                    })
                     
-                    # Apply filters BEFORE sorting and pagination
-                    filtered_results = []
-                    for item in cast_results:
-                        media_type = item.get("media_type", "movie")
-                        if media_type not in ["movie", "tv"]:
-                            continue
-                        
-                        # Filter by content type
-                        if request.content_type:
-                            if request.content_type == "movie" and media_type != "movie":
-                                continue
-                            elif request.content_type == "tv" and media_type != "tv":
-                                continue
-                        
-                        # Filter by genre
-                        if request.genre:
-                            item_genres = item.get("genre_ids", [])
-                            if int(request.genre) not in item_genres:
-                                continue
-                        
-                        # Filter by language
-                        if request.language:
-                            item_language = item.get("original_language", "")
-                            if item_language != request.language:
-                                continue
-                        
-                        filtered_results.append(item)
+                    # Check cache first
+                    filtered_results = get_cached_results(cache_key)
                     
-                    # Apply user's requested sort and paginate manually
-                    filtered_results = apply_manual_sort(filtered_results, request.sort_by)
+                    if filtered_results is None:
+                        # Cache miss - fetch and process
+                        credits = await fetch_tmdb_data(f"person/{person_id}/combined_credits")
+                        cast_results = credits.get("cast", [])
+                        
+                        # Apply filters BEFORE sorting and pagination
+                        filtered_results = []
+                        for item in cast_results:
+                            media_type = item.get("media_type", "movie")
+                            if media_type not in ["movie", "tv"]:
+                                continue
+                            
+                            # Filter by content type
+                            if request.content_type:
+                                if request.content_type == "movie" and media_type != "movie":
+                                    continue
+                                elif request.content_type == "tv" and media_type != "tv":
+                                    continue
+                            
+                            # Filter by genre
+                            if request.genre:
+                                item_genres = item.get("genre_ids", [])
+                                if int(request.genre) not in item_genres:
+                                    continue
+                            
+                            # Filter by language
+                            if request.language:
+                                item_language = item.get("original_language", "")
+                                if item_language != request.language:
+                                    continue
+                            
+                            filtered_results.append(item)
+                        
+                        # Apply user's requested sort
+                        filtered_results = apply_manual_sort(filtered_results, request.sort_by)
+                        
+                        # Cache the sorted and filtered results
+                        cache_results(cache_key, filtered_results)
+                        logger.info(f"Cached {len(filtered_results)} results for key: {cache_key}")
+                    else:
+                        logger.info(f"Cache hit for key: {cache_key}")
+                    
+                    # Paginate from cached results
                     start_idx = (request.page - 1) * 20
                     end_idx = start_idx + 20
                     results = filtered_results[start_idx:end_idx]
