@@ -26,6 +26,11 @@ RAPIDAPI_KEY = os.environ['RAPIDAPI_KEY']
 OMDB_API_KEY = os.environ['OMDB_API_KEY']
 WATCHMODE_API_KEY = os.environ['WATCHMODE_API_KEY']
 
+# In-memory cache for sorted search results (to ensure pagination consistency)
+from datetime import timezone
+search_results_cache = {}
+CACHE_TTL_SECONDS = 3600  # 1 hour cache
+
 # Create the main app
 app = FastAPI()
 api_router = APIRouter(prefix="/api")
