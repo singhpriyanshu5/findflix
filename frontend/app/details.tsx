@@ -172,7 +172,7 @@ export default function DetailsScreen() {
             <View style={styles.heroInfo}>
               <Text style={styles.title}>{titleData.title}</Text>
               <View style={styles.metaRow}>
-                <Text style={styles.year}>{titleData.year}</Text>
+                {titleData.year && <Text style={styles.year}>{titleData.year}</Text>}
                 <View style={styles.badge}>
                   <Text style={styles.badgeText}>
                     {titleData.media_type === 'movie' ? 'Movie' : 'TV'}
@@ -190,13 +190,17 @@ export default function DetailsScreen() {
                   </View>
                 )}
               </View>
-              <View style={styles.genreRow}>
-                {titleData.genres.slice(0, 3).map((genre, idx) => (
-                  <Text key={idx} style={styles.genre}>
-                    {genre}
-                  </Text>
-                ))}
-              </View>
+              {titleData.genres && titleData.genres.length > 0 && (
+                <View style={styles.genreRow}>
+                  {titleData.genres.slice(0, 3).map((genre, idx) => (
+                    genre && (
+                      <Text key={idx} style={styles.genre}>
+                        {genre}
+                      </Text>
+                    )
+                  ))}
+                </View>
+              )}
               <TouchableOpacity style={styles.shareButton} onPress={handleShare}>
                 <Ionicons name="share-outline" size={20} color="#fff" />
               </TouchableOpacity>
