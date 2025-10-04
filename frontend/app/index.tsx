@@ -446,10 +446,22 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 15,
   },
+  historyTags: {
+    flexDirection: 'row',
+    gap: 6,
+  },
   historyScopeTag: {
     color: '#888',
     fontSize: 12,
     textTransform: 'capitalize',
+    backgroundColor: '#2a2a2a',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 4,
+  },
+  historyLanguageTag: {
+    color: '#e50914',
+    fontSize: 12,
     backgroundColor: '#2a2a2a',
     paddingHorizontal: 8,
     paddingVertical: 4,
