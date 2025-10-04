@@ -355,7 +355,8 @@ async def get_title_details(tmdb_id: int, media_type: str = Query("movie", regex
         else:
             result["seasons"] = tmdb_data.get("number_of_seasons", 0)
             result["episodes"] = tmdb_data.get("number_of_episodes", 0)
-            result["episode_runtime"] = tmdb_data.get("episode_run_time", [None])[0]
+            episode_runtimes = tmdb_data.get("episode_run_time", [])
+            result["episode_runtime"] = episode_runtimes[0] if episode_runtimes else None
         
         # Add cast and crew
         credits = tmdb_data.get("credits", {})
