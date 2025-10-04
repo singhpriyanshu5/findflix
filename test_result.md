@@ -133,7 +133,7 @@ backend:
     implemented: true
     working: false
     file: "backend/server.py"
-    stuck_count: 1
+    stuck_count: 2
     priority: "high"
     needs_retesting: false
     status_history:
@@ -143,6 +143,9 @@ backend:
         - working: false
           agent: "testing"
           comment: "SORTING BUG: Genre search with 'action' and year_desc sorting fails pagination consistency. Page 2 newest (2025) > Page 1 oldest (2002). Genre search uses TMDB Discover API with get_tmdb_sort_param() mapping, but sorting is still inconsistent across pages."
+        - working: false
+          agent: "testing"
+          comment: "RE-TESTED AFTER COMPREHENSIVE FIX: Genre search sorting bug persists. Action genre search with year_desc shows Page 2 has 2025 movies while Page 1 oldest is 2002. Despite get_tmdb_sort_param() mapping sort parameters to TMDB Discover API, the API is not maintaining consistent global sorting across pages. This suggests either TMDB API limitation or incorrect parameter usage."
 
   - task: "Search by Cast"
     implemented: true
