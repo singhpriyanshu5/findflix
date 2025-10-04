@@ -17,6 +17,7 @@ import { useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
+import { getLanguageName } from '../utils/languages';
 
 const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL || '';
 const TMDB_IMAGE_BASE = 'https://image.tmdb.org/t/p/w500';
