@@ -300,16 +300,32 @@ async def search_titles(request: SearchRequest):
                 persons.sort(key=lambda x: x.get("popularity", 0), reverse=True)
                 person_id = persons[0]["id"]
                 logger.info(f"Selected person ID: {person_id} with popularity: {persons[0].get('popularity')}")
-                # Get credits for this person
-                credits = await fetch_tmdb_data(f"person/{person_id}/combined_credits")
-                cast_results = credits.get("cast", [])
                 
-                # Sort by popularity and paginate manually
-                cast_results.sort(key=lambda x: x.get("popularity", 0), reverse=True)
-                start_idx = (request.page - 1) * 20
-                end_idx = start_idx + 20
-                results = cast_results[start_idx:end_idx]
-                total_pages = (len(cast_results) + 19) // 20
+                # Use discover API if genre filter is applied, otherwise use combined_credits
+                if request.genre:
+                    # Use discover API with both cast and genre filters
+                    discover_params = {
+                        "with_cast": person_id,
+                        "page": request.page,
+                        "sort_by": "popularity.desc"
+                    }
+                    if request.genre:
+                        discover_params["with_genres"] = request.genre
+                    
+                    data = await fetch_tmdb_data("discover/movie", discover_params)
+                    results = data.get("results", [])
+                    total_pages = data.get("total_pages", 1)
+                else:
+                    # Get all credits for this person (no genre filter)
+                    credits = await fetch_tmdb_data(f"person/{person_id}/combined_credits")
+                    cast_results = credits.get("cast", [])
+                    
+                    # Sort by popularity and paginate manually
+                    cast_results.sort(key=lambda x: x.get("popularity", 0), reverse=True)
+                    start_idx = (request.page - 1) * 20
+                    end_idx = start_idx + 20
+                    results = cast_results[start_idx:end_idx]
+                    total_pages = (len(cast_results) + 19) // 20
             else:
                 results = []
                 total_pages = 1
