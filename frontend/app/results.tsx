@@ -74,6 +74,12 @@ export default function ResultsScreen() {
     },
   });
 
+  // Reset results when search parameters change
+  useEffect(() => {
+    setPage(1);
+    setAllResults([]);
+  }, [query, scope, genre, language, contentType, sortBy]);
+
   const handleItemPress = (item: SearchResult) => {
     router.push({
       pathname: '/details',
