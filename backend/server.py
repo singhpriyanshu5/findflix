@@ -254,10 +254,11 @@ def apply_manual_sort(results: List[Dict], sort_by: Optional[str]) -> List[Dict]
     elif sort_by == "rating_asc":
         results.sort(key=lambda x: x.get("vote_average", 0))
     elif sort_by == "year_desc":
-        # Sort by release_date or first_air_date
-        results.sort(key=lambda x: (x.get("release_date") or x.get("first_air_date") or ""), reverse=True)
+        # Sort by release_date or first_air_date, putting items without dates at the end
+        results.sort(key=lambda x: (x.get("release_date") or x.get("first_air_date") or "0000-00-00"), reverse=True)
     elif sort_by == "year_asc":
-        results.sort(key=lambda x: (x.get("release_date") or x.get("first_air_date") or ""))
+        # Sort by release_date or first_air_date, putting items without dates at the end
+        results.sort(key=lambda x: (x.get("release_date") or x.get("first_air_date") or "9999-99-99"))
     
     return results
 
