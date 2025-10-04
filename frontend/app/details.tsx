@@ -32,6 +32,7 @@ interface TitleDetails {
   overview: string;
   genres: string[];
   ratings: {
+    tmdb: number;
     imdb: number;
     rotten_tomatoes_critics: number | null;
     rotten_tomatoes_audience: number | null;
