@@ -325,8 +325,11 @@ metadata:
 test_plan:
   current_focus:
     - "Search by Cast"
+    - "Search by Genre"
     - "Search Results Sorting with Pagination"
-  stuck_tasks: []
+  stuck_tasks: 
+    - "Search by Cast"
+    - "Search by Genre"
   test_all: false
   test_priority: "high_first"
 
