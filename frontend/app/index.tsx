@@ -47,7 +47,9 @@ export default function SearchScreen() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedScope, setSelectedScope] = useState<SearchScope>('title');
   const [selectedLanguage, setSelectedLanguage] = useState('');
+  const [selectedContentType, setSelectedContentType] = useState('');
   const [showLanguageModal, setShowLanguageModal] = useState(false);
+  const [showContentTypeModal, setShowContentTypeModal] = useState(false);
   const router = useRouter();
   const queryClient = useQueryClient();
 
