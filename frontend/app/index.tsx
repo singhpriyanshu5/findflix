@@ -245,6 +245,11 @@ export default function SearchScreen() {
                         {getLanguageName(item.language)}
                       </Text>
                     )}
+                    {item.content_type && (
+                      <Text style={styles.historyContentTypeTag}>
+                        {item.content_type === 'movie' ? 'Movies' : 'TV'}
+                      </Text>
+                    )}
                   </View>
                 </TouchableOpacity>
               ))}
