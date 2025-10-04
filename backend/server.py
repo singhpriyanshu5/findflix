@@ -380,7 +380,7 @@ async def search_titles(request: SearchRequest):
                     discover_params = {
                         "with_crew": person_id,
                         "page": request.page,
-                        "sort_by": "popularity.desc"
+                        "sort_by": get_tmdb_sort_param(request.sort_by)
                     }
                     if request.genre:
                         discover_params["with_genres"] = request.genre
@@ -393,8 +393,8 @@ async def search_titles(request: SearchRequest):
                     credits = await fetch_tmdb_data(f"person/{person_id}/combined_credits")
                     crew_results = [c for c in credits.get("crew", []) if c.get("job") == "Director"]
                     
-                    # Sort by popularity and paginate
-                    crew_results.sort(key=lambda x: x.get("popularity", 0), reverse=True)
+                    # Apply user's requested sort and paginate
+                    crew_results = apply_manual_sort(crew_results, request.sort_by)
                     start_idx = (request.page - 1) * 20
                     end_idx = start_idx + 20
                     results = crew_results[start_idx:end_idx]
