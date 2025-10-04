@@ -147,11 +147,17 @@ backend:
     file: "backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
         - working: true
           agent: "testing"
           comment: "POST /api/search with scope='cast' working correctly. Tested with 'Leonardo DiCaprio' query, found 20 movies"
+        - working: false
+          agent: "user"
+          comment: "User reported sorting issue: when searching for cast 'Christian Bale' and sorting by 'newest first', initial results were sorted correctly but after scrolling (pagination), newer movies appeared after older ones, breaking sort order"
+        - working: true
+          agent: "main"
+          comment: "Fixed pagination sorting issue. Root cause: sorting was applied AFTER pagination on each page independently. Solution: 1) Added get_tmdb_sort_param() to map frontend sort to TMDB sort params 2) Pass sort_by to TMDB Discover API for cast/director/genre searches 3) Added apply_manual_sort() for combined_credits searches before pagination 4) Removed client-side sorting that was re-sorting each page 5) Fixed frontend to accumulate results across pages for proper infinite scroll. Now sorting is applied globally before pagination."
 
   - task: "Search by Director"
     implemented: true
