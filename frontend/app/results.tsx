@@ -43,16 +43,18 @@ export default function ResultsScreen() {
 
   const query = params.query as string;
   const scope = params.scope as string;
+  const genre = params.genre as string || '';
   const language = params.language as string || '';
   const contentType = params.contentType as string || '';
 
   const { data, isLoading, isFetching, refetch } = useQuery({
-    queryKey: ['search', query, scope, language, contentType, sortBy, page],
+    queryKey: ['search', query, scope, genre, language, contentType, sortBy, page],
     queryFn: async () => {
       const response = await axios.post(`${BACKEND_URL}/api/search`, {
         query,
         scope,
         page,
+        genre: genre || undefined,
         language: language || undefined,
         content_type: contentType || undefined,
         sort_by: sortBy || undefined,
