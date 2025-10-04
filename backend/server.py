@@ -46,6 +46,7 @@ class SearchHistoryItem(BaseModel):
     query: str
     scope: SearchScope
     language: Optional[str] = None
+    content_type: Optional[str] = None
     timestamp: datetime = Field(default_factory=datetime.utcnow)
 
 class SearchRequest(BaseModel):
