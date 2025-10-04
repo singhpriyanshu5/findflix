@@ -53,6 +53,7 @@ class SearchRequest(BaseModel):
     query: str
     scope: SearchScope = SearchScope.TITLE
     page: int = 1
+    genre: Optional[str] = None  # Genre ID as string
     language: Optional[str] = None  # ISO 639-1 language code (e.g., "en", "hi", "te")
     content_type: Optional[str] = None  # "movie" or "tv"
     sort_by: Optional[str] = None  # "rating_desc", "rating_asc", "year_desc", "year_asc"
