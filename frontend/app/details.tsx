@@ -225,6 +225,12 @@ export default function DetailsScreen() {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Ratings</Text>
           <View style={styles.ratingsGrid}>
+            {titleData.ratings.tmdb > 0 && (
+              <View style={styles.ratingCard}>
+                <Text style={styles.ratingValue}>{titleData.ratings.tmdb.toFixed(1)}</Text>
+                <Text style={styles.ratingLabel}>TMDB</Text>
+              </View>
+            )}
             {titleData.ratings.imdb > 0 && (
               <View style={styles.ratingCard}>
                 <Text style={styles.ratingValue}>{titleData.ratings.imdb.toFixed(1)}</Text>
