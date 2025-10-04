@@ -30,6 +30,7 @@ interface SearchHistoryItem {
   query: string;
   scope: SearchScope;
   language: string | null;
+  content_type: string | null;
   timestamp: string;
 }
 
