@@ -381,7 +381,8 @@ async def get_title_details(tmdb_id: int, media_type: str = Query("movie", regex
         
         # Build ratings object
         ratings = {
-            "imdb": tmdb_data.get("vote_average", 0),
+            "tmdb": tmdb_data.get("vote_average", 0),
+            "imdb": tmdb_data.get("vote_average", 0),  # Default to TMDB, will be overridden by OMDb
             "rotten_tomatoes_critics": None,
             "rotten_tomatoes_audience": None,
             "metacritic": None,
