@@ -348,6 +348,10 @@ const styles = StyleSheet.create({
     color: '#fff',
     marginRight: 8,
   },
+  badgeContainer: {
+    flexDirection: 'column',
+    gap: 4,
+  },
   badge: {
     backgroundColor: '#e50914',
     paddingHorizontal: 8,
@@ -355,6 +359,17 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   badgeText: {
+    color: '#fff',
+    fontSize: 11,
+    fontWeight: '600',
+  },
+  unreleasedBadge: {
+    backgroundColor: '#ff9500',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 4,
+  },
+  unreleasedBadgeText: {
     color: '#fff',
     fontSize: 11,
     fontWeight: '600',
