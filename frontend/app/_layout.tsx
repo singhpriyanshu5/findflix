@@ -2,6 +2,9 @@ import { Stack } from 'expo-router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { StatusBar } from 'expo-status-bar';
+import { useEffect } from 'react';
+import * as Font from 'expo-font';
+import { Ionicons } from '@expo/vector-icons';
 
 const queryClient = new QueryClient({
   defaultOptions: {
