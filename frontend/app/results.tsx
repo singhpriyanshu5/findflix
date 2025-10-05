@@ -164,7 +164,8 @@ export default function ResultsScreen() {
         </View>
       </View>
     </Pressable>
-  );
+    );
+  };
 
   const renderEmptyComponent = () => {
     if (isLoading) return null;
