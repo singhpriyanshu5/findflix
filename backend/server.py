@@ -595,6 +595,7 @@ async def search_titles(request: SearchRequest):
             
             # Fetch IMDb rating for this result
             imdb_rating = item.get("vote_average", 0)  # Default to TMDB
+            imdb_id = None
             try:
                 # Get external IDs to fetch IMDb ID
                 external_ids_data = await fetch_tmdb_data(f"{media_type}/{tmdb_id}/external_ids")
@@ -607,8 +608,15 @@ async def search_titles(request: SearchRequest):
                         omdb_rating = omdb_data.get("imdbRating")
                         if omdb_rating and omdb_rating != "N/A":
                             imdb_rating = float(omdb_rating)
+                            logger.info(f"Fetched IMDb rating for {title} ({imdb_id}): {imdb_rating}")
+                        else:
+                            logger.warning(f"No IMDb rating available for {title} ({imdb_id})")
+                    else:
+                        logger.warning(f"OMDb returned no data for {imdb_id}")
+                else:
+                    logger.warning(f"No IMDb ID found for {title} (TMDB: {tmdb_id})")
             except Exception as e:
-                logger.error(f"Error fetching IMDb rating for {tmdb_id}: {str(e)}")
+                logger.error(f"Error fetching IMDb rating for {title} ({tmdb_id}): {str(e)}")
                 # Continue with TMDB rating as fallback
             
             formatted_item = {
