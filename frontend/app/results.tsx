@@ -26,6 +26,7 @@ interface SearchResult {
   id: number;
   title: string;
   year: string;
+  release_date: string;
   media_type: string;
   poster_path: string | null;
   genres: number[];
