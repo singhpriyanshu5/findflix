@@ -770,3 +770,537 @@ async def get_swipe_content(session_id: str, page: int = 1, current_user: User =
     except Exception as e:
         logger.error(f"Get swipe content error: {str(e)}")
         raise HTTPException(status_code=500, detail="Failed to get swipe content")
+
+# ===== Helper Functions (from original server) =====
+async def fetch_tmdb_data(endpoint: str, params: Dict = None):
+    """Fetch data from TMDB API"""
+    base_url = "https://api.themoviedb.org/3"
+    default_params = {"api_key": TMDB_API_KEY}
+    if params:
+        default_params.update(params)
+    
+    async with httpx.AsyncClient(timeout=10.0) as client:
+        try:
+            response = await client.get(f"{base_url}/{endpoint}", params=default_params)
+            response.raise_for_status()
+            return response.json()
+        except Exception as e:
+            logger.error(f"TMDB API error: {str(e)}")
+            raise HTTPException(status_code=500, detail=f"TMDB API error: {str(e)}")
+
+async def fetch_omdb_data(imdb_id: str):
+    """Fetch additional ratings from OMDb API"""
+    async with httpx.AsyncClient(timeout=10.0) as client:
+        try:
+            response = await client.get(
+                "http://www.omdbapi.com/",
+                params={"apikey": OMDB_API_KEY, "i": imdb_id}
+            )
+            response.raise_for_status()
+            data = response.json()
+            if data.get("Response") == "False":
+                return None
+            return data
+        except Exception as e:
+            logger.error(f"OMDb API error: {str(e)}")
+            return None
+
+async def fetch_streaming_availability(tmdb_id: int, media_type: str):
+    """Fetch US streaming availability from Streaming Availability API"""
+    async with httpx.AsyncClient(timeout=10.0) as client:
+        try:
+            response = await client.get(
+                f"https://streaming-availability.p.rapidapi.com/shows/{media_type}/{tmdb_id}",
+                headers={
+                    "X-RapidAPI-Key": RAPIDAPI_KEY,
+                    "X-RapidAPI-Host": "streaming-availability.p.rapidapi.com"
+                },
+                params={"series_granularity": "show", "output_language": "en"}
+            )
+            
+            if response.status_code == 404:
+                return None
+                
+            response.raise_for_status()
+            data = response.json()
+            
+            streaming_options = data.get("streamingOptions", {}).get("us", [])
+            
+            grouped = {"stream": [], "rent": [], "buy": []}
+            seen_services = {"stream": set(), "rent": set(), "buy": set()}
+            
+            for option in streaming_options:
+                service_name = option.get("service", {}).get("name", "")
+                service_id = option.get("service", {}).get("id", "")
+                option_type = option.get("type", "").lower()
+                link = option.get("link", "")
+                
+                if option_type in ["subscription", "free"]:
+                    category = "stream"
+                elif option_type == "rent":
+                    category = "rent"
+                elif option_type == "buy":
+                    category = "buy"
+                else:
+                    continue
+                
+                if service_id not in seen_services[category]:
+                    grouped[category].append({
+                        "name": service_name,
+                        "id": service_id,
+                        "link": link
+                    })
+                    seen_services[category].add(service_id)
+            
+            return grouped
+        except Exception as e:
+            logger.error(f"Streaming API (RapidAPI) error: {str(e)}")
+            return None
+
+def calculate_hit_flop(budget: Optional[int], revenue: Optional[int]) -> str:
+    """Calculate hit/flop status"""
+    if not budget or not revenue or budget == 0:
+        return "Unknown"
+    
+    ratio = revenue / budget
+    if ratio >= 2.0:
+        return "Hit"
+    elif ratio < 1.0:
+        return "Flop"
+    else:
+        return "Average"
+
+# ===== Original Movie/TV Endpoints =====
+
+@api_router.post("/search")
+async def search_titles(request: SearchRequest):
+    """Search for movies/TV shows with filters"""
+    try:
+        # Save to search history (only if user is authenticated)
+        # For now, skip history to maintain backward compatibility
+        
+        results = []
+        
+        if request.scope == SearchScope.TITLE:
+            search_params = {
+                "query": request.query,
+                "page": request.page,
+                "include_adult": False
+            }
+            if request.language:
+                search_params["language"] = request.language
+            
+            data = await fetch_tmdb_data("search/multi", search_params)
+            results = data.get("results", [])
+            total_pages = data.get("total_pages", 1)
+            
+        elif request.scope == SearchScope.GENRE:
+            genres_movie = await fetch_tmdb_data("genre/movie/list")
+            genres_tv = await fetch_tmdb_data("genre/tv/list")
+            all_genres = genres_movie.get("genres", []) + genres_tv.get("genres", [])
+            
+            matching_genre = next((g for g in all_genres if request.query.lower() in g["name"].lower()), None)
+            
+            if matching_genre:
+                discover_params = {
+                    "with_genres": matching_genre["id"],
+                    "page": request.page,
+                    "sort_by": "popularity.desc"
+                }
+                if request.language:
+                    discover_params["with_original_language"] = request.language
+                
+                data = await fetch_tmdb_data("discover/movie", discover_params)
+                results = data.get("results", [])
+                total_pages = data.get("total_pages", 1)
+            else:
+                results = []
+                total_pages = 1
+                
+        elif request.scope == SearchScope.CAST:
+            person_data = await fetch_tmdb_data("search/person", {
+                "query": request.query,
+                "page": 1
+            })
+            persons = person_data.get("results", [])
+            
+            if persons:
+                persons.sort(key=lambda x: x.get("popularity", 0), reverse=True)
+                person_id = persons[0]["id"]
+                
+                if request.genre:
+                    discover_params = {
+                        "with_cast": person_id,
+                        "page": request.page,
+                        "sort_by": "popularity.desc"
+                    }
+                    if request.genre:
+                        discover_params["with_genres"] = request.genre
+                    
+                    data = await fetch_tmdb_data("discover/movie", discover_params)
+                    results = data.get("results", [])
+                    total_pages = data.get("total_pages", 1)
+                else:
+                    credits = await fetch_tmdb_data(f"person/{person_id}/combined_credits")
+                    cast_results = credits.get("cast", [])
+                    
+                    cast_results.sort(key=lambda x: x.get("popularity", 0), reverse=True)
+                    start_idx = (request.page - 1) * 20
+                    end_idx = start_idx + 20
+                    results = cast_results[start_idx:end_idx]
+                    total_pages = (len(cast_results) + 19) // 20
+            else:
+                results = []
+                total_pages = 1
+                
+        elif request.scope == SearchScope.DIRECTOR:
+            person_data = await fetch_tmdb_data("search/person", {
+                "query": request.query,
+                "page": 1
+            })
+            persons = person_data.get("results", [])
+            
+            if persons:
+                persons.sort(key=lambda x: x.get("popularity", 0), reverse=True)
+                person_id = persons[0]["id"]
+                
+                if request.genre:
+                    discover_params = {
+                        "with_crew": person_id,
+                        "page": request.page,
+                        "sort_by": "popularity.desc"
+                    }
+                    if request.genre:
+                        discover_params["with_genres"] = request.genre
+                    
+                    data = await fetch_tmdb_data("discover/movie", discover_params)
+                    results = data.get("results", [])
+                    total_pages = data.get("total_pages", 1)
+                else:
+                    credits = await fetch_tmdb_data(f"person/{person_id}/combined_credits")
+                    crew_results = [c for c in credits.get("crew", []) if c.get("job") == "Director"]
+                    
+                    crew_results.sort(key=lambda x: x.get("popularity", 0), reverse=True)
+                    start_idx = (request.page - 1) * 20
+                    end_idx = start_idx + 20
+                    results = crew_results[start_idx:end_idx]
+                    total_pages = (len(crew_results) + 19) // 20
+            else:
+                results = []
+                total_pages = 1
+        
+        # Format results
+        formatted_results = []
+        for item in results:
+            media_type = item.get("media_type", "movie")
+            if media_type not in ["movie", "tv"]:
+                continue
+            
+            if request.content_type:
+                if request.content_type == "movie" and media_type != "movie":
+                    continue
+                elif request.content_type == "tv" and media_type != "tv":
+                    continue
+            
+            if request.genre:
+                item_genres = item.get("genre_ids", [])
+                if int(request.genre) not in item_genres:
+                    continue
+            
+            if request.language:
+                item_language = item.get("original_language", "")
+                if item_language != request.language:
+                    continue
+            
+            title = item.get("title") or item.get("name", "")
+            year = (item.get("release_date") or item.get("first_air_date", ""))[:4]
+            tmdb_id = item.get("id")
+            
+            imdb_rating = item.get("vote_average", 0)
+            try:
+                external_ids_data = await fetch_tmdb_data(f"{media_type}/{tmdb_id}/external_ids")
+                imdb_id = external_ids_data.get("imdb_id")
+                
+                if imdb_id:
+                    omdb_data = await fetch_omdb_data(imdb_id)
+                    if omdb_data:
+                        omdb_rating = omdb_data.get("imdbRating")
+                        if omdb_rating and omdb_rating != "N/A":
+                            imdb_rating = float(omdb_rating)
+            except Exception as e:
+                logger.error(f"Error fetching IMDb rating for {tmdb_id}: {str(e)}")
+            
+            formatted_item = {
+                "id": tmdb_id,
+                "title": title,
+                "year": year,
+                "media_type": media_type,
+                "poster_path": item.get("poster_path"),
+                "genres": item.get("genre_ids", []),
+                "vote_average": imdb_rating,
+                "overview": item.get("overview", ""),
+                "original_language": item.get("original_language", "")
+            }
+            formatted_results.append(formatted_item)
+        
+        # Apply sorting if specified
+        if request.sort_by:
+            if request.sort_by == "rating_desc":
+                formatted_results.sort(key=lambda x: x["vote_average"], reverse=True)
+            elif request.sort_by == "rating_asc":
+                formatted_results.sort(key=lambda x: x["vote_average"])
+            elif request.sort_by == "year_desc":
+                formatted_results.sort(key=lambda x: x["year"] or "0", reverse=True)
+            elif request.sort_by == "year_asc":
+                formatted_results.sort(key=lambda x: x["year"] or "0")
+        
+        return {
+            "results": formatted_results,
+            "page": request.page,
+            "total_pages": total_pages
+        }
+        
+    except Exception as e:
+        logger.error(f"Search error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/title/{tmdb_id}")
+async def get_title_details(tmdb_id: int, media_type: str = Query("movie", regex="^(movie|tv)$")):
+    """Get detailed information for a specific title"""
+    try:
+        endpoint = f"{media_type}/{tmdb_id}"
+        tmdb_data = await fetch_tmdb_data(endpoint, {"append_to_response": "credits,external_ids"})
+        
+        imdb_id = tmdb_data.get("external_ids", {}).get("imdb_id")
+        
+        omdb_data = None
+        if imdb_id:
+            omdb_data = await fetch_omdb_data(imdb_id)
+        
+        ratings = {
+            "tmdb": tmdb_data.get("vote_average", 0),
+            "imdb": tmdb_data.get("vote_average", 0),
+            "imdb_votes": None,
+            "rotten_tomatoes_critics": None,
+            "rotten_tomatoes_audience": None,
+            "metacritic": None,
+            "google_users": None
+        }
+        
+        if omdb_data:
+            omdb_ratings = omdb_data.get("Ratings", [])
+            for rating in omdb_ratings:
+                source = rating.get("Source", "")
+                value = rating.get("Value", "")
+                
+                if "Rotten Tomatoes" in source:
+                    if "%" in value:
+                        ratings["rotten_tomatoes_critics"] = int(value.replace("%", ""))
+                elif "Metacritic" in source:
+                    if "/" in value:
+                        ratings["metacritic"] = int(value.split("/")[0])
+            
+            imdb_rating = omdb_data.get("imdbRating")
+            if imdb_rating and imdb_rating != "N/A":
+                ratings["imdb"] = float(imdb_rating)
+            
+            imdb_votes = omdb_data.get("imdbVotes")
+            if imdb_votes and imdb_votes != "N/A":
+                ratings["imdb_votes"] = imdb_votes
+        
+        title = tmdb_data.get("title") or tmdb_data.get("name", "")
+        year = (tmdb_data.get("release_date") or tmdb_data.get("first_air_date", ""))[:4]
+        
+        result = {
+            "id": tmdb_id,
+            "title": title,
+            "year": year,
+            "media_type": media_type,
+            "poster_path": tmdb_data.get("poster_path"),
+            "backdrop_path": tmdb_data.get("backdrop_path"),
+            "overview": tmdb_data.get("overview", ""),
+            "genres": [g["name"] for g in tmdb_data.get("genres", [])],
+            "ratings": ratings,
+            "tagline": tmdb_data.get("tagline", ""),
+            "original_language": tmdb_data.get("original_language", ""),
+            "imdb_id": imdb_id
+        }
+        
+        if media_type == "movie":
+            budget = tmdb_data.get("budget", 0)
+            revenue = tmdb_data.get("revenue", 0)
+            result["runtime"] = tmdb_data.get("runtime")
+            result["budget"] = budget
+            result["box_office"] = revenue
+            result["hit_flop_status"] = calculate_hit_flop(budget, revenue)
+        else:
+            result["seasons"] = tmdb_data.get("number_of_seasons", 0)
+            result["episodes"] = tmdb_data.get("number_of_episodes", 0)
+            episode_runtimes = tmdb_data.get("episode_run_time", [])
+            
+            if not episode_runtimes:
+                try:
+                    season_data = await fetch_tmdb_data(f"tv/{tmdb_id}/season/1")
+                    episodes = season_data.get("episodes", [])
+                    if episodes:
+                        runtimes = [ep.get("runtime") for ep in episodes if ep.get("runtime")]
+                        if runtimes:
+                            result["episode_runtime"] = int(sum(runtimes) / len(runtimes))
+                        else:
+                            result["episode_runtime"] = None
+                    else:
+                        result["episode_runtime"] = None
+                except Exception as e:
+                    logger.error(f"Error fetching season data: {str(e)}")
+                    result["episode_runtime"] = None
+            else:
+                result["episode_runtime"] = episode_runtimes[0]
+        
+        credits = tmdb_data.get("credits", {})
+        cast = credits.get("cast", [])[:5]
+        result["cast"] = [{"name": c.get("name"), "character": c.get("character")} for c in cast]
+        
+        crew = credits.get("crew", [])
+        directors = [c["name"] for c in crew if c.get("job") == "Director"][:3]
+        producers = [c["name"] for c in crew if c.get("job") == "Producer"][:3]
+        
+        result["directors"] = directors
+        result["producers"] = producers
+        result["production_companies"] = [pc.get("name") for pc in tmdb_data.get("production_companies", [])[:3]]
+        
+        return result
+        
+    except Exception as e:
+        logger.error(f"Title details error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/streaming/{tmdb_id}")
+async def get_streaming_availability_endpoint(tmdb_id: int, media_type: str = Query("movie", regex="^(movie|tv)$")):
+    """Get US streaming availability for a title"""
+    try:
+        streaming_data = await fetch_streaming_availability(tmdb_id, media_type)
+        
+        if not streaming_data:
+            return {
+                "available": False,
+                "stream": [],
+                "rent": [],
+                "buy": []
+            }
+        
+        return {
+            "available": True,
+            **streaming_data
+        }
+        
+    except Exception as e:
+        logger.error(f"Streaming availability error: {str(e)}")
+        return {
+            "available": False,
+            "stream": [],
+            "rent": [],
+            "buy": [],
+            "error": "Streaming availability temporarily unavailable"
+        }
+
+@api_router.get("/popular")
+async def get_popular_titles(page: int = 1):
+    """Get popular/trending titles"""
+    try:
+        trending = await fetch_tmdb_data("trending/all/week", {"page": page})
+        
+        results = []
+        for item in trending.get("results", []):
+            media_type = item.get("media_type", "movie")
+            if media_type not in ["movie", "tv"]:
+                continue
+            
+            title = item.get("title") or item.get("name", "")
+            year = (item.get("release_date") or item.get("first_air_date", ""))[:4]
+            
+            results.append({
+                "id": item.get("id"),
+                "title": title,
+                "year": year,
+                "media_type": media_type,
+                "poster_path": item.get("poster_path"),
+                "genres": item.get("genre_ids", []),
+                "vote_average": item.get("vote_average", 0)
+            })
+        
+        return {
+            "results": results,
+            "page": page,
+            "total_pages": trending.get("total_pages", 1)
+        }
+        
+    except Exception as e:
+        logger.error(f"Popular titles error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/search/history")
+async def get_search_history_endpoint(limit: int = 10, current_user: User = Depends(get_current_user)):
+    """Get recent search history (requires authentication)"""
+    if not current_user:
+        return []
+    
+    try:
+        history = await db.search_history.find(
+            {"user_id": current_user.id}
+        ).sort("timestamp", -1).limit(limit).to_list(limit)
+        return [SearchHistoryItem(**item) for item in history]
+    except Exception as e:
+        logger.error(f"Search history error: {str(e)}")
+        return []
+
+@api_router.delete("/search/history")
+async def clear_search_history_endpoint(current_user: User = Depends(require_auth)):
+    """Clear search history"""
+    try:
+        await db.search_history.delete_many({"user_id": current_user.id})
+        return {"message": "Search history cleared"}
+    except Exception as e:
+        logger.error(f"Clear history error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/genres")
+async def get_genres():
+    """Get all available genres"""
+    try:
+        movie_genres = await fetch_tmdb_data("genre/movie/list")
+        tv_genres = await fetch_tmdb_data("genre/tv/list")
+        
+        all_genres = {}
+        for g in movie_genres.get("genres", []) + tv_genres.get("genres", []):
+            all_genres[g["id"]] = g["name"]
+        
+        return {"genres": all_genres}
+    except Exception as e:
+        logger.error(f"Genres error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# Health check
+@api_router.get("/")
+async def root():
+    return {"message": "FindFlix API with Tinder Feature", "status": "running"}
+
+# Include router
+app.include_router(api_router)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_credentials=True,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+@app.on_event("shutdown")
+async def shutdown_db_client():
+    client.close()
+
+# Cleanup task
+@app.on_event("startup")
+async def startup_event():
+    # Clean up expired sessions on startup
+    await cleanup_expired_sessions(db)
