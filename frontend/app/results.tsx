@@ -204,8 +204,8 @@ export default function ResultsScreen() {
 
   const sortOptions = [
     { value: '', label: 'Default' },
-    { value: 'rating_desc', label: 'TMDB Rating: High to Low' },
-    { value: 'rating_asc', label: 'TMDB Rating: Low to High' },
+    { value: 'rating_desc', label: 'Rating: High to Low' },
+    { value: 'rating_asc', label: 'Rating: Low to High' },
     { value: 'year_desc', label: 'Year: Newest First' },
     { value: 'year_asc', label: 'Year: Oldest First' },
   ];
