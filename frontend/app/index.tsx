@@ -537,10 +537,17 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     alignItems: 'center',
   },
+  searchButtonDisabled: {
+    backgroundColor: '#4a4a4a',
+    opacity: 0.5,
+  },
   searchButtonText: {
     color: '#fff',
     fontSize: 16,
     fontWeight: '600',
+  },
+  searchButtonTextDisabled: {
+    color: '#999',
   },
   section: {
     paddingHorizontal: 16,
