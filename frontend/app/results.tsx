@@ -97,35 +97,46 @@ export default function ResultsScreen() {
     }
   }, [isFetching, data?.total_pages, page]);
 
-  const renderItem = ({ item }: { item: SearchResult }) => (
-    <Pressable
-      style={({ pressed }) => [styles.card, pressed && styles.cardPressed]}
-      onPress={() => handleItemPress(item)}
-    >
-      <View style={styles.cardContent}>
-        {item.poster_path ? (
-          <Image
-            source={{ uri: `${TMDB_IMAGE_BASE}${item.poster_path}` }}
-            style={styles.poster}
-            resizeMode="cover"
-          />
-        ) : (
-          <View style={[styles.poster, styles.placeholderPoster]}>
-            <Ionicons name="film-outline" size={40} color="#666" />
-          </View>
-        )}
-
-        <View style={styles.info}>
-          <View style={styles.titleRow}>
-            <Text style={styles.title} numberOfLines={2}>
-              {item.title}
-            </Text>
-            <View style={styles.badge}>
-              <Text style={styles.badgeText}>
-                {item.media_type === 'movie' ? 'Movie' : 'TV'}
-              </Text>
+  const renderItem = ({ item }: { item: SearchResult }) => {
+    // Check if unreleased (release_date in the future)
+    const isUnreleased = item.release_date && new Date(item.release_date) > new Date();
+    
+    return (
+      <Pressable
+        style={({ pressed }) => [styles.card, pressed && styles.cardPressed]}
+        onPress={() => handleItemPress(item)}
+      >
+        <View style={styles.cardContent}>
+          {item.poster_path ? (
+            <Image
+              source={{ uri: `${TMDB_IMAGE_BASE}${item.poster_path}` }}
+              style={styles.poster}
+              resizeMode="cover"
+            />
+          ) : (
+            <View style={[styles.poster, styles.placeholderPoster]}>
+              <Ionicons name="film-outline" size={40} color="#666" />
             </View>
-          </View>
+          )}
+
+          <View style={styles.info}>
+            <View style={styles.titleRow}>
+              <Text style={styles.title} numberOfLines={2}>
+                {item.title}
+              </Text>
+              <View style={styles.badgeContainer}>
+                <View style={styles.badge}>
+                  <Text style={styles.badgeText}>
+                    {item.media_type === 'movie' ? 'Movie' : 'TV'}
+                  </Text>
+                </View>
+                {isUnreleased && (
+                  <View style={styles.unreleasedBadge}>
+                    <Text style={styles.unreleasedBadgeText}>Unreleased</Text>
+                  </View>
+                )}
+              </View>
+            </View>
 
           <View style={styles.metaRow}>
             <Text style={styles.year}>{item.year}</Text>
