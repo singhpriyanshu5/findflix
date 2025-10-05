@@ -229,11 +229,17 @@ export default function SearchScreen() {
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={styles.searchButton}
+            style={[
+              styles.searchButton,
+              (!searchQuery.trim() && !selectedGenre && !selectedLanguage) && styles.searchButtonDisabled
+            ]}
             onPress={handleSearch}
-            disabled={!searchQuery.trim()}
+            disabled={!searchQuery.trim() && !selectedGenre && !selectedLanguage}
           >
-            <Text style={styles.searchButtonText}>Search</Text>
+            <Text style={[
+              styles.searchButtonText,
+              (!searchQuery.trim() && !selectedGenre && !selectedLanguage) && styles.searchButtonTextDisabled
+            ]}>Search</Text>
           </TouchableOpacity>
         </View>
 
