@@ -640,12 +640,26 @@ class FindFlixAPITester:
     
     def run_all_tests(self):
         """Run all tests"""
-        print(f"🚀 Starting Movie Recommendation API Tests")
+        print(f"🚀 Starting FindFlix API Tests with Tinder Functionality")
         print(f"Backend URL: {self.base_url}")
-        print("=" * 60)
+        print("=" * 70)
         
-        tests = [
+        # Authentication and Friend System Tests (New Tinder Features)
+        auth_tests = [
             self.test_health_check,
+            self.test_user_registration,
+            self.test_user_login,
+            self.test_get_current_user,
+            self.test_friend_user_registration,
+            self.test_send_friend_request,
+            self.test_get_friend_requests,
+            self.test_accept_friend_request,
+            self.test_get_friends_list,
+            self.test_logout
+        ]
+        
+        # Original Movie API Tests (Backward Compatibility)
+        movie_tests = [
             self.test_search_by_title,
             self.test_search_by_genre,
             self.test_search_by_cast,
@@ -660,17 +674,29 @@ class FindFlixAPITester:
             self.test_genres
         ]
         
+        all_tests = auth_tests + movie_tests
+        
         passed = 0
         failed = 0
         
-        for test in tests:
+        print("\n🔐 Testing Authentication & Friend System (New Tinder Features):")
+        print("-" * 70)
+        for test in auth_tests:
             if test():
                 passed += 1
             else:
                 failed += 1
         
-        print("=" * 60)
-        print(f"📊 Test Results: {passed} passed, {failed} failed")
+        print(f"\n🎬 Testing Movie API Compatibility (Original Features):")
+        print("-" * 70)
+        for test in movie_tests:
+            if test():
+                passed += 1
+            else:
+                failed += 1
+        
+        print("=" * 70)
+        print(f"📊 Final Test Results: {passed} passed, {failed} failed")
         
         if failed > 0:
             print("\n❌ Failed Tests:")
@@ -681,7 +707,7 @@ class FindFlixAPITester:
         return passed, failed, self.test_results
 
 if __name__ == "__main__":
-    tester = MovieAPITester()
+    tester = FindFlixAPITester()
     passed, failed, results = tester.run_all_tests()
     
     # Exit with error code if tests failed
