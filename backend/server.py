@@ -615,6 +615,7 @@ async def search_titles(request: SearchRequest):
                 "id": tmdb_id,
                 "title": title,
                 "year": year,
+                "release_date": item.get("release_date") or item.get("first_air_date", ""),
                 "media_type": media_type,
                 "poster_path": item.get("poster_path"),
                 "genres": item.get("genre_ids", []),
