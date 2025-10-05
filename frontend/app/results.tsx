@@ -31,6 +31,7 @@ interface SearchResult {
   poster_path: string | null;
   genres: number[];
   vote_average: number;
+  rating_source: string;
   overview: string;
   original_language: string;
 }
