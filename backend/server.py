@@ -593,8 +593,32 @@ async def search_titles(request: SearchRequest):
             year = (item.get("release_date") or item.get("first_air_date", ""))[:4]
             tmdb_id = item.get("id")
             
-            # Use TMDB rating directly (more reliable than OMDb)
-            tmdb_rating = item.get("vote_average", 0)
+            # Fetch IMDb rating (preferred), fall back to TMDB if unavailable
+            rating = item.get("vote_average", 0)  # Default to TMDB
+            rating_source = "TMDB"  # Track the source
+            imdb_id = None
+            
+            try:
+                # Get external IDs to fetch IMDb ID
+                external_ids_data = await fetch_tmdb_data(f"{media_type}/{tmdb_id}/external_ids")
+                imdb_id = external_ids_data.get("imdb_id")
+                
+                if imdb_id:
+                    # Try to fetch IMDb rating from OMDb
+                    try:
+                        omdb_data = await fetch_omdb_data(imdb_id)
+                        if omdb_data:
+                            omdb_rating = omdb_data.get("imdbRating")
+                            if omdb_rating and omdb_rating != "N/A":
+                                rating = float(omdb_rating)
+                                rating_source = "IMDb"
+                                logger.info(f"✓ IMDb rating for {title}: {rating}")
+                    except Exception as omdb_error:
+                        logger.warning(f"OMDb failed for {title} ({imdb_id}): {str(omdb_error)}")
+                        # Continue with TMDB rating
+            except Exception as e:
+                logger.error(f"Error fetching rating for {title} ({tmdb_id}): {str(e)}")
+                # Continue with TMDB rating as fallback
             
             formatted_item = {
                 "id": tmdb_id,
