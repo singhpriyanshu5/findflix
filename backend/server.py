@@ -19,16 +19,16 @@ from auth_utils import *
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
-# MongoDB connection
-mongo_url = os.environ['MONGO_URL']
+# MongoDB connection with defaults
+mongo_url = os.environ.get('MONGO_URL', 'mongodb://localhost:27017')
 client = AsyncIOMotorClient(mongo_url)
-db = client[os.environ['DB_NAME']]
+db = client[os.environ.get('DB_NAME', 'findflix')]
 
-# API Keys
-TMDB_API_KEY = os.environ['TMDB_API_KEY']
-RAPIDAPI_KEY = os.environ['RAPIDAPI_KEY']
-OMDB_API_KEY = os.environ['OMDB_API_KEY']
-WATCHMODE_API_KEY = os.environ['WATCHMODE_API_KEY']
+# API Keys with defaults
+TMDB_API_KEY = os.environ.get('TMDB_API_KEY', '')
+RAPIDAPI_KEY = os.environ.get('RAPIDAPI_KEY', '')
+OMDB_API_KEY = os.environ.get('OMDB_API_KEY', '')
+WATCHMODE_API_KEY = os.environ.get('WATCHMODE_API_KEY', '')
 
 # Create the main app
 app = FastAPI()
