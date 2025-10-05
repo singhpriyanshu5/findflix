@@ -628,7 +628,8 @@ async def search_titles(request: SearchRequest):
                 "media_type": media_type,
                 "poster_path": item.get("poster_path"),
                 "genres": item.get("genre_ids", []),
-                "vote_average": tmdb_rating,
+                "vote_average": rating,
+                "rating_source": rating_source,
                 "overview": item.get("overview", ""),
                 "original_language": item.get("original_language", "")
             }
