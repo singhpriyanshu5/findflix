@@ -10,7 +10,7 @@ import sys
 from datetime import datetime
 
 # Backend URL from frontend .env
-BACKEND_URL = "https://findflix-1.preview.emergentagent.com/api"
+BACKEND_URL = "https://watchmatch-5.preview.emergentagent.com/api"
 
 class MovieAPITester:
     def __init__(self):
