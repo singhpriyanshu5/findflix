@@ -157,6 +157,67 @@ export default function TinderScreen() {
           </>
         )}
       </View>
+
+      {/* Custom Modal for Options */}
+      <Modal
+        visible={showModal}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setShowModal(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>
+              Swipe with {selectedFriend?.name}
+            </Text>
+            <Text style={styles.modalSubtitle}>
+              You have {sessionData?.match_count || 0} matches together
+            </Text>
+
+            <TouchableOpacity
+              style={styles.modalButton}
+              onPress={() => {
+                console.log('Continue Swiping selected');
+                setShowModal(false);
+                router.push({
+                  pathname: '/swipe-session',
+                  params: { sessionId: sessionData.session_id },
+                });
+              }}
+            >
+              <Ionicons name="heart" size={24} color="#fff" />
+              <Text style={styles.modalButtonText}>Continue Swiping</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.modalButton, styles.modalButtonSecondary]}
+              onPress={() => {
+                console.log('View Matches selected');
+                setShowModal(false);
+                router.push({
+                  pathname: '/session-summary',
+                  params: { sessionId: sessionData.session_id },
+                });
+              }}
+            >
+              <Ionicons name="eye" size={24} color="#e50914" />
+              <Text style={[styles.modalButtonText, styles.modalButtonTextSecondary]}>
+                View Matches
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.modalCancelButton}
+              onPress={() => {
+                console.log('Cancelled');
+                setShowModal(false);
+              }}
+            >
+              <Text style={styles.modalCancelText}>Cancel</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
