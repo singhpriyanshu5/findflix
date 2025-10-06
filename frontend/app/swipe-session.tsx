@@ -140,10 +140,12 @@ export default function SwipeSessionScreen() {
   };
 
   const handleLike = () => {
+    console.log('Like button pressed');
     animateSwipe('right', () => submitSwipe('like'));
   };
 
   const handleDislike = () => {
+    console.log('Dislike button pressed');
     animateSwipe('left', () => submitSwipe('dislike'));
   };
 
