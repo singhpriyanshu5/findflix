@@ -135,10 +135,11 @@ export default function TinderScreen() {
       </View>
       <TouchableOpacity
         style={styles.swipeButton}
-        onPress={() => createSwipeSession(item)}
+        onPress={() => handleFriendClick(item)}
+        disabled={isLoading}
       >
         <Ionicons name="heart" size={20} color="#fff" />
-        <Text style={styles.swipeButtonText}>Start Swiping</Text>
+        <Text style={styles.swipeButtonText}>Swipe Movies</Text>
       </TouchableOpacity>
     </View>
   );
