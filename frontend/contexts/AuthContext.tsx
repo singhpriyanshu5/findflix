@@ -71,11 +71,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const login = async (email: string, password: string): Promise<boolean> => {
     try {
       setIsLoading(true);
-      const response = await axios.post(`${BACKEND_URL}/api/auth/login`, {
+      console.log('Attempting login with backend URL:', BACKEND_URL);
+      
+      const response = await axios.post(`${BACKEND_URL}/auth/login`, {
         email,
         password,
       });
 
+      console.log('Login response:', response.data);
       const { user: userData, session_token } = response.data;
       
       // Store session token
@@ -88,6 +91,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       return true;
     } catch (error) {
       console.error('Login failed:', error);
+      console.error('Error details:', error.response?.data);
       return false;
     } finally {
       setIsLoading(false);
