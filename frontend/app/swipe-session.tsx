@@ -51,6 +51,17 @@ export default function SwipeSessionScreen() {
   const swipeAnimation = useRef(new Animated.ValueXY()).current;
   const rotateAnimation = useRef(new Animated.Value(0)).current;
   const scaleAnimation = useRef(new Animated.Value(1)).current;
+  
+  // State refs to capture latest values for gesture handlers
+  const currentIndexRef = useRef(currentIndex);
+  const moviesRef = useRef(movies);
+  
+  // Update refs whenever state changes
+  useEffect(() => {
+    currentIndexRef.current = currentIndex;
+    moviesRef.current = movies;
+    console.log('📊 State refs updated - Index:', currentIndex, 'Movies:', movies.length);
+  }, [currentIndex, movies]);
 
   useEffect(() => {
     if (!isAuthenticated) {
