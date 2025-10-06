@@ -57,6 +57,7 @@ export default function SearchScreen() {
   const [showContentTypeModal, setShowContentTypeModal] = useState(false);
   const router = useRouter();
   const queryClient = useQueryClient();
+  const { isAuthenticated, user, logout } = useAuth();
 
   // Fetch search history
   const { data: searchHistory, refetch: refetchHistory } = useQuery<SearchHistoryItem[]>({
