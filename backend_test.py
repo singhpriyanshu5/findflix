@@ -148,9 +148,11 @@ class FindFlixAPITester:
     def test_friend_user_registration(self):
         """Test registering a second user for friend system testing"""
         try:
+            import uuid
+            unique_id = str(uuid.uuid4())[:8]
             payload = {
                 "name": "Ryan Gosling",
-                "email": "ryan.gosling@findflix.com",
+                "email": f"ryan.gosling.{unique_id}@findflix.com",
                 "password": "AnotherSecurePass456!"
             }
             response = self.session.post(f"{self.base_url}/auth/register", json=payload)
