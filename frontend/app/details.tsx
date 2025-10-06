@@ -408,7 +408,23 @@ export default function DetailsScreen() {
           <View style={styles.section}>
             <TouchableOpacity
               style={styles.trailerButton}
-              onPress={() => Linking.openURL(titleData.trailer!)}
+              onPress={async () => {
+                try {
+                  console.log('Opening trailer:', titleData.trailer);
+                  const supported = await Linking.canOpenURL(titleData.trailer!);
+                  if (supported) {
+                    await Linking.openURL(titleData.trailer!);
+                  } else {
+                    console.log('Cannot open URL:', titleData.trailer);
+                    // For web browsers, try using window.open as fallback
+                    if (typeof window !== 'undefined') {
+                      window.open(titleData.trailer, '_blank');
+                    }
+                  }
+                } catch (error) {
+                  console.error('Error opening trailer:', error);
+                }
+              }}
             >
               <Ionicons name="play-circle" size={24} color="#fff" />
               <Text style={styles.trailerButtonText}>Watch Trailer</Text>
