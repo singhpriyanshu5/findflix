@@ -130,6 +130,7 @@ export default function SwipeSessionScreen() {
   };
 
   const animateSwipe = (direction: 'left' | 'right', callback?: () => void) => {
+    console.log('animateSwipe called:', direction);
     const toValue = direction === 'left' ? -SCREEN_WIDTH : SCREEN_WIDTH;
     
     Animated.parallel([
@@ -143,9 +144,15 @@ export default function SwipeSessionScreen() {
         duration: 300,
         useNativeDriver: false,
       }),
-    ]).start(() => {
+    ]).start((finished) => {
+      console.log('Animation finished:', finished);
       resetAnimations();
-      callback?.();
+      if (callback) {
+        console.log('Calling callback function');
+        callback();
+      } else {
+        console.log('No callback provided');
+      }
     });
   };
 
