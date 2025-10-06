@@ -340,7 +340,6 @@ metadata:
 test_plan:
   current_focus:
     - "Swipe Gesture State Synchronization Fix"
-    - "Swipe Session API Integration"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
