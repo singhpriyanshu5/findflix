@@ -93,8 +93,13 @@ class FindFlixAPITester:
     def test_user_login(self):
         """Test POST /api/auth/login - User login"""
         try:
+            # Use the email from registration
+            if not self.user_data:
+                self.log_test("User Login", False, "No user data from registration")
+                return False
+                
             payload = {
-                "email": "emma.watson@findflix.com",
+                "email": self.user_data["email"],
                 "password": "SecurePass123!"
             }
             response = self.session.post(f"{self.base_url}/auth/login", json=payload)
