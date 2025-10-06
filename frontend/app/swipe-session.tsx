@@ -184,7 +184,10 @@ export default function SwipeSessionScreen() {
         const rotation = (gestureState.dx / SCREEN_WIDTH) * 15;
         rotateAnimation.setValue(rotation);
         
-        console.log('Gesture move:', gestureState.dx, gestureState.dy);
+        // Visual feedback during swipe (less verbose logging)
+        if (Math.abs(gestureState.dx) > 50) {
+          console.log('Swiping:', gestureState.dx > 0 ? 'RIGHT (like)' : 'LEFT (dislike)');
+        }
       },
       
       onPanResponderRelease: (evt, gestureState) => {
