@@ -64,9 +64,11 @@ class FindFlixAPITester:
     def test_user_registration(self):
         """Test POST /api/auth/register - User registration"""
         try:
+            import uuid
+            unique_id = str(uuid.uuid4())[:8]
             payload = {
                 "name": "Emma Watson",
-                "email": "emma.watson@findflix.com",
+                "email": f"emma.watson.{unique_id}@findflix.com",
                 "password": "SecurePass123!"
             }
             response = self.session.post(f"{self.base_url}/auth/register", json=payload)
