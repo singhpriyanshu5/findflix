@@ -52,33 +52,66 @@ export default function AuthScreen() {
 
   const handleGoogleLogin = async () => {
     try {
-      const redirectUrl = `${Constants.expoConfig?.scheme}://auth`;
+      setIsLoading(true);
+      
+      // For web and testing - use a simple redirect approach
+      if (Constants.platform?.web) {
+        const authUrl = 'https://auth.emergentagent.com/';
+        window.open(authUrl, '_blank');
+        Alert.alert('OAuth', 'Please complete authentication in the new window and return to the app');
+        setIsLoading(false);
+        return;
+      }
+      
+      // For mobile - use WebBrowser
+      const redirectUrl = `${Constants.expoConfig?.scheme || 'frontend'}://auth`;
       const authUrl = `https://auth.emergentagent.com/?redirect=${encodeURIComponent(redirectUrl)}`;
+      
+      console.log('Opening OAuth URL:', authUrl);
+      console.log('Redirect URL:', redirectUrl);
       
       const result = await WebBrowser.openAuthSessionAsync(authUrl, redirectUrl);
       
+      console.log('OAuth result:', result);
+      
       if (result.type === 'success' && result.url) {
-        // Extract session_id from URL fragment
+        // Extract session_id from URL fragment or query
         const url = new URL(result.url);
-        const fragment = url.hash.substring(1);
-        const params = new URLSearchParams(fragment);
-        const sessionId = params.get('session_id');
+        let sessionId = null;
+        
+        // Try URL fragment first
+        if (url.hash) {
+          const fragment = url.hash.substring(1);
+          const params = new URLSearchParams(fragment);
+          sessionId = params.get('session_id');
+        }
+        
+        // Try query params if not found in fragment
+        if (!sessionId) {
+          sessionId = url.searchParams.get('session_id');
+        }
+        
+        console.log('Extracted session ID:', sessionId);
         
         if (sessionId) {
-          setIsLoading(true);
           const success = await processOAuthSession(sessionId);
-          setIsLoading(false);
           
           if (success) {
             router.replace('/');
           } else {
             Alert.alert('Error', 'Google authentication failed');
           }
+        } else {
+          Alert.alert('Error', 'No session ID received from OAuth');
         }
+      } else if (result.type === 'cancel') {
+        Alert.alert('Cancelled', 'Authentication was cancelled');
       }
     } catch (error) {
       console.error('Google auth error:', error);
-      Alert.alert('Error', 'Google authentication failed');
+      Alert.alert('Error', `Google authentication failed: ${error.message}`);
+    } finally {
+      setIsLoading(false);
     }
   };
 
