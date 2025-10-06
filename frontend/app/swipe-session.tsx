@@ -245,23 +245,23 @@ export default function SwipeSessionScreen() {
         console.log('🎯 Is valid swipe:', isSwipe);
         
         if (isSwipe && gestureState.dx > 0) {
-          // Swipe right (like) - USE EXACT SAME FUNCTION AS BUTTON
+          // Swipe right (like) - USE FRESH STATE VALUES
           console.log('👍 SWIPE RIGHT DETECTED - CALLING handleLike()');
-          console.log('🎬 State check before handleLike: movies=', movies.length, 'currentIndex=', currentIndex);
-          // Use setTimeout to ensure we're not in the middle of gesture processing
-          setTimeout(() => {
-            console.log('🎬 Delayed handleLike execution: movies=', movies.length, 'currentIndex=', currentIndex);
-            handleLike();
-          }, 0);
+          const currentMoviesArray = moviesRef.current;
+          const currentMovieIndex = currentIndexRef.current;
+          console.log('🎬 Fresh state values: movies=', currentMoviesArray.length, 'currentIndex=', currentMovieIndex);
+          
+          // Call with explicit current state values
+          handleLike(currentMovieIndex, currentMoviesArray);
         } else if (isSwipe && gestureState.dx < 0) {
-          // Swipe left (dislike) - USE EXACT SAME FUNCTION AS BUTTON
+          // Swipe left (dislike) - USE FRESH STATE VALUES
           console.log('👎 SWIPE LEFT DETECTED - CALLING handleDislike()');
-          console.log('🎬 State check before handleDislike: movies=', movies.length, 'currentIndex=', currentIndex);
-          // Use setTimeout to ensure we're not in the middle of gesture processing
-          setTimeout(() => {
-            console.log('🎬 Delayed handleDislike execution: movies=', movies.length, 'currentIndex=', currentIndex);
-            handleDislike();
-          }, 0);
+          const currentMoviesArray = moviesRef.current;
+          const currentMovieIndex = currentIndexRef.current;
+          console.log('🎬 Fresh state values: movies=', currentMoviesArray.length, 'currentIndex=', currentMovieIndex);
+          
+          // Call with explicit current state values
+          handleDislike(currentMovieIndex, currentMoviesArray);
         } else {
           // Snap back
           console.log('↩️ Gesture too short - snapping back');
