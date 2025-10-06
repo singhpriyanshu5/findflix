@@ -1209,14 +1209,24 @@ async def get_title_details(tmdb_id: int, media_type: str = Query("movie", regex
         videos = tmdb_data.get("videos", {}).get("results", [])
         trailer = None
         
-        # Look for official trailer first, then any trailer
-        for video in videos:
-            if video.get("site") == "YouTube" and "trailer" in video.get("type", "").lower():
-                if video.get("official", False):
+        # Look for trailers in this priority order:
+        # 1. Official Trailers
+        # 2. Trailers
+        # 3. Teasers
+        trailer_priorities = [
+            lambda v: v.get("site") == "YouTube" and v.get("type") == "Trailer" and v.get("official", False),
+            lambda v: v.get("site") == "YouTube" and v.get("type") == "Trailer",
+            lambda v: v.get("site") == "YouTube" and v.get("type") == "Teaser",
+            lambda v: v.get("site") == "YouTube" and "trailer" in v.get("name", "").lower(),
+        ]
+        
+        for priority_check in trailer_priorities:
+            for video in videos:
+                if priority_check(video) and video.get("key"):
                     trailer = f"https://www.youtube.com/watch?v={video.get('key')}"
                     break
-                elif not trailer:  # Use first trailer if no official one found
-                    trailer = f"https://www.youtube.com/watch?v={video.get('key')}"
+            if trailer:
+                break
         
         result["trailer"] = trailer
         
