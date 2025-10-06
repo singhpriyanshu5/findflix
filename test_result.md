@@ -105,6 +105,18 @@
 user_problem_statement: "Fix swipe gesture functionality in FindFlix Tinder-like movie matching feature. Swipe gestures only animate cards but don't advance to next movie or register swipes, while Like/Dislike buttons work correctly. This is due to state synchronization issue where movies array becomes empty during gesture execution."
 
 backend:
+  - task: "Swipe Session API Integration"
+    implemented: true
+    working: true
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: true
+          agent: "main"
+          comment: "Backend swipe endpoints working correctly. Need to verify they still work after frontend gesture fix."
+
   - task: "Health Check Endpoint"
     implemented: true
     working: true
