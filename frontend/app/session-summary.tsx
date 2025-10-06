@@ -137,7 +137,20 @@ export default function SessionSummaryScreen() {
             </Text>
             
             {summary.matches.map((match, index) => (
-              <View key={`${match.movie_id}-${index}`} style={styles.matchCard}>
+              <TouchableOpacity 
+                key={`${match.movie_id}-${index}`} 
+                style={styles.matchCard}
+                onPress={() => {
+                  router.push({
+                    pathname: '/details',
+                    params: {
+                      id: match.movie_id.toString(),
+                      mediaType: match.media_type,
+                    },
+                  });
+                }}
+                activeOpacity={0.7}
+              >
                 <View style={styles.matchPoster}>
                   {match.movie_poster ? (
                     <Image
@@ -172,8 +185,9 @@ export default function SessionSummaryScreen() {
                   <View style={styles.heartIcon}>
                     <Ionicons name="heart" size={24} color="#e50914" />
                   </View>
+                  <Ionicons name="chevron-forward" size={20} color="#666" style={styles.chevron} />
                 </View>
-              </View>
+              </TouchableOpacity>
             ))}
 
             {/* Continue Swiping Button */}
