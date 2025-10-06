@@ -67,39 +67,10 @@ export default function TinderScreen() {
       
       console.log('Session data received:', sessionData);
       
-      // Show options modal
-      Alert.alert(
-        `Swipe with ${friend.name}`,
-        `You have ${sessionData.match_count} matches together. Choose an option:`,
-        [
-          {
-            text: 'View Matches',
-            onPress: () => {
-              console.log('View Matches selected');
-              router.push({
-                pathname: '/session-summary',
-                params: { sessionId: sessionData.session_id },
-              });
-            },
-          },
-          {
-            text: 'Continue Swiping',
-            style: 'default',
-            onPress: () => {
-              console.log('Continue Swiping selected');
-              router.push({
-                pathname: '/swipe-session',
-                params: { sessionId: sessionData.session_id },
-              });
-            },
-          },
-          {
-            text: 'Cancel',
-            style: 'cancel',
-            onPress: () => console.log('Cancelled'),
-          },
-        ]
-      );
+      // Show custom modal instead of Alert (better for web)
+      setSelectedFriend(friend);
+      setSessionData(sessionData);
+      setShowModal(true);
     } catch (error: any) {
       console.error('Failed to get session:', error);
       console.error('Error response:', error.response?.data);
