@@ -73,7 +73,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setIsLoading(true);
       console.log('Attempting login with backend URL:', BACKEND_URL);
       
-      const response = await axios.post(`${BACKEND_URL}/auth/login`, {
+      const response = await axios.post(`${BACKEND_URL}/api/auth/login`, {
         email,
         password,
       });
