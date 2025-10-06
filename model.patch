@@ -1,941 +1,984 @@
 diff --git a/model.patch b/model.patch
-index d9aebe6..e69de29 100644
+index e934e33..e69de29 100644
 --- a/model.patch
 +++ b/model.patch
-@@ -1,892 +0,0 @@
+@@ -1,941 +0,0 @@
 -diff --git a/model.patch b/model.patch
--index d4653e4..e69de29 100644
+-index d9aebe6..e69de29 100644
 ---- a/model.patch
 -+++ b/model.patch
--@@ -1,854 +0,0 @@
+-@@ -1,892 +0,0 @@
 --diff --git a/model.patch b/model.patch
---index ed99ba6..e69de29 100644
+--index d4653e4..e69de29 100644
 ----- a/model.patch
 --+++ b/model.patch
---@@ -1,849 +0,0 @@
+--@@ -1,854 +0,0 @@
 ---diff --git a/model.patch b/model.patch
----index cae2970..e69de29 100644
+---index ed99ba6..e69de29 100644
 ------ a/model.patch
 ---+++ b/model.patch
----@@ -1,808 +0,0 @@
+---@@ -1,849 +0,0 @@
 ----diff --git a/model.patch b/model.patch
-----index c53a56f..e69de29 100644
+----index cae2970..e69de29 100644
 ------- a/model.patch
 ----+++ b/model.patch
-----@@ -1,803 +0,0 @@
------diff --git a/frontend/app/swipe-session.tsx b/frontend/app/swipe-session.tsx
------index ddeef6d..8adea78 100644
--------- a/frontend/app/swipe-session.tsx
------+++ b/frontend/app/swipe-session.tsx
------@@ -336,6 +336,38 @@ export default function SwipeSessionScreen() {
------           ]}
------           {...panResponder.panHandlers}
------         >
------+          {/* Like/Dislike Overlays */}
------+          <Animated.View 
------+            style={[
------+              styles.overlay,
------+              styles.likeOverlay,
------+              {
------+                opacity: swipeAnimation.x.interpolate({
------+                  inputRange: [0, 100],
------+                  outputRange: [0, 0.8],
------+                  extrapolate: 'clamp',
------+                }),
------+              }
------+            ]}
------+          >
------+            <Text style={styles.overlayText}>LIKE</Text>
------+          </Animated.View>
------+          
------+          <Animated.View 
------+            style={[
------+              styles.overlay,
------+              styles.dislikeOverlay,
------+              {
------+                opacity: swipeAnimation.x.interpolate({
------+                  inputRange: [-100, 0],
------+                  outputRange: [0.8, 0],
------+                  extrapolate: 'clamp',
------+                }),
------+              }
------+            ]}
------+          >
------+            <Text style={styles.overlayText}>PASS</Text>
------+          </Animated.View>
------           {currentMovie.poster_path ? (
------             <Image
------               source={{ uri: `${TMDB_IMAGE_BASE}${currentMovie.poster_path}` }}
------@@ -688,4 +720,29 @@ const styles = StyleSheet.create({
------     alignItems: 'center',
------     justifyContent: 'center',
------   },
------+  overlay: {
------+    position: 'absolute',
------+    top: 0,
------+    left: 0,
------+    right: 0,
------+    bottom: 0,
------+    alignItems: 'center',
------+    justifyContent: 'center',
------+    borderRadius: 20,
------+  },
------+  likeOverlay: {
------+    backgroundColor: 'rgba(34, 197, 94, 0.2)',
------+  },
------+  dislikeOverlay: {
------+    backgroundColor: 'rgba(239, 68, 68, 0.2)',
------+  },
------+  overlayText: {
------+    fontSize: 48,
------+    fontWeight: 'bold',
------+    color: '#fff',
------+    textShadowColor: 'rgba(0, 0, 0, 0.75)',
------+    textShadowOffset: { width: 2, height: 2 },
------+    textShadowRadius: 4,
------+    transform: [{ rotate: '-15deg' }],
------+  },
------ });
------\ No newline at end of file
+----@@ -1,808 +0,0 @@
 -----diff --git a/model.patch b/model.patch
------index e878a54..e69de29 100644
+-----index c53a56f..e69de29 100644
 -------- a/model.patch
 -----+++ b/model.patch
------@@ -1,724 +0,0 @@
-------diff --git a/frontend/app/session-summary.tsx b/frontend/app/session-summary.tsx
-------index e37e37f..77b3bab 100644
---------- a/frontend/app/session-summary.tsx
-------+++ b/frontend/app/session-summary.tsx
-------@@ -383,4 +383,7 @@ const styles = StyleSheet.create({
-------     fontSize: 16,
-------     fontWeight: '600',
+-----@@ -1,803 +0,0 @@
+------diff --git a/frontend/app/swipe-session.tsx b/frontend/app/swipe-session.tsx
+------index ddeef6d..8adea78 100644
+--------- a/frontend/app/swipe-session.tsx
+------+++ b/frontend/app/swipe-session.tsx
+------@@ -336,6 +336,38 @@ export default function SwipeSessionScreen() {
+------           ]}
+------           {...panResponder.panHandlers}
+------         >
+------+          {/* Like/Dislike Overlays */}
+------+          <Animated.View 
+------+            style={[
+------+              styles.overlay,
+------+              styles.likeOverlay,
+------+              {
+------+                opacity: swipeAnimation.x.interpolate({
+------+                  inputRange: [0, 100],
+------+                  outputRange: [0, 0.8],
+------+                  extrapolate: 'clamp',
+------+                }),
+------+              }
+------+            ]}
+------+          >
+------+            <Text style={styles.overlayText}>LIKE</Text>
+------+          </Animated.View>
+------+          
+------+          <Animated.View 
+------+            style={[
+------+              styles.overlay,
+------+              styles.dislikeOverlay,
+------+              {
+------+                opacity: swipeAnimation.x.interpolate({
+------+                  inputRange: [-100, 0],
+------+                  outputRange: [0.8, 0],
+------+                  extrapolate: 'clamp',
+------+                }),
+------+              }
+------+            ]}
+------+          >
+------+            <Text style={styles.overlayText}>PASS</Text>
+------+          </Animated.View>
+------           {currentMovie.poster_path ? (
+------             <Image
+------               source={{ uri: `${TMDB_IMAGE_BASE}${currentMovie.poster_path}` }}
+------@@ -688,4 +720,29 @@ const styles = StyleSheet.create({
+------     alignItems: 'center',
+------     justifyContent: 'center',
 ------   },
-------+  chevron: {
-------+    marginLeft: 8,
+------+  overlay: {
+------+    position: 'absolute',
+------+    top: 0,
+------+    left: 0,
+------+    right: 0,
+------+    bottom: 0,
+------+    alignItems: 'center',
+------+    justifyContent: 'center',
+------+    borderRadius: 20,
+------+  },
+------+  likeOverlay: {
+------+    backgroundColor: 'rgba(34, 197, 94, 0.2)',
+------+  },
+------+  dislikeOverlay: {
+------+    backgroundColor: 'rgba(239, 68, 68, 0.2)',
+------+  },
+------+  overlayText: {
+------+    fontSize: 48,
+------+    fontWeight: 'bold',
+------+    color: '#fff',
+------+    textShadowColor: 'rgba(0, 0, 0, 0.75)',
+------+    textShadowOffset: { width: 2, height: 2 },
+------+    textShadowRadius: 4,
+------+    transform: [{ rotate: '-15deg' }],
 ------+  },
 ------ });
 ------\ No newline at end of file
 ------diff --git a/model.patch b/model.patch
-------index 98462a0..e69de29 100644
+------index e878a54..e69de29 100644
 --------- a/model.patch
 ------+++ b/model.patch
-------@@ -1,706 +0,0 @@
+------@@ -1,724 +0,0 @@
+-------diff --git a/frontend/app/session-summary.tsx b/frontend/app/session-summary.tsx
+-------index e37e37f..77b3bab 100644
+---------- a/frontend/app/session-summary.tsx
+-------+++ b/frontend/app/session-summary.tsx
+-------@@ -383,4 +383,7 @@ const styles = StyleSheet.create({
+-------     fontSize: 16,
+-------     fontWeight: '600',
+-------   },
+-------+  chevron: {
+-------+    marginLeft: 8,
+-------+  },
+------- });
+-------\ No newline at end of file
 -------diff --git a/model.patch b/model.patch
--------index c64a9b7..e69de29 100644
+-------index 98462a0..e69de29 100644
 ---------- a/model.patch
 -------+++ b/model.patch
--------@@ -1,701 +0,0 @@
---------diff --git a/frontend/app/tinder.tsx b/frontend/app/tinder.tsx
---------index 6f48add..78d9cb8 100644
------------ a/frontend/app/tinder.tsx
---------+++ b/frontend/app/tinder.tsx
---------@@ -157,6 +157,67 @@ export default function TinderScreen() {
---------           </>
---------         )}
---------       </View>
---------+
---------+      {/* Custom Modal for Options */}
---------+      <Modal
---------+        visible={showModal}
---------+        transparent={true}
---------+        animationType="fade"
---------+        onRequestClose={() => setShowModal(false)}
---------+      >
---------+        <View style={styles.modalOverlay}>
---------+          <View style={styles.modalContent}>
---------+            <Text style={styles.modalTitle}>
---------+              Swipe with {selectedFriend?.name}
---------+            </Text>
---------+            <Text style={styles.modalSubtitle}>
---------+              You have {sessionData?.match_count || 0} matches together
---------+            </Text>
---------+
---------+            <TouchableOpacity
---------+              style={styles.modalButton}
---------+              onPress={() => {
---------+                console.log('Continue Swiping selected');
---------+                setShowModal(false);
---------+                router.push({
---------+                  pathname: '/swipe-session',
---------+                  params: { sessionId: sessionData.session_id },
---------+                });
---------+              }}
---------+            >
---------+              <Ionicons name="heart" size={24} color="#fff" />
---------+              <Text style={styles.modalButtonText}>Continue Swiping</Text>
---------+            </TouchableOpacity>
---------+
---------+            <TouchableOpacity
---------+              style={[styles.modalButton, styles.modalButtonSecondary]}
---------+              onPress={() => {
---------+                console.log('View Matches selected');
---------+                setShowModal(false);
---------+                router.push({
---------+                  pathname: '/session-summary',
---------+                  params: { sessionId: sessionData.session_id },
---------+                });
---------+              }}
---------+            >
---------+              <Ionicons name="eye" size={24} color="#e50914" />
---------+              <Text style={[styles.modalButtonText, styles.modalButtonTextSecondary]}>
---------+                View Matches
---------+              </Text>
---------+            </TouchableOpacity>
---------+
---------+            <TouchableOpacity
---------+              style={styles.modalCancelButton}
---------+              onPress={() => {
---------+                console.log('Cancelled');
---------+                setShowModal(false);
---------+              }}
---------+            >
---------+              <Text style={styles.modalCancelText}>Cancel</Text>
---------+            </TouchableOpacity>
---------+          </View>
---------+        </View>
---------+      </Modal>
---------     </SafeAreaView>
---------   );
--------- }
---------@@ -299,4 +360,66 @@ const styles = StyleSheet.create({
---------     shadowOpacity: 0.25,
---------     shadowRadius: 4,
---------   },
---------+  modalOverlay: {
---------+    flex: 1,
---------+    backgroundColor: 'rgba(0, 0, 0, 0.8)',
---------+    justifyContent: 'center',
---------+    alignItems: 'center',
---------+    padding: 20,
---------+  },
---------+  modalContent: {
---------+    backgroundColor: '#1a1a1a',
---------+    borderRadius: 16,
---------+    padding: 24,
---------+    width: '100%',
---------+    maxWidth: 320,
---------+    alignItems: 'center',
---------+  },
---------+  modalTitle: {
---------+    fontSize: 20,
---------+    fontWeight: 'bold',
---------+    color: '#fff',
---------+    textAlign: 'center',
---------+    marginBottom: 8,
---------+  },
---------+  modalSubtitle: {
---------+    fontSize: 14,
---------+    color: '#888',
---------+    textAlign: 'center',
---------+    marginBottom: 24,
---------+  },
---------+  modalButton: {
---------+    flexDirection: 'row',
---------+    alignItems: 'center',
---------+    backgroundColor: '#e50914',
---------+    paddingVertical: 16,
---------+    paddingHorizontal: 24,
---------+    borderRadius: 12,
---------+    width: '100%',
---------+    justifyContent: 'center',
---------+    marginBottom: 12,
---------+    gap: 8,
---------+  },
---------+  modalButtonSecondary: {
---------+    backgroundColor: 'transparent',
---------+    borderWidth: 2,
---------+    borderColor: '#e50914',
---------+  },
---------+  modalButtonText: {
---------+    color: '#fff',
---------+    fontSize: 16,
---------+    fontWeight: '600',
---------+  },
---------+  modalButtonTextSecondary: {
---------+    color: '#e50914',
---------+  },
---------+  modalCancelButton: {
---------+    paddingVertical: 12,
---------+    paddingHorizontal: 24,
---------+    marginTop: 8,
---------+  },
---------+  modalCancelText: {
---------+    color: '#888',
---------+    fontSize: 16,
---------+  },
--------- });
---------\ No newline at end of file
+-------@@ -1,706 +0,0 @@
 --------diff --git a/model.patch b/model.patch
---------index 7e3a0d1..e69de29 100644
+--------index c64a9b7..e69de29 100644
 ----------- a/model.patch
 --------+++ b/model.patch
---------@@ -1,556 +0,0 @@
+--------@@ -1,701 +0,0 @@
 ---------diff --git a/frontend/app/tinder.tsx b/frontend/app/tinder.tsx
----------index 9e939ac..a22de0a 100644
+---------index 6f48add..78d9cb8 100644
 ------------ a/frontend/app/tinder.tsx
 ---------+++ b/frontend/app/tinder.tsx
----------@@ -23,18 +23,6 @@ interface Friend {
----------   picture?: string;
---------- }
---------- 
-----------interface SwipeSession {
-----------  id: string;
-----------  creator: Friend;
-----------  friend: Friend;
-----------  content_type: 'popular' | 'search' | 'genre';
-----------  content_params: Record<string, any>;
-----------  is_active: boolean;
-----------  created_at: string;
-----------  my_swipes_count: number;
-----------  friend_swipes_count: number;
-----------}
-----------
---------- export default function TinderScreen() {
----------   const [friends, setFriends] = useState<Friend[]>([]);
----------   const [isLoading, setIsLoading] = useState(true);
----------@@ -104,13 +92,6 @@ export default function TinderScreen() {
----------     }
----------   };
---------- 
-----------  const joinSession = (session: SwipeSession) => {
-----------    router.push({
-----------      pathname: '/swipe-session',
-----------      params: { sessionId: session.id },
-----------    });
-----------  };
-----------
----------   const addFriend = () => {
----------     router.push('/add-friend');
----------   };
----------@@ -137,48 +118,6 @@ export default function TinderScreen() {
----------     </View>
----------   );
---------- 
-----------  const renderSession = ({ item }: { item: SwipeSession }) => (
-----------    <View style={styles.sessionCard}>
-----------      <View style={styles.sessionHeader}>
-----------        <Text style={styles.sessionTitle}>
-----------          Swipe Session with {item.creator.id === user?.id ? item.friend.name : item.creator.name}
-----------        </Text>
-----------        <View style={[
-----------          styles.statusBadge,
-----------          item.is_active ? styles.statusActive : styles.statusInactive
-----------        ]}>
-----------          <Text style={styles.statusText}>{item.is_active ? 'Active' : 'Ended'}</Text>
-----------        </View>
-----------      </View>
-----------      
-----------      <View style={styles.sessionStats}>
-----------        <View style={styles.statItem}>
-----------          <Text style={styles.statNumber}>{item.my_swipes_count}</Text>
-----------          <Text style={styles.statLabel}>Your Swipes</Text>
-----------        </View>
-----------        <View style={styles.statItem}>
-----------          <Text style={styles.statNumber}>{item.friend_swipes_count}</Text>
-----------          <Text style={styles.statLabel}>Friend's Swipes</Text>
-----------        </View>
-----------      </View>
-----------
-----------      <View style={styles.sessionMeta}>
-----------        <Text style={styles.contentType}>
-----------          Content: {item.content_type.charAt(0).toUpperCase() + item.content_type.slice(1)}
-----------        </Text>
-----------      </View>
-----------
-----------      {item.is_active && (
-----------        <TouchableOpacity
-----------          style={styles.joinButton}
-----------          onPress={() => joinSession(item)}
-----------        >
-----------          <Text style={styles.joinButtonText}>Continue Swiping</Text>
-----------        </TouchableOpacity>
-----------      )}
-----------    </View>
-----------  );
-----------
----------   if (!isAuthenticated) {
----------     return null;
----------   }
----------@@ -202,88 +141,34 @@ export default function TinderScreen() {
----------         <Text style={styles.subtitle}>Swipe movies with your friends</Text>
+---------@@ -157,6 +157,67 @@ export default function TinderScreen() {
+---------           </>
+---------         )}
 ---------       </View>
---------- 
-----------      {/* Tab Navigation */}
-----------      <View style={styles.tabContainer}>
-----------        <TouchableOpacity
-----------          style={[styles.tab, activeTab === 'sessions' && styles.activeTab]}
-----------          onPress={() => setActiveTab('sessions')}
-----------        >
-----------          <Text style={[styles.tabText, activeTab === 'sessions' && styles.activeTabText]}>
-----------            Sessions ({sessions.length})
-----------          </Text>
-----------        </TouchableOpacity>
-----------        <TouchableOpacity
-----------          style={[styles.tab, activeTab === 'friends' && styles.activeTab]}
-----------          onPress={() => setActiveTab('friends')}
-----------        >
-----------          <Text style={[styles.tabText, activeTab === 'friends' && styles.activeTabText]}>
-----------            Friends ({friends.length})
-----------          </Text>
-----------        </TouchableOpacity>
-----------      </View>
-----------
----------       {/* Content */}
-----------      {activeTab === 'friends' ? (
-----------        <View style={styles.content}>
-----------          {friends.length === 0 ? (
-----------            <View style={styles.emptyState}>
-----------              <Ionicons name="people-outline" size={64} color="#666" />
-----------              <Text style={styles.emptyTitle}>No Friends Yet</Text>
-----------              <Text style={styles.emptyText}>
-----------                Add friends to start swiping movies together!
-----------              </Text>
-----------              <TouchableOpacity style={styles.addButton} onPress={addFriend}>
-----------                <Text style={styles.addButtonText}>Add Friends</Text>
-----------              </TouchableOpacity>
-----------            </View>
-----------          ) : (
-----------            <>
-----------              <FlashList
-----------                data={friends}
-----------                renderItem={renderFriend}
-----------                keyExtractor={(item) => item.id}
-----------                estimatedItemSize={80}
-----------                contentContainerStyle={styles.listContent}
-----------              />
-----------              <TouchableOpacity style={styles.fab} onPress={addFriend}>
-----------                <Ionicons name="add" size={24} color="#fff" />
-----------              </TouchableOpacity>
-----------            </>
-----------          )}
-----------        </View>
-----------      ) : (
-----------        <View style={styles.content}>
-----------          {sessions.length === 0 ? (
-----------            <View style={styles.emptyState}>
-----------              <Ionicons name="heart-outline" size={64} color="#666" />
-----------              <Text style={styles.emptyTitle}>No Sessions Yet</Text>
-----------              <Text style={styles.emptyText}>
-----------                Start a swipe session with a friend to find movies to watch together!
-----------              </Text>
-----------              {friends.length > 0 ? (
-----------                <TouchableOpacity
-----------                  style={styles.addButton}
-----------                  onPress={() => setActiveTab('friends')}
-----------                >
-----------                  <Text style={styles.addButtonText}>Start Swiping</Text>
-----------                </TouchableOpacity>
-----------              ) : (
-----------                <TouchableOpacity style={styles.addButton} onPress={addFriend}>
-----------                  <Text style={styles.addButtonText}>Add Friends First</Text>
-----------                </TouchableOpacity>
-----------              )}
-----------            </View>
-----------          ) : (
----------+      <View style={styles.content}>
----------+        {friends.length === 0 ? (
----------+          <View style={styles.emptyState}>
----------+            <Ionicons name="people-outline" size={64} color="#666" />
----------+            <Text style={styles.emptyTitle}>No Friends Yet</Text>
----------+            <Text style={styles.emptyText}>
----------+              Add friends to start swiping movies together!
+---------+
+---------+      {/* Custom Modal for Options */}
+---------+      <Modal
+---------+        visible={showModal}
+---------+        transparent={true}
+---------+        animationType="fade"
+---------+        onRequestClose={() => setShowModal(false)}
+---------+      >
+---------+        <View style={styles.modalOverlay}>
+---------+          <View style={styles.modalContent}>
+---------+            <Text style={styles.modalTitle}>
+---------+              Swipe with {selectedFriend?.name}
 ---------+            </Text>
----------+            <TouchableOpacity style={styles.addButton} onPress={addFriend}>
----------+              <Text style={styles.addButtonText}>Add Friends</Text>
+---------+            <Text style={styles.modalSubtitle}>
+---------+              You have {sessionData?.match_count || 0} matches together
+---------+            </Text>
+---------+
+---------+            <TouchableOpacity
+---------+              style={styles.modalButton}
+---------+              onPress={() => {
+---------+                console.log('Continue Swiping selected');
+---------+                setShowModal(false);
+---------+                router.push({
+---------+                  pathname: '/swipe-session',
+---------+                  params: { sessionId: sessionData.session_id },
+---------+                });
+---------+              }}
+---------+            >
+---------+              <Ionicons name="heart" size={24} color="#fff" />
+---------+              <Text style={styles.modalButtonText}>Continue Swiping</Text>
+---------+            </TouchableOpacity>
+---------+
+---------+            <TouchableOpacity
+---------+              style={[styles.modalButton, styles.modalButtonSecondary]}
+---------+              onPress={() => {
+---------+                console.log('View Matches selected');
+---------+                setShowModal(false);
+---------+                router.push({
+---------+                  pathname: '/session-summary',
+---------+                  params: { sessionId: sessionData.session_id },
+---------+                });
+---------+              }}
+---------+            >
+---------+              <Ionicons name="eye" size={24} color="#e50914" />
+---------+              <Text style={[styles.modalButtonText, styles.modalButtonTextSecondary]}>
+---------+                View Matches
+---------+              </Text>
+---------+            </TouchableOpacity>
+---------+
+---------+            <TouchableOpacity
+---------+              style={styles.modalCancelButton}
+---------+              onPress={() => {
+---------+                console.log('Cancelled');
+---------+                setShowModal(false);
+---------+              }}
+---------+            >
+---------+              <Text style={styles.modalCancelText}>Cancel</Text>
 ---------+            </TouchableOpacity>
 ---------+          </View>
----------+        ) : (
----------+          <>
----------             <FlashList
-----------              data={sessions}
-----------              renderItem={renderSession}
----------+              data={friends}
----------+              renderItem={renderFriend}
----------               keyExtractor={(item) => item.id}
-----------              estimatedItemSize={120}
----------+              estimatedItemSize={80}
----------               contentContainerStyle={styles.listContent}
----------             />
-----------          )}
-----------        </View>
-----------      )}
----------+            <TouchableOpacity style={styles.fab} onPress={addFriend}>
----------+              <Ionicons name="add" size={24} color="#fff" />
----------+            </TouchableOpacity>
----------+          </>
----------+        )}
----------+      </View>
+---------+        </View>
+---------+      </Modal>
 ---------     </SafeAreaView>
 ---------   );
 --------- }
----------@@ -318,30 +203,6 @@ const styles = StyleSheet.create({
----------     fontSize: 16,
----------     color: '#888',
+---------@@ -299,4 +360,66 @@ const styles = StyleSheet.create({
+---------     shadowOpacity: 0.25,
+---------     shadowRadius: 4,
 ---------   },
-----------  tabContainer: {
-----------    flexDirection: 'row',
-----------    paddingHorizontal: 16,
-----------    marginBottom: 16,
-----------  },
-----------  tab: {
-----------    flex: 1,
-----------    paddingVertical: 12,
-----------    alignItems: 'center',
-----------    backgroundColor: '#1a1a1a',
-----------    marginHorizontal: 4,
-----------    borderRadius: 8,
-----------  },
-----------  activeTab: {
-----------    backgroundColor: '#e50914',
-----------  },
-----------  tabText: {
-----------    color: '#888',
-----------    fontSize: 14,
-----------    fontWeight: '600',
-----------  },
-----------  activeTabText: {
-----------    color: '#fff',
-----------  },
----------   content: {
----------     flex: 1,
----------     paddingHorizontal: 16,
----------@@ -434,80 +295,6 @@ const styles = StyleSheet.create({
----------     fontSize: 14,
----------     fontWeight: '600',
----------   },
-----------  sessionCard: {
-----------    backgroundColor: '#1a1a1a',
-----------    padding: 16,
-----------    borderRadius: 12,
-----------    marginBottom: 12,
-----------  },
-----------  sessionHeader: {
-----------    flexDirection: 'row',
-----------    justifyContent: 'space-between',
-----------    alignItems: 'flex-start',
-----------    marginBottom: 12,
-----------  },
-----------  sessionTitle: {
-----------    fontSize: 16,
-----------    fontWeight: '600',
-----------    color: '#fff',
-----------    flex: 1,
-----------    marginRight: 8,
-----------  },
-----------  statusBadge: {
-----------    paddingHorizontal: 8,
-----------    paddingVertical: 4,
-----------    borderRadius: 4,
-----------  },
-----------  statusActive: {
-----------    backgroundColor: '#22c55e',
-----------  },
-----------  statusInactive: {
-----------    backgroundColor: '#888',
-----------  },
-----------  statusText: {
-----------    color: '#fff',
-----------    fontSize: 12,
-----------    fontWeight: '600',
-----------  },
-----------  sessionStats: {
-----------    flexDirection: 'row',
-----------    justifyContent: 'space-around',
-----------    marginBottom: 12,
-----------    paddingVertical: 12,
-----------    backgroundColor: '#0c0c0c',
-----------    borderRadius: 8,
-----------  },
-----------  statItem: {
-----------    alignItems: 'center',
-----------  },
-----------  statNumber: {
-----------    fontSize: 20,
-----------    fontWeight: 'bold',
-----------    color: '#e50914',
-----------  },
-----------  statLabel: {
-----------    fontSize: 12,
-----------    color: '#888',
-----------    marginTop: 4,
-----------  },
-----------  sessionMeta: {
-----------    marginBottom: 12,
-----------  },
-----------  contentType: {
-----------    fontSize: 14,
-----------    color: '#aaa',
-----------  },
-----------  joinButton: {
-----------    backgroundColor: '#e50914',
-----------    paddingVertical: 12,
-----------    borderRadius: 8,
-----------    alignItems: 'center',
-----------  },
-----------  joinButtonText: {
-----------    color: '#fff',
-----------    fontSize: 16,
-----------    fontWeight: '600',
-----------  },
----------   fab: {
----------     position: 'absolute',
----------     right: 16,
+---------+  modalOverlay: {
+---------+    flex: 1,
+---------+    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+---------+    justifyContent: 'center',
+---------+    alignItems: 'center',
+---------+    padding: 20,
+---------+  },
+---------+  modalContent: {
+---------+    backgroundColor: '#1a1a1a',
+---------+    borderRadius: 16,
+---------+    padding: 24,
+---------+    width: '100%',
+---------+    maxWidth: 320,
+---------+    alignItems: 'center',
+---------+  },
+---------+  modalTitle: {
+---------+    fontSize: 20,
+---------+    fontWeight: 'bold',
+---------+    color: '#fff',
+---------+    textAlign: 'center',
+---------+    marginBottom: 8,
+---------+  },
+---------+  modalSubtitle: {
+---------+    fontSize: 14,
+---------+    color: '#888',
+---------+    textAlign: 'center',
+---------+    marginBottom: 24,
+---------+  },
+---------+  modalButton: {
+---------+    flexDirection: 'row',
+---------+    alignItems: 'center',
+---------+    backgroundColor: '#e50914',
+---------+    paddingVertical: 16,
+---------+    paddingHorizontal: 24,
+---------+    borderRadius: 12,
+---------+    width: '100%',
+---------+    justifyContent: 'center',
+---------+    marginBottom: 12,
+---------+    gap: 8,
+---------+  },
+---------+  modalButtonSecondary: {
+---------+    backgroundColor: 'transparent',
+---------+    borderWidth: 2,
+---------+    borderColor: '#e50914',
+---------+  },
+---------+  modalButtonText: {
+---------+    color: '#fff',
+---------+    fontSize: 16,
+---------+    fontWeight: '600',
+---------+  },
+---------+  modalButtonTextSecondary: {
+---------+    color: '#e50914',
+---------+  },
+---------+  modalCancelButton: {
+---------+    paddingVertical: 12,
+---------+    paddingHorizontal: 24,
+---------+    marginTop: 8,
+---------+  },
+---------+  modalCancelText: {
+---------+    color: '#888',
+---------+    fontSize: 16,
+---------+  },
+--------- });
+---------\ No newline at end of file
 ---------diff --git a/model.patch b/model.patch
----------index 36479d9..960605d 100644
+---------index 7e3a0d1..e69de29 100644
 ------------ a/model.patch
 ---------+++ b/model.patch
----------@@ -1,241 +0,0 @@
+---------@@ -1,556 +0,0 @@
+----------diff --git a/frontend/app/tinder.tsx b/frontend/app/tinder.tsx
+----------index 9e939ac..a22de0a 100644
+------------- a/frontend/app/tinder.tsx
+----------+++ b/frontend/app/tinder.tsx
+----------@@ -23,18 +23,6 @@ interface Friend {
+----------   picture?: string;
+---------- }
+---------- 
+-----------interface SwipeSession {
+-----------  id: string;
+-----------  creator: Friend;
+-----------  friend: Friend;
+-----------  content_type: 'popular' | 'search' | 'genre';
+-----------  content_params: Record<string, any>;
+-----------  is_active: boolean;
+-----------  created_at: string;
+-----------  my_swipes_count: number;
+-----------  friend_swipes_count: number;
+-----------}
+-----------
+---------- export default function TinderScreen() {
+----------   const [friends, setFriends] = useState<Friend[]>([]);
+----------   const [isLoading, setIsLoading] = useState(true);
+----------@@ -104,13 +92,6 @@ export default function TinderScreen() {
+----------     }
+----------   };
+---------- 
+-----------  const joinSession = (session: SwipeSession) => {
+-----------    router.push({
+-----------      pathname: '/swipe-session',
+-----------      params: { sessionId: session.id },
+-----------    });
+-----------  };
+-----------
+----------   const addFriend = () => {
+----------     router.push('/add-friend');
+----------   };
+----------@@ -137,48 +118,6 @@ export default function TinderScreen() {
+----------     </View>
+----------   );
+---------- 
+-----------  const renderSession = ({ item }: { item: SwipeSession }) => (
+-----------    <View style={styles.sessionCard}>
+-----------      <View style={styles.sessionHeader}>
+-----------        <Text style={styles.sessionTitle}>
+-----------          Swipe Session with {item.creator.id === user?.id ? item.friend.name : item.creator.name}
+-----------        </Text>
+-----------        <View style={[
+-----------          styles.statusBadge,
+-----------          item.is_active ? styles.statusActive : styles.statusInactive
+-----------        ]}>
+-----------          <Text style={styles.statusText}>{item.is_active ? 'Active' : 'Ended'}</Text>
+-----------        </View>
+-----------      </View>
+-----------      
+-----------      <View style={styles.sessionStats}>
+-----------        <View style={styles.statItem}>
+-----------          <Text style={styles.statNumber}>{item.my_swipes_count}</Text>
+-----------          <Text style={styles.statLabel}>Your Swipes</Text>
+-----------        </View>
+-----------        <View style={styles.statItem}>
+-----------          <Text style={styles.statNumber}>{item.friend_swipes_count}</Text>
+-----------          <Text style={styles.statLabel}>Friend's Swipes</Text>
+-----------        </View>
+-----------      </View>
+-----------
+-----------      <View style={styles.sessionMeta}>
+-----------        <Text style={styles.contentType}>
+-----------          Content: {item.content_type.charAt(0).toUpperCase() + item.content_type.slice(1)}
+-----------        </Text>
+-----------      </View>
+-----------
+-----------      {item.is_active && (
+-----------        <TouchableOpacity
+-----------          style={styles.joinButton}
+-----------          onPress={() => joinSession(item)}
+-----------        >
+-----------          <Text style={styles.joinButtonText}>Continue Swiping</Text>
+-----------        </TouchableOpacity>
+-----------      )}
+-----------    </View>
+-----------  );
+-----------
+----------   if (!isAuthenticated) {
+----------     return null;
+----------   }
+----------@@ -202,88 +141,34 @@ export default function TinderScreen() {
+----------         <Text style={styles.subtitle}>Swipe movies with your friends</Text>
+----------       </View>
+---------- 
+-----------      {/* Tab Navigation */}
+-----------      <View style={styles.tabContainer}>
+-----------        <TouchableOpacity
+-----------          style={[styles.tab, activeTab === 'sessions' && styles.activeTab]}
+-----------          onPress={() => setActiveTab('sessions')}
+-----------        >
+-----------          <Text style={[styles.tabText, activeTab === 'sessions' && styles.activeTabText]}>
+-----------            Sessions ({sessions.length})
+-----------          </Text>
+-----------        </TouchableOpacity>
+-----------        <TouchableOpacity
+-----------          style={[styles.tab, activeTab === 'friends' && styles.activeTab]}
+-----------          onPress={() => setActiveTab('friends')}
+-----------        >
+-----------          <Text style={[styles.tabText, activeTab === 'friends' && styles.activeTabText]}>
+-----------            Friends ({friends.length})
+-----------          </Text>
+-----------        </TouchableOpacity>
+-----------      </View>
+-----------
+----------       {/* Content */}
+-----------      {activeTab === 'friends' ? (
+-----------        <View style={styles.content}>
+-----------          {friends.length === 0 ? (
+-----------            <View style={styles.emptyState}>
+-----------              <Ionicons name="people-outline" size={64} color="#666" />
+-----------              <Text style={styles.emptyTitle}>No Friends Yet</Text>
+-----------              <Text style={styles.emptyText}>
+-----------                Add friends to start swiping movies together!
+-----------              </Text>
+-----------              <TouchableOpacity style={styles.addButton} onPress={addFriend}>
+-----------                <Text style={styles.addButtonText}>Add Friends</Text>
+-----------              </TouchableOpacity>
+-----------            </View>
+-----------          ) : (
+-----------            <>
+-----------              <FlashList
+-----------                data={friends}
+-----------                renderItem={renderFriend}
+-----------                keyExtractor={(item) => item.id}
+-----------                estimatedItemSize={80}
+-----------                contentContainerStyle={styles.listContent}
+-----------              />
+-----------              <TouchableOpacity style={styles.fab} onPress={addFriend}>
+-----------                <Ionicons name="add" size={24} color="#fff" />
+-----------              </TouchableOpacity>
+-----------            </>
+-----------          )}
+-----------        </View>
+-----------      ) : (
+-----------        <View style={styles.content}>
+-----------          {sessions.length === 0 ? (
+-----------            <View style={styles.emptyState}>
+-----------              <Ionicons name="heart-outline" size={64} color="#666" />
+-----------              <Text style={styles.emptyTitle}>No Sessions Yet</Text>
+-----------              <Text style={styles.emptyText}>
+-----------                Start a swipe session with a friend to find movies to watch together!
+-----------              </Text>
+-----------              {friends.length > 0 ? (
+-----------                <TouchableOpacity
+-----------                  style={styles.addButton}
+-----------                  onPress={() => setActiveTab('friends')}
+-----------                >
+-----------                  <Text style={styles.addButtonText}>Start Swiping</Text>
+-----------                </TouchableOpacity>
+-----------              ) : (
+-----------                <TouchableOpacity style={styles.addButton} onPress={addFriend}>
+-----------                  <Text style={styles.addButtonText}>Add Friends First</Text>
+-----------                </TouchableOpacity>
+-----------              )}
+-----------            </View>
+-----------          ) : (
+----------+      <View style={styles.content}>
+----------+        {friends.length === 0 ? (
+----------+          <View style={styles.emptyState}>
+----------+            <Ionicons name="people-outline" size={64} color="#666" />
+----------+            <Text style={styles.emptyTitle}>No Friends Yet</Text>
+----------+            <Text style={styles.emptyText}>
+----------+              Add friends to start swiping movies together!
+----------+            </Text>
+----------+            <TouchableOpacity style={styles.addButton} onPress={addFriend}>
+----------+              <Text style={styles.addButtonText}>Add Friends</Text>
+----------+            </TouchableOpacity>
+----------+          </View>
+----------+        ) : (
+----------+          <>
+----------             <FlashList
+-----------              data={sessions}
+-----------              renderItem={renderSession}
+----------+              data={friends}
+----------+              renderItem={renderFriend}
+----------               keyExtractor={(item) => item.id}
+-----------              estimatedItemSize={120}
+----------+              estimatedItemSize={80}
+----------               contentContainerStyle={styles.listContent}
+----------             />
+-----------          )}
+-----------        </View>
+-----------      )}
+----------+            <TouchableOpacity style={styles.fab} onPress={addFriend}>
+----------+              <Ionicons name="add" size={24} color="#fff" />
+----------+            </TouchableOpacity>
+----------+          </>
+----------+        )}
+----------+      </View>
+----------     </SafeAreaView>
+----------   );
+---------- }
+----------@@ -318,30 +203,6 @@ const styles = StyleSheet.create({
+----------     fontSize: 16,
+----------     color: '#888',
+----------   },
+-----------  tabContainer: {
+-----------    flexDirection: 'row',
+-----------    paddingHorizontal: 16,
+-----------    marginBottom: 16,
+-----------  },
+-----------  tab: {
+-----------    flex: 1,
+-----------    paddingVertical: 12,
+-----------    alignItems: 'center',
+-----------    backgroundColor: '#1a1a1a',
+-----------    marginHorizontal: 4,
+-----------    borderRadius: 8,
+-----------  },
+-----------  activeTab: {
+-----------    backgroundColor: '#e50914',
+-----------  },
+-----------  tabText: {
+-----------    color: '#888',
+-----------    fontSize: 14,
+-----------    fontWeight: '600',
+-----------  },
+-----------  activeTabText: {
+-----------    color: '#fff',
+-----------  },
+----------   content: {
+----------     flex: 1,
+----------     paddingHorizontal: 16,
+----------@@ -434,80 +295,6 @@ const styles = StyleSheet.create({
+----------     fontSize: 14,
+----------     fontWeight: '600',
+----------   },
+-----------  sessionCard: {
+-----------    backgroundColor: '#1a1a1a',
+-----------    padding: 16,
+-----------    borderRadius: 12,
+-----------    marginBottom: 12,
+-----------  },
+-----------  sessionHeader: {
+-----------    flexDirection: 'row',
+-----------    justifyContent: 'space-between',
+-----------    alignItems: 'flex-start',
+-----------    marginBottom: 12,
+-----------  },
+-----------  sessionTitle: {
+-----------    fontSize: 16,
+-----------    fontWeight: '600',
+-----------    color: '#fff',
+-----------    flex: 1,
+-----------    marginRight: 8,
+-----------  },
+-----------  statusBadge: {
+-----------    paddingHorizontal: 8,
+-----------    paddingVertical: 4,
+-----------    borderRadius: 4,
+-----------  },
+-----------  statusActive: {
+-----------    backgroundColor: '#22c55e',
+-----------  },
+-----------  statusInactive: {
+-----------    backgroundColor: '#888',
+-----------  },
+-----------  statusText: {
+-----------    color: '#fff',
+-----------    fontSize: 12,
+-----------    fontWeight: '600',
+-----------  },
+-----------  sessionStats: {
+-----------    flexDirection: 'row',
+-----------    justifyContent: 'space-around',
+-----------    marginBottom: 12,
+-----------    paddingVertical: 12,
+-----------    backgroundColor: '#0c0c0c',
+-----------    borderRadius: 8,
+-----------  },
+-----------  statItem: {
+-----------    alignItems: 'center',
+-----------  },
+-----------  statNumber: {
+-----------    fontSize: 20,
+-----------    fontWeight: 'bold',
+-----------    color: '#e50914',
+-----------  },
+-----------  statLabel: {
+-----------    fontSize: 12,
+-----------    color: '#888',
+-----------    marginTop: 4,
+-----------  },
+-----------  sessionMeta: {
+-----------    marginBottom: 12,
+-----------  },
+-----------  contentType: {
+-----------    fontSize: 14,
+-----------    color: '#aaa',
+-----------  },
+-----------  joinButton: {
+-----------    backgroundColor: '#e50914',
+-----------    paddingVertical: 12,
+-----------    borderRadius: 8,
+-----------    alignItems: 'center',
+-----------  },
+-----------  joinButtonText: {
+-----------    color: '#fff',
+-----------    fontSize: 16,
+-----------    fontWeight: '600',
+-----------  },
+----------   fab: {
+----------     position: 'absolute',
+----------     right: 16,
 ----------diff --git a/model.patch b/model.patch
-----------index 86d5cb1..e69de29 100644
+----------index 36479d9..960605d 100644
 ------------- a/model.patch
 ----------+++ b/model.patch
-----------@@ -1,236 +0,0 @@
+----------@@ -1,241 +0,0 @@
 -----------diff --git a/model.patch b/model.patch
------------index 6f6de07..e69de29 100644
+-----------index 86d5cb1..e69de29 100644
 -------------- a/model.patch
 -----------+++ b/model.patch
------------@@ -1,231 +0,0 @@
-------------diff --git a/backend/server.py b/backend/server.py
-------------index b8ffef8..3c782e4 100644
---------------- a/backend/server.py
-------------+++ b/backend/server.py
-------------@@ -355,7 +355,8 @@ async def get_title_details(tmdb_id: int, media_type: str = Query("movie", regex
-------------         else:
-------------             result["seasons"] = tmdb_data.get("number_of_seasons", 0)
-------------             result["episodes"] = tmdb_data.get("number_of_episodes", 0)
--------------            result["episode_runtime"] = tmdb_data.get("episode_run_time", [None])[0]
-------------+            episode_runtimes = tmdb_data.get("episode_run_time", [])
-------------+            result["episode_runtime"] = episode_runtimes[0] if episode_runtimes else None
-------------         
-------------         # Add cast and crew
-------------         credits = tmdb_data.get("credits", {})
-------------diff --git a/test_result.md b/test_result.md
-------------index 187cba4..8395c0e 100644
---------------- a/test_result.md
-------------+++ b/test_result.md
-------------@@ -100,4 +100,209 @@
------------- 
------------- #====================================================================================================
------------- # Testing Data - Main Agent and testing sub agent both should log testing data below this section
--------------#====================================================================================================
-------------\ No newline at end of file
-------------+#====================================================================================================
-------------+
-------------+user_problem_statement: "Test the Movie Recommendation API backend thoroughly with 3 external API integrations: TMDB, OMDb, Streaming Availability API"
-------------+
-------------+backend:
-------------+  - task: "Health Check Endpoint"
-------------+    implemented: true
-------------+    working: true
-------------+    file: "backend/server.py"
-------------+    stuck_count: 0
-------------+    priority: "high"
-------------+    needs_retesting: false
-------------+    status_history:
-------------+        - working: true
-------------+          agent: "testing"
-------------+          comment: "GET /api/ endpoint working correctly, returns API status and message"
-------------+
-------------+  - task: "Search by Title"
-------------+    implemented: true
-------------+    working: true
-------------+    file: "backend/server.py"
-------------+    stuck_count: 0
-------------+    priority: "high"
-------------+    needs_retesting: false
-------------+    status_history:
-------------+        - working: true
-------------+          agent: "testing"
-------------+          comment: "POST /api/search with scope='title' working correctly. Tested with 'Inception' query, found 11 results including the target movie"
-------------+
-------------+  - task: "Search by Genre"
-------------+    implemented: true
-------------+    working: true
-------------+    file: "backend/server.py"
-------------+    stuck_count: 0
-------------+    priority: "high"
-------------+    needs_retesting: false
-------------+    status_history:
-------------+        - working: true
-------------+          agent: "testing"
-------------+          comment: "POST /api/search with scope='genre' working correctly. Tested with 'crime' query, found 20 crime movies"
-------------+
-------------+  - task: "Search by Cast"
-------------+    implemented: true
-------------+    working: true
-------------+    file: "backend/server.py"
-------------+    stuck_count: 0
-------------+    priority: "high"
-------------+    needs_retesting: false
-------------+    status_history:
-------------+        - working: true
-------------+          agent: "testing"
-------------+          comment: "POST /api/search with scope='cast' working correctly. Tested with 'Leonardo DiCaprio' query, found 20 movies"
-------------+
-------------+  - task: "Search by Director"
-------------+    implemented: true
-------------+    working: true
-------------+    file: "backend/server.py"
-------------+    stuck_count: 0
-------------+    priority: "high"
-------------+    needs_retesting: false
-------------+    status_history:
-------------+        - working: true
-------------+          agent: "testing"
-------------+          comment: "POST /api/search with scope='director' working correctly. Tested with 'Christopher Nolan' query, found 19 movies"
-------------+
-------------+  - task: "Movie Title Details"
-------------+    implemented: true
-------------+    working: true
-------------+    file: "backend/server.py"
-------------+    stuck_count: 0
-------------+    priority: "high"
-------------+    needs_retesting: false
-------------+    status_history:
-------------+        - working: true
-------------+          agent: "testing"
-------------+          comment: "GET /api/title/{id} for movies working correctly. Tested with Inception (ID: 27205), retrieved complete details including TMDB+OMDb ratings, hit/flop calculation (Hit status), cast, crew, and financial data"
-------------+
-------------+  - task: "TV Show Title Details"
-------------+    implemented: true
-------------+    working: true
-------------+    file: "backend/server.py"
-------------+    stuck_count: 1
-------------+    priority: "high"
-------------+    needs_retesting: false
-------------+    status_history:
-------------+        - working: false
-------------+          agent: "testing"
-------------+          comment: "GET /api/title/{id} for TV shows initially failed with 'list index out of range' error due to empty episode_run_time array"
-------------+        - working: true
-------------+          agent: "testing"
-------------+          comment: "Fixed episode_runtime handling for TV shows. Now working correctly with Breaking Bad (ID: 1396), showing 5 seasons, 62 episodes, and proper ratings integration"
-------------+
-------------+  - task: "Streaming Availability"
-------------+    implemented: true
-------------+    working: true
-------------+    file: "backend/server.py"
-------------+    stuck_count: 0
-------------+    priority: "medium"
-------------+    needs_retesting: false
-------------+    status_history:
-------------+        - working: true
-------------+          agent: "testing"
-------------+          comment: "GET /api/streaming/{id} working with graceful error handling. Streaming API has rate limits (403/429 errors) but endpoint returns proper empty results structure when data unavailable"
-------------+
-------------+  - task: "Popular Titles"
-------------+    implemented: true
-------------+    working: true
-------------+    file: "backend/server.py"
-------------+    stuck_count: 0
-------------+    priority: "high"
-------------+    needs_retesting: false
-------------+    status_history:
-------------+        - working: true
-------------+          agent: "testing"
-------------+          comment: "GET /api/popular endpoint working correctly, retrieved 20 trending titles from TMDB"
-------------+
-------------+  - task: "Search History Management"
-------------+    implemented: true
-------------+    working: true
-------------+    file: "backend/server.py"
-------------+    stuck_count: 0
-------------+    priority: "medium"
-------------+    needs_retesting: false
-------------+    status_history:
-------------+        - working: true
-------------+          agent: "testing"
-------------+          comment: "Both GET /api/search/history and DELETE /api/search/history working correctly. Search history persists in MongoDB and can be retrieved and cleared properly"
-------------+
-------------+  - task: "Genres Endpoint"
-------------+    implemented: true
-------------+    working: true
-------------+    file: "backend/server.py"
-------------+    stuck_count: 0
-------------+    priority: "medium"
-------------+    needs_retesting: false
-------------+    status_history:
-------------+        - working: true
-------------+          agent: "testing"
-------------+          comment: "GET /api/genres working correctly, retrieved 27 combined movie and TV genres from TMDB"
-------------+
-------------+  - task: "External API Integration - TMDB"
-------------+    implemented: true
-------------+    working: true
-------------+    file: "backend/server.py"
-------------+    stuck_count: 0
-------------+    priority: "high"
-------------+    needs_retesting: false
-------------+    status_history:
-------------+        - working: true
-------------+          agent: "testing"
-------------+          comment: "TMDB API integration working correctly across all endpoints. Proper error handling and data formatting implemented"
-------------+
-------------+  - task: "External API Integration - OMDb"
-------------+    implemented: true
-------------+    working: true
-------------+    file: "backend/server.py"
-------------+    stuck_count: 0
-------------+    priority: "high"
-------------+    needs_retesting: false
-------------+    status_history:
-------------+        - working: true
-------------+          agent: "testing"
-------------+          comment: "OMDb API integration working correctly. Successfully retrieving additional ratings (IMDb: 8.8, RT Critics: 87%, Metacritic: 74) for title details"
-------------+
-------------+  - task: "External API Integration - Streaming Availability"
-------------+    implemented: true
-------------+    working: true
-------------+    file: "backend/server.py"
-------------+    stuck_count: 0
-------------+    priority: "low"
-------------+    needs_retesting: false
-------------+    status_history:
-------------+        - working: true
-------------+          agent: "testing"
-------------+          comment: "Streaming Availability API integration implemented with proper error handling. API has rate limits but graceful fallback implemented"
-------------+
-------------+  - task: "Hit/Flop Calculation"
-------------+    implemented: true
-------------+    working: true
-------------+    file: "backend/server.py"
-------------+    stuck_count: 0
-------------+    priority: "medium"
-------------+    needs_retesting: false
-------------+    status_history:
-------------+        - working: true
-------------+          agent: "testing"
-------------+          comment: "Hit/Flop calculation working correctly. Inception correctly calculated as 'Hit' (revenue $839M vs budget $160M = 5.24x ratio)"
-------------+
-------------+frontend:
-------------+  # No frontend testing performed as per instructions
-------------+
-------------+metadata:
-------------+  created_by: "testing_agent"
-------------+  version: "1.0"
-------------+  test_sequence: 1
-------------+  run_ui: false
-------------+
-------------+test_plan:
-------------+  current_focus: []
-------------+  stuck_tasks: []
-------------+  test_all: true
-------------+  test_priority: "high_first"
-------------+
-------------+agent_communication:
-------------+    - agent: "testing"
-------------+      message: "Completed comprehensive backend API testing. All 13 test cases passed after fixing TV show episode_runtime handling. All external API integrations (TMDB, OMDb, Streaming) working correctly with proper error handling. MongoDB integration for search history working. Hit/Flop calculation accurate. Streaming API has rate limits but graceful fallback implemented."
-------------\ No newline at end of file
----diff --git a/test_result.md b/test_result.md
----index fcca957..3ecc0d4 100644
------- a/test_result.md
----+++ b/test_result.md
----@@ -107,15 +107,18 @@ user_problem_statement: "Fix swipe gesture functionality in FindFlix Tinder-like
---- backend:
----   - task: "Swipe Session API Integration"
----     implemented: true
-----    working: true
----+    working: false
----     file: "backend/server.py"
-----    stuck_count: 0
----+    stuck_count: 1
----     priority: "high"
-----    needs_retesting: true
----+    needs_retesting: false
----     status_history:
----         - working: true
----           agent: "main"
----           comment: "Backend swipe endpoints working correctly. Need to verify they still work after frontend gesture fix."
----+        - working: false
----+          agent: "testing"
----+          comment: "Critical issue found: Friend request system not working properly. Friend requests are sent successfully but not retrieved by the receiving user, preventing swipe session creation. Authentication endpoints work correctly. Most movie API endpoints work correctly. Swipe session endpoints cannot be tested without working friend system."
---- 
----   - task: "Health Check Endpoint"
----     implemented: true
----@@ -331,4 +334,6 @@ agent_communication:
----     - agent: "testing"
----       message: "Completed comprehensive backend API testing. All 13 test cases passed after fixing TV show episode_runtime handling. All external API integrations (TMDB, OMDb, Streaming) working correctly with proper error handling. MongoDB integration for search history working. Hit/Flop calculation accurate. Streaming API has rate limits but graceful fallback implemented."
----     - agent: "main"
-----      message: "Fixed swipe gesture state synchronization issue. Updated PanResponder to use useRef for capturing fresh state values instead of stale closures. Modified submitSwipe, handleLike, and handleDislike functions to accept explicit state parameters. Ready for backend testing of swipe endpoints and then frontend gesture testing."
----\ No newline at end of file
----+      message: "Fixed swipe gesture state synchronization issue. Updated PanResponder to use useRef for capturing fresh state values instead of stale closures. Modified submitSwipe, handleLike, and handleDislike functions to accept explicit state parameters. Ready for backend testing of swipe endpoints and then frontend gesture testing."
----+    - agent: "testing"
----+      message: "CRITICAL ISSUE FOUND: Friend request system has a major bug. Friend requests are sent successfully (POST /api/friends/request returns 200), but when the receiving user calls GET /api/friends/requests, they get an empty array. This prevents the friend acceptance flow and blocks swipe session creation. Authentication endpoints work correctly (registration, login, logout). Most movie API endpoints work correctly. Cannot test swipe session endpoints without working friend system. This needs immediate investigation by main agent."
----\ No newline at end of file
+-----------@@ -1,236 +0,0 @@
+------------diff --git a/model.patch b/model.patch
+------------index 6f6de07..e69de29 100644
+--------------- a/model.patch
+------------+++ b/model.patch
+------------@@ -1,231 +0,0 @@
+-------------diff --git a/backend/server.py b/backend/server.py
+-------------index b8ffef8..3c782e4 100644
+---------------- a/backend/server.py
+-------------+++ b/backend/server.py
+-------------@@ -355,7 +355,8 @@ async def get_title_details(tmdb_id: int, media_type: str = Query("movie", regex
+-------------         else:
+-------------             result["seasons"] = tmdb_data.get("number_of_seasons", 0)
+-------------             result["episodes"] = tmdb_data.get("number_of_episodes", 0)
+--------------            result["episode_runtime"] = tmdb_data.get("episode_run_time", [None])[0]
+-------------+            episode_runtimes = tmdb_data.get("episode_run_time", [])
+-------------+            result["episode_runtime"] = episode_runtimes[0] if episode_runtimes else None
+-------------         
+-------------         # Add cast and crew
+-------------         credits = tmdb_data.get("credits", {})
+-------------diff --git a/test_result.md b/test_result.md
+-------------index 187cba4..8395c0e 100644
+---------------- a/test_result.md
+-------------+++ b/test_result.md
+-------------@@ -100,4 +100,209 @@
+------------- 
+------------- #====================================================================================================
+------------- # Testing Data - Main Agent and testing sub agent both should log testing data below this section
+--------------#====================================================================================================
+-------------\ No newline at end of file
+-------------+#====================================================================================================
+-------------+
+-------------+user_problem_statement: "Test the Movie Recommendation API backend thoroughly with 3 external API integrations: TMDB, OMDb, Streaming Availability API"
+-------------+
+-------------+backend:
+-------------+  - task: "Health Check Endpoint"
+-------------+    implemented: true
+-------------+    working: true
+-------------+    file: "backend/server.py"
+-------------+    stuck_count: 0
+-------------+    priority: "high"
+-------------+    needs_retesting: false
+-------------+    status_history:
+-------------+        - working: true
+-------------+          agent: "testing"
+-------------+          comment: "GET /api/ endpoint working correctly, returns API status and message"
+-------------+
+-------------+  - task: "Search by Title"
+-------------+    implemented: true
+-------------+    working: true
+-------------+    file: "backend/server.py"
+-------------+    stuck_count: 0
+-------------+    priority: "high"
+-------------+    needs_retesting: false
+-------------+    status_history:
+-------------+        - working: true
+-------------+          agent: "testing"
+-------------+          comment: "POST /api/search with scope='title' working correctly. Tested with 'Inception' query, found 11 results including the target movie"
+-------------+
+-------------+  - task: "Search by Genre"
+-------------+    implemented: true
+-------------+    working: true
+-------------+    file: "backend/server.py"
+-------------+    stuck_count: 0
+-------------+    priority: "high"
+-------------+    needs_retesting: false
+-------------+    status_history:
+-------------+        - working: true
+-------------+          agent: "testing"
+-------------+          comment: "POST /api/search with scope='genre' working correctly. Tested with 'crime' query, found 20 crime movies"
+-------------+
+-------------+  - task: "Search by Cast"
+-------------+    implemented: true
+-------------+    working: true
+-------------+    file: "backend/server.py"
+-------------+    stuck_count: 0
+-------------+    priority: "high"
+-------------+    needs_retesting: false
+-------------+    status_history:
+-------------+        - working: true
+-------------+          agent: "testing"
+-------------+          comment: "POST /api/search with scope='cast' working correctly. Tested with 'Leonardo DiCaprio' query, found 20 movies"
+-------------+
+-------------+  - task: "Search by Director"
+-------------+    implemented: true
+-------------+    working: true
+-------------+    file: "backend/server.py"
+-------------+    stuck_count: 0
+-------------+    priority: "high"
+-------------+    needs_retesting: false
+-------------+    status_history:
+-------------+        - working: true
+-------------+          agent: "testing"
+-------------+          comment: "POST /api/search with scope='director' working correctly. Tested with 'Christopher Nolan' query, found 19 movies"
+-------------+
+-------------+  - task: "Movie Title Details"
+-------------+    implemented: true
+-------------+    working: true
+-------------+    file: "backend/server.py"
+-------------+    stuck_count: 0
+-------------+    priority: "high"
+-------------+    needs_retesting: false
+-------------+    status_history:
+-------------+        - working: true
+-------------+          agent: "testing"
+-------------+          comment: "GET /api/title/{id} for movies working correctly. Tested with Inception (ID: 27205), retrieved complete details including TMDB+OMDb ratings, hit/flop calculation (Hit status), cast, crew, and financial data"
+-------------+
+-------------+  - task: "TV Show Title Details"
+-------------+    implemented: true
+-------------+    working: true
+-------------+    file: "backend/server.py"
+-------------+    stuck_count: 1
+-------------+    priority: "high"
+-------------+    needs_retesting: false
+-------------+    status_history:
+-------------+        - working: false
+-------------+          agent: "testing"
+-------------+          comment: "GET /api/title/{id} for TV shows initially failed with 'list index out of range' error due to empty episode_run_time array"
+-------------+        - working: true
+-------------+          agent: "testing"
+-------------+          comment: "Fixed episode_runtime handling for TV shows. Now working correctly with Breaking Bad (ID: 1396), showing 5 seasons, 62 episodes, and proper ratings integration"
+-------------+
+-------------+  - task: "Streaming Availability"
+-------------+    implemented: true
+-------------+    working: true
+-------------+    file: "backend/server.py"
+-------------+    stuck_count: 0
+-------------+    priority: "medium"
+-------------+    needs_retesting: false
+-------------+    status_history:
+-------------+        - working: true
+-------------+          agent: "testing"
+-------------+          comment: "GET /api/streaming/{id} working with graceful error handling. Streaming API has rate limits (403/429 errors) but endpoint returns proper empty results structure when data unavailable"
+-------------+
+-------------+  - task: "Popular Titles"
+-------------+    implemented: true
+-------------+    working: true
+-------------+    file: "backend/server.py"
+-------------+    stuck_count: 0
+-------------+    priority: "high"
+-------------+    needs_retesting: false
+-------------+    status_history:
+-------------+        - working: true
+-------------+          agent: "testing"
+-------------+          comment: "GET /api/popular endpoint working correctly, retrieved 20 trending titles from TMDB"
+-------------+
+-------------+  - task: "Search History Management"
+-------------+    implemented: true
+-------------+    working: true
+-------------+    file: "backend/server.py"
+-------------+    stuck_count: 0
+-------------+    priority: "medium"
+-------------+    needs_retesting: false
+-------------+    status_history:
+-------------+        - working: true
+-------------+          agent: "testing"
+-------------+          comment: "Both GET /api/search/history and DELETE /api/search/history working correctly. Search history persists in MongoDB and can be retrieved and cleared properly"
+-------------+
+-------------+  - task: "Genres Endpoint"
+-------------+    implemented: true
+-------------+    working: true
+-------------+    file: "backend/server.py"
+-------------+    stuck_count: 0
+-------------+    priority: "medium"
+-------------+    needs_retesting: false
+-------------+    status_history:
+-------------+        - working: true
+-------------+          agent: "testing"
+-------------+          comment: "GET /api/genres working correctly, retrieved 27 combined movie and TV genres from TMDB"
+-------------+
+-------------+  - task: "External API Integration - TMDB"
+-------------+    implemented: true
+-------------+    working: true
+-------------+    file: "backend/server.py"
+-------------+    stuck_count: 0
+-------------+    priority: "high"
+-------------+    needs_retesting: false
+-------------+    status_history:
+-------------+        - working: true
+-------------+          agent: "testing"
+-------------+          comment: "TMDB API integration working correctly across all endpoints. Proper error handling and data formatting implemented"
+-------------+
+-------------+  - task: "External API Integration - OMDb"
+-------------+    implemented: true
+-------------+    working: true
+-------------+    file: "backend/server.py"
+-------------+    stuck_count: 0
+-------------+    priority: "high"
+-------------+    needs_retesting: false
+-------------+    status_history:
+-------------+        - working: true
+-------------+          agent: "testing"
+-------------+          comment: "OMDb API integration working correctly. Successfully retrieving additional ratings (IMDb: 8.8, RT Critics: 87%, Metacritic: 74) for title details"
+-------------+
+-------------+  - task: "External API Integration - Streaming Availability"
+-------------+    implemented: true
+-------------+    working: true
+-------------+    file: "backend/server.py"
+-------------+    stuck_count: 0
+-------------+    priority: "low"
+-------------+    needs_retesting: false
+-------------+    status_history:
+-------------+        - working: true
+-------------+          agent: "testing"
+-------------+          comment: "Streaming Availability API integration implemented with proper error handling. API has rate limits but graceful fallback implemented"
+-------------+
+-------------+  - task: "Hit/Flop Calculation"
+-------------+    implemented: true
+-------------+    working: true
+-------------+    file: "backend/server.py"
+-------------+    stuck_count: 0
+-------------+    priority: "medium"
+-------------+    needs_retesting: false
+-------------+    status_history:
+-------------+        - working: true
+-------------+          agent: "testing"
+-------------+          comment: "Hit/Flop calculation working correctly. Inception correctly calculated as 'Hit' (revenue $839M vs budget $160M = 5.24x ratio)"
+-------------+
+-------------+frontend:
+-------------+  # No frontend testing performed as per instructions
+-------------+
+-------------+metadata:
+-------------+  created_by: "testing_agent"
+-------------+  version: "1.0"
+-------------+  test_sequence: 1
+-------------+  run_ui: false
+-------------+
+-------------+test_plan:
+-------------+  current_focus: []
+-------------+  stuck_tasks: []
+-------------+  test_all: true
+-------------+  test_priority: "high_first"
+-------------+
+-------------+agent_communication:
+-------------+    - agent: "testing"
+-------------+      message: "Completed comprehensive backend API testing. All 13 test cases passed after fixing TV show episode_runtime handling. All external API integrations (TMDB, OMDb, Streaming) working correctly with proper error handling. MongoDB integration for search history working. Hit/Flop calculation accurate. Streaming API has rate limits but graceful fallback implemented."
+-------------\ No newline at end of file
+----diff --git a/test_result.md b/test_result.md
+----index fcca957..3ecc0d4 100644
+------- a/test_result.md
+----+++ b/test_result.md
+----@@ -107,15 +107,18 @@ user_problem_statement: "Fix swipe gesture functionality in FindFlix Tinder-like
+---- backend:
+----   - task: "Swipe Session API Integration"
+----     implemented: true
+-----    working: true
+----+    working: false
+----     file: "backend/server.py"
+-----    stuck_count: 0
+----+    stuck_count: 1
+----     priority: "high"
+-----    needs_retesting: true
+----+    needs_retesting: false
+----     status_history:
+----         - working: true
+----           agent: "main"
+----           comment: "Backend swipe endpoints working correctly. Need to verify they still work after frontend gesture fix."
+----+        - working: false
+----+          agent: "testing"
+----+          comment: "Critical issue found: Friend request system not working properly. Friend requests are sent successfully but not retrieved by the receiving user, preventing swipe session creation. Authentication endpoints work correctly. Most movie API endpoints work correctly. Swipe session endpoints cannot be tested without working friend system."
+---- 
+----   - task: "Health Check Endpoint"
+----     implemented: true
+----@@ -331,4 +334,6 @@ agent_communication:
+----     - agent: "testing"
+----       message: "Completed comprehensive backend API testing. All 13 test cases passed after fixing TV show episode_runtime handling. All external API integrations (TMDB, OMDb, Streaming) working correctly with proper error handling. MongoDB integration for search history working. Hit/Flop calculation accurate. Streaming API has rate limits but graceful fallback implemented."
+----     - agent: "main"
+-----      message: "Fixed swipe gesture state synchronization issue. Updated PanResponder to use useRef for capturing fresh state values instead of stale closures. Modified submitSwipe, handleLike, and handleDislike functions to accept explicit state parameters. Ready for backend testing of swipe endpoints and then frontend gesture testing."
+----\ No newline at end of file
+----+      message: "Fixed swipe gesture state synchronization issue. Updated PanResponder to use useRef for capturing fresh state values instead of stale closures. Modified submitSwipe, handleLike, and handleDislike functions to accept explicit state parameters. Ready for backend testing of swipe endpoints and then frontend gesture testing."
+----+    - agent: "testing"
+----+      message: "CRITICAL ISSUE FOUND: Friend request system has a major bug. Friend requests are sent successfully (POST /api/friends/request returns 200), but when the receiving user calls GET /api/friends/requests, they get an empty array. This prevents the friend acceptance flow and blocks swipe session creation. Authentication endpoints work correctly (registration, login, logout). Most movie API endpoints work correctly. Cannot test swipe session endpoints without working friend system. This needs immediate investigation by main agent."
+----\ No newline at end of file
+--diff --git a/test_result.md b/test_result.md
+--index 3ecc0d4..0f9fc32 100644
+----- a/test_result.md
+--+++ b/test_result.md
+--@@ -107,7 +107,7 @@ user_problem_statement: "Fix swipe gesture functionality in FindFlix Tinder-like
+-- backend:
+--   - task: "Swipe Session API Integration"
+--     implemented: true
+---    working: false
+--+    working: true
+--     file: "backend/server.py"
+--     stuck_count: 1
+--     priority: "high"
+--@@ -119,6 +119,9 @@ backend:
+--         - working: false
+--           agent: "testing"
+--           comment: "Critical issue found: Friend request system not working properly. Friend requests are sent successfully but not retrieved by the receiving user, preventing swipe session creation. Authentication endpoints work correctly. Most movie API endpoints work correctly. Swipe session endpoints cannot be tested without working friend system."
+--+        - working: true
+--+          agent: "testing"
+--+          comment: "FIXED: Friend request system now working correctly with enhanced logging. Successfully tested: 1) Created 2 test users (Alice and Bob), 2) Sent friend request from Alice to Bob, 3) Bob successfully retrieved the friend request. Enhanced logging shows all database operations working properly: 'Creating friend request', 'Friend request created with ID', 'Verification query result', 'Looking for friend requests for user', 'Found 1 pending requests for user'. The database logging fix implemented by main agent resolved the issue."
+-- 
+--   - task: "Health Check Endpoint"
+--     implemented: true
+--@@ -336,4 +339,6 @@ agent_communication:
+--     - agent: "main"
+--       message: "Fixed swipe gesture state synchronization issue. Updated PanResponder to use useRef for capturing fresh state values instead of stale closures. Modified submitSwipe, handleLike, and handleDislike functions to accept explicit state parameters. Ready for backend testing of swipe endpoints and then frontend gesture testing."
+--     - agent: "testing"
+---      message: "CRITICAL ISSUE FOUND: Friend request system has a major bug. Friend requests are sent successfully (POST /api/friends/request returns 200), but when the receiving user calls GET /api/friends/requests, they get an empty array. This prevents the friend acceptance flow and blocks swipe session creation. Authentication endpoints work correctly (registration, login, logout). Most movie API endpoints work correctly. Cannot test swipe session endpoints without working friend system. This needs immediate investigation by main agent."
+--\ No newline at end of file
+--+      message: "CRITICAL ISSUE FOUND: Friend request system has a major bug. Friend requests are sent successfully (POST /api/friends/request returns 200), but when the receiving user calls GET /api/friends/requests, they get an empty array. This prevents the friend acceptance flow and blocks swipe session creation. Authentication endpoints work correctly (registration, login, logout). Most movie API endpoints work correctly. Cannot test swipe session endpoints without working friend system. This needs immediate investigation by main agent."
+--+    - agent: "testing"
+--+      message: "FRIEND REQUEST SYSTEM FIXED! Successfully completed focused testing of the enhanced logging fix. Test results: ✅ Created 2 test users (Alice and Bob), ✅ Sent friend request from Alice to Bob, ✅ Bob successfully retrieved 1 friend request. All enhanced logging messages are working perfectly: 'Creating friend request', 'Friend request created with ID', 'Verification query result', 'Looking for friend requests for user', 'Found 1 pending requests for user'. The database logging fix implemented by main agent has resolved the critical issue. Friend request system is now fully operational."
+--\ No newline at end of file
 -diff --git a/test_result.md b/test_result.md
--index 3ecc0d4..0f9fc32 100644
+-index 0f9fc32..9388977 100644
 ---- a/test_result.md
 -+++ b/test_result.md
--@@ -107,7 +107,7 @@ user_problem_statement: "Fix swipe gesture functionality in FindFlix Tinder-like
+-@@ -105,7 +105,7 @@
+- user_problem_statement: "Fix swipe gesture functionality in FindFlix Tinder-like movie matching feature. Swipe gestures only animate cards but don't advance to next movie or register swipes, while Like/Dislike buttons work correctly. This is due to state synchronization issue where movies array becomes empty during gesture execution."
+- 
 - backend:
--   - task: "Swipe Session API Integration"
+--  - task: "Swipe Session API Integration"
+-+  - task: "Friend Request System Fix"
 -     implemented: true
---    working: false
--+    working: true
+-     working: true
 -     file: "backend/server.py"
--     stuck_count: 1
+-@@ -113,15 +113,24 @@ backend:
 -     priority: "high"
--@@ -119,6 +119,9 @@ backend:
+-     needs_retesting: false
+-     status_history:
+--        - working: true
+--          agent: "main"
+--          comment: "Backend swipe endpoints working correctly. Need to verify they still work after frontend gesture fix."
 -         - working: false
 -           agent: "testing"
--           comment: "Critical issue found: Friend request system not working properly. Friend requests are sent successfully but not retrieved by the receiving user, preventing swipe session creation. Authentication endpoints work correctly. Most movie API endpoints work correctly. Swipe session endpoints cannot be tested without working friend system."
+--          comment: "Critical issue found: Friend request system not working properly. Friend requests are sent successfully but not retrieved by the receiving user, preventing swipe session creation. Authentication endpoints work correctly. Most movie API endpoints work correctly. Swipe session endpoints cannot be tested without working friend system."
+-+          comment: "Friend requests sent successfully but not retrieved by receiving users due to database logging issue"
+-         - working: true
+--          agent: "testing"
+--          comment: "FIXED: Friend request system now working correctly with enhanced logging. Successfully tested: 1) Created 2 test users (Alice and Bob), 2) Sent friend request from Alice to Bob, 3) Bob successfully retrieved the friend request. Enhanced logging shows all database operations working properly: 'Creating friend request', 'Friend request created with ID', 'Verification query result', 'Looking for friend requests for user', 'Found 1 pending requests for user'. The database logging fix implemented by main agent resolved the issue."
+-+          agent: "main"
+-+          comment: "Fixed database logging and verification. Added detailed logging to friend request creation and retrieval. Testing agent confirmed friend request system now fully operational."
+-+
+-+  - task: "Swipe Session API Integration"
+-+    implemented: true
+-+    working: true
+-+    file: "backend/server.py"
+-+    stuck_count: 0
+-+    priority: "high"
+-+    needs_retesting: true
+-+    status_history:
 -+        - working: true
--+          agent: "testing"
--+          comment: "FIXED: Friend request system now working correctly with enhanced logging. Successfully tested: 1) Created 2 test users (Alice and Bob), 2) Sent friend request from Alice to Bob, 3) Bob successfully retrieved the friend request. Enhanced logging shows all database operations working properly: 'Creating friend request', 'Friend request created with ID', 'Verification query result', 'Looking for friend requests for user', 'Found 1 pending requests for user'. The database logging fix implemented by main agent resolved the issue."
+-+          agent: "main"
+-+          comment: "Backend swipe endpoints working correctly. Need to verify full swipe session flow now that friend system is fixed."
 - 
 -   - task: "Health Check Endpoint"
 -     implemented: true
--@@ -336,4 +339,6 @@ agent_communication:
--     - agent: "main"
--       message: "Fixed swipe gesture state synchronization issue. Updated PanResponder to use useRef for capturing fresh state values instead of stale closures. Modified submitSwipe, handleLike, and handleDislike functions to accept explicit state parameters. Ready for backend testing of swipe endpoints and then frontend gesture testing."
--     - agent: "testing"
---      message: "CRITICAL ISSUE FOUND: Friend request system has a major bug. Friend requests are sent successfully (POST /api/friends/request returns 200), but when the receiving user calls GET /api/friends/requests, they get an empty array. This prevents the friend acceptance flow and blocks swipe session creation. Authentication endpoints work correctly (registration, login, logout). Most movie API endpoints work correctly. Cannot test swipe session endpoints without working friend system. This needs immediate investigation by main agent."
--\ No newline at end of file
--+      message: "CRITICAL ISSUE FOUND: Friend request system has a major bug. Friend requests are sent successfully (POST /api/friends/request returns 200), but when the receiving user calls GET /api/friends/requests, they get an empty array. This prevents the friend acceptance flow and blocks swipe session creation. Authentication endpoints work correctly (registration, login, logout). Most movie API endpoints work correctly. Cannot test swipe session endpoints without working friend system. This needs immediate investigation by main agent."
--+    - agent: "testing"
--+      message: "FRIEND REQUEST SYSTEM FIXED! Successfully completed focused testing of the enhanced logging fix. Test results: ✅ Created 2 test users (Alice and Bob), ✅ Sent friend request from Alice to Bob, ✅ Bob successfully retrieved 1 friend request. All enhanced logging messages are working perfectly: 'Creating friend request', 'Friend request created with ID', 'Verification query result', 'Looking for friend requests for user', 'Found 1 pending requests for user'. The database logging fix implemented by main agent has resolved the critical issue. Friend request system is now fully operational."
--\ No newline at end of file
 diff --git a/test_result.md b/test_result.md
-index 0f9fc32..9388977 100644
+index 9388977..f3d322b 100644
 --- a/test_result.md
 +++ b/test_result.md
-@@ -105,7 +105,7 @@
- user_problem_statement: "Fix swipe gesture functionality in FindFlix Tinder-like movie matching feature. Swipe gestures only animate cards but don't advance to next movie or register swipes, while Like/Dislike buttons work correctly. This is due to state synchronization issue where movies array becomes empty during gesture execution."
- 
- backend:
--  - task: "Swipe Session API Integration"
-+  - task: "Friend Request System Fix"
-     implemented: true
-     working: true
+@@ -126,11 +126,14 @@ backend:
      file: "backend/server.py"
-@@ -113,15 +113,24 @@ backend:
+     stuck_count: 0
      priority: "high"
-     needs_retesting: false
+-    needs_retesting: true
++    needs_retesting: false
      status_history:
--        - working: true
--          agent: "main"
--          comment: "Backend swipe endpoints working correctly. Need to verify they still work after frontend gesture fix."
-         - working: false
-           agent: "testing"
--          comment: "Critical issue found: Friend request system not working properly. Friend requests are sent successfully but not retrieved by the receiving user, preventing swipe session creation. Authentication endpoints work correctly. Most movie API endpoints work correctly. Swipe session endpoints cannot be tested without working friend system."
-+          comment: "Friend requests sent successfully but not retrieved by receiving users due to database logging issue"
          - working: true
--          agent: "testing"
--          comment: "FIXED: Friend request system now working correctly with enhanced logging. Successfully tested: 1) Created 2 test users (Alice and Bob), 2) Sent friend request from Alice to Bob, 3) Bob successfully retrieved the friend request. Enhanced logging shows all database operations working properly: 'Creating friend request', 'Friend request created with ID', 'Verification query result', 'Looking for friend requests for user', 'Found 1 pending requests for user'. The database logging fix implemented by main agent resolved the issue."
-+          agent: "main"
-+          comment: "Fixed database logging and verification. Added detailed logging to friend request creation and retrieval. Testing agent confirmed friend request system now fully operational."
-+
-+  - task: "Swipe Session API Integration"
-+    implemented: true
-+    working: true
-+    file: "backend/server.py"
-+    stuck_count: 0
-+    priority: "high"
-+    needs_retesting: true
-+    status_history:
+           agent: "main"
+           comment: "Backend swipe endpoints working correctly. Need to verify full swipe session flow now that friend system is fixed."
 +        - working: true
-+          agent: "main"
-+          comment: "Backend swipe endpoints working correctly. Need to verify full swipe session flow now that friend system is fixed."
++          agent: "testing"
++          comment: "COMPREHENSIVE SWIPE SESSION FLOW TESTING COMPLETED - ALL 8 TESTS PASSED! ✅ User Registration & Auth (2 users created), ✅ Friend Request Flow (send, retrieve, accept, verify friendship), ✅ Swipe Session Creation (session ID: efa37611-9bb9-48c5-98e5-b0f61b8fcc04), ✅ Content Loading (20 movies loaded), ✅ Swipe Recording (10 swipes recorded by both users), ✅ Match Detection & Retrieval (3 matches found: 'Caught Stealing', 'The Lost Bus', 'The Conjuring: Last Rites'), ✅ Session Summary (total: 10 swipes, 3 matches, 5 creator swipes, 5 friend swipes), ✅ Swipe Sessions List (1 active session). Complete end-to-end swipe functionality is working perfectly."
  
    - task: "Health Check Endpoint"
      implemented: true
+@@ -337,7 +340,6 @@ metadata:
+ test_plan:
+   current_focus:
+     - "Swipe Gesture State Synchronization Fix"
+-    - "Swipe Session API Integration"
+   stuck_tasks: []
+   test_all: false
+   test_priority: "high_first"
+@@ -350,4 +352,6 @@ agent_communication:
+     - agent: "testing"
+       message: "CRITICAL ISSUE FOUND: Friend request system has a major bug. Friend requests are sent successfully (POST /api/friends/request returns 200), but when the receiving user calls GET /api/friends/requests, they get an empty array. This prevents the friend acceptance flow and blocks swipe session creation. Authentication endpoints work correctly (registration, login, logout). Most movie API endpoints work correctly. Cannot test swipe session endpoints without working friend system. This needs immediate investigation by main agent."
+     - agent: "testing"
+-      message: "FRIEND REQUEST SYSTEM FIXED! Successfully completed focused testing of the enhanced logging fix. Test results: ✅ Created 2 test users (Alice and Bob), ✅ Sent friend request from Alice to Bob, ✅ Bob successfully retrieved 1 friend request. All enhanced logging messages are working perfectly: 'Creating friend request', 'Friend request created with ID', 'Verification query result', 'Looking for friend requests for user', 'Found 1 pending requests for user'. The database logging fix implemented by main agent has resolved the critical issue. Friend request system is now fully operational."
+\ No newline at end of file
++      message: "FRIEND REQUEST SYSTEM FIXED! Successfully completed focused testing of the enhanced logging fix. Test results: ✅ Created 2 test users (Alice and Bob), ✅ Sent friend request from Alice to Bob, ✅ Bob successfully retrieved 1 friend request. All enhanced logging messages are working perfectly: 'Creating friend request', 'Friend request created with ID', 'Verification query result', 'Looking for friend requests for user', 'Found 1 pending requests for user'. The database logging fix implemented by main agent has resolved the critical issue. Friend request system is now fully operational."
++    - agent: "testing"
++      message: "🎉 COMPLETE SWIPE SESSION FLOW TESTING SUCCESSFUL! Executed comprehensive end-to-end testing of the entire swipe functionality with 8 test scenarios - ALL PASSED: ✅ User Registration & Auth (created Alice & Bob), ✅ Friend Request Flow (send → retrieve → accept → verify friendship), ✅ Swipe Session Creation (session created successfully), ✅ Content Loading (20 movies loaded from TMDB), ✅ Swipe Recording (10 swipes recorded by both users), ✅ Match Detection & Retrieval (3 matches found: 'Caught Stealing', 'The Lost Bus', 'The Conjuring: Last Rites'), ✅ Session Summary (accurate counts: 10 total swipes, 3 matches, 5 per user), ✅ Swipe Sessions List (1 active session displayed). The complete backend swipe system is working perfectly - ready for frontend integration testing."
+\ No newline at end of file
