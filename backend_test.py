@@ -223,8 +223,8 @@ class FindFlixAPITester:
                         self.log_test("Get Friend Requests", True, f"Found {len(data)} pending friend requests")
                         return True
                     else:
-                        self.log_test("Get Friend Requests", True, "No pending friend requests found")
-                        return True
+                        self.log_test("Get Friend Requests", False, "No pending friend requests found - friend request may not have been created properly")
+                        return False
                 else:
                     self.log_test("Get Friend Requests", False, "Invalid response format")
                     return False
