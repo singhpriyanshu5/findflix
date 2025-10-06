@@ -20,6 +20,7 @@ import axios from 'axios';
 import { POPULAR_LANGUAGES, getLanguageName } from '../utils/languages';
 import { POPULAR_GENRES, getGenreName } from '../utils/genres';
 import { useCallback } from 'react';
+import { useAuth } from '../contexts/AuthContext';
 
 const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL || '';
 const TMDB_IMAGE_BASE = 'https://image.tmdb.org/t/p/w500';
