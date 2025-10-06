@@ -300,7 +300,10 @@ export default function SwipeSessionScreen() {
     );
   }
 
+  console.log('🎯 RENDER - Current Index:', currentIndex, 'Total Movies:', movies.length, 'Current Movie:', movies[currentIndex]?.title);
+
   if (currentIndex >= movies.length) {
+    console.log('🏁 Session completed - no more movies');
     return (
       <SafeAreaView style={styles.container} edges={['top']}>
         <View style={styles.completedContainer}>
@@ -322,6 +325,8 @@ export default function SwipeSessionScreen() {
 
   const currentMovie = movies[currentIndex];
   const progress = ((currentIndex + 1) / movies.length) * 100;
+  
+  console.log('📽️ Displaying movie:', currentMovie?.title, 'Progress:', progress.toFixed(1) + '%');
 
   const rotateInterpolate = rotateAnimation.interpolate({
     inputRange: [-30, 0, 30],
