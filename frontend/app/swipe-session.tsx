@@ -162,29 +162,59 @@ export default function SwipeSessionScreen() {
   // Pan responder for swipe gestures
   const panResponder = useRef(
     PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
       onMoveShouldSetPanResponder: (evt, gestureState) => {
-        return Math.abs(gestureState.dx) > 20 || Math.abs(gestureState.dy) > 20;
+        // More sensitive gesture detection - lower threshold
+        return Math.abs(gestureState.dx) > 5 || Math.abs(gestureState.dy) > 5;
+      },
+      onPanResponderGrant: () => {
+        console.log('Gesture started');
+        // Add slight scale animation when gesture starts
+        Animated.spring(scaleAnimation, {
+          toValue: 0.95,
+          useNativeDriver: false,
+        }).start();
       },
       
       onPanResponderMove: (evt, gestureState) => {
+        // Update position
         swipeAnimation.setValue({ x: gestureState.dx, y: 0 });
         
-        // Rotate based on horizontal movement
-        const rotation = gestureState.dx / SCREEN_WIDTH * 30;
+        // Rotate based on horizontal movement (more subtle)
+        const rotation = (gestureState.dx / SCREEN_WIDTH) * 15;
         rotateAnimation.setValue(rotation);
+        
+        console.log('Gesture move:', gestureState.dx, gestureState.dy);
       },
       
       onPanResponderRelease: (evt, gestureState) => {
-        const threshold = SCREEN_WIDTH * 0.25;
+        console.log('Gesture released:', gestureState.dx, 'velocity:', gestureState.vx);
         
-        if (gestureState.dx > threshold) {
+        // Reset scale
+        Animated.spring(scaleAnimation, {
+          toValue: 1,
+          useNativeDriver: false,
+        }).start();
+        
+        // Lower threshold for web compatibility and add velocity consideration
+        const threshold = Math.min(SCREEN_WIDTH * 0.2, 80); // Max 80px threshold
+        const velocity = Math.abs(gestureState.vx);
+        const distance = Math.abs(gestureState.dx);
+        
+        // Consider both distance and velocity for swipe detection
+        const isSwipe = distance > threshold || (velocity > 0.5 && distance > 30);
+        
+        if (isSwipe && gestureState.dx > 0) {
           // Swipe right (like)
+          console.log('Swipe RIGHT detected - LIKE');
           animateSwipe('right', () => submitSwipe('like'));
-        } else if (gestureState.dx < -threshold) {
-          // Swipe left (dislike)
+        } else if (isSwipe && gestureState.dx < 0) {
+          // Swipe left (dislike)  
+          console.log('Swipe LEFT detected - DISLIKE');
           animateSwipe('left', () => submitSwipe('dislike'));
         } else {
           // Snap back
+          console.log('Gesture too short - snapping back');
           Animated.parallel([
             Animated.spring(swipeAnimation.x, {
               toValue: 0,
@@ -196,6 +226,25 @@ export default function SwipeSessionScreen() {
             }),
           ]).start();
         }
+      },
+      
+      onPanResponderTerminate: () => {
+        console.log('Gesture terminated');
+        // Reset animations if gesture is interrupted
+        Animated.parallel([
+          Animated.spring(swipeAnimation.x, {
+            toValue: 0,
+            useNativeDriver: false,
+          }),
+          Animated.spring(rotateAnimation, {
+            toValue: 0,
+            useNativeDriver: false,
+          }),
+          Animated.spring(scaleAnimation, {
+            toValue: 1,
+            useNativeDriver: false,
+          }),
+        ]).start();
       },
     })
   ).current;
