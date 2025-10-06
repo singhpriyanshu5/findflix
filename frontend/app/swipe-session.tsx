@@ -209,7 +209,7 @@ export default function SwipeSessionScreen() {
       },
       
       onPanResponderRelease: (evt, gestureState) => {
-        console.log('Gesture released:', gestureState.dx, 'velocity:', gestureState.vx);
+        console.log('🔥 GESTURE RELEASED:', gestureState.dx, 'velocity:', gestureState.vx);
         
         // Reset scale
         Animated.spring(scaleAnimation, {
@@ -222,24 +222,26 @@ export default function SwipeSessionScreen() {
         const velocity = Math.abs(gestureState.vx);
         const distance = Math.abs(gestureState.dx);
         
+        console.log('📏 Swipe detection - Distance:', distance, 'Threshold:', threshold, 'Velocity:', velocity);
+        
         // Consider both distance and velocity for swipe detection
         const isSwipe = distance > threshold || (velocity > 0.5 && distance > 30);
         
+        console.log('🎯 Is valid swipe:', isSwipe);
+        
         if (isSwipe && gestureState.dx > 0) {
           // Swipe right (like)
-          console.log('Swipe RIGHT detected - LIKE');
-          // Execute the swipe immediately, then animate
-          submitSwipe('like');
-          animateSwipe('right');
+          console.log('👍 SWIPE RIGHT DETECTED - CALLING LIKE FUNCTION');
+          console.log('🎬 About to call submitSwipe(like) from gesture');
+          handleLike(); // Call the same function as the button
         } else if (isSwipe && gestureState.dx < 0) {
           // Swipe left (dislike)  
-          console.log('Swipe LEFT detected - DISLIKE');
-          // Execute the swipe immediately, then animate
-          submitSwipe('dislike');
-          animateSwipe('left');
+          console.log('👎 SWIPE LEFT DETECTED - CALLING DISLIKE FUNCTION');
+          console.log('🎬 About to call submitSwipe(dislike) from gesture');
+          handleDislike(); // Call the same function as the button
         } else {
           // Snap back
-          console.log('Gesture too short - snapping back');
+          console.log('↩️ Gesture too short - snapping back');
           Animated.parallel([
             Animated.spring(swipeAnimation.x, {
               toValue: 0,
