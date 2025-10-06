@@ -53,15 +53,11 @@ export default function TinderScreen() {
   const loadData = async () => {
     setIsLoading(true);
     try {
-      const [friendsResponse, sessionsResponse] = await Promise.all([
-        axios.get(`${BACKEND_URL}/api/friends`),
-        axios.get(`${BACKEND_URL}/api/swipe/sessions`)
-      ]);
+      const friendsResponse = await axios.get(`${BACKEND_URL}/api/friends`);
       setFriends(friendsResponse.data);
-      setSessions(sessionsResponse.data);
     } catch (error) {
-      console.error('Failed to load data:', error);
-      Alert.alert('Error', 'Failed to load data');
+      console.error('Failed to load friends:', error);
+      Alert.alert('Error', 'Failed to load friends');
     } finally {
       setIsLoading(false);
     }
