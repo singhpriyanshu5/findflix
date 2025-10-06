@@ -685,14 +685,22 @@ class FindFlixAPITester:
             self.test_genres
         ]
         
-        all_tests = auth_tests + movie_tests
+        all_tests = auth_tests + swipe_tests + movie_tests
         
         passed = 0
         failed = 0
         
-        print("\n🔐 Testing Authentication & Friend System (New Tinder Features):")
+        print("\n🔐 Testing Authentication & Friend System:")
         print("-" * 70)
         for test in auth_tests:
+            if test():
+                passed += 1
+            else:
+                failed += 1
+        
+        print(f"\n🎯 Testing Swipe Session Endpoints (Core Tinder Features):")
+        print("-" * 70)
+        for test in swipe_tests:
             if test():
                 passed += 1
             else:
