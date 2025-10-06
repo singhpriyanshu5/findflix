@@ -230,17 +230,13 @@ export default function SwipeSessionScreen() {
         console.log('🎯 Is valid swipe:', isSwipe);
         
         if (isSwipe && gestureState.dx > 0) {
-          // Swipe right (like)
-          console.log('👍 SWIPE RIGHT DETECTED - SUBMITTING LIKE');
-          console.log('🎬 Calling submitSwipe(like) directly from gesture');
-          submitSwipe('like'); // Call submitSwipe directly, no extra animation needed
-          animateSwipe('right'); // Just animate the exit
+          // Swipe right (like) - USE EXACT SAME FUNCTION AS BUTTON
+          console.log('👍 SWIPE RIGHT DETECTED - CALLING handleLike()');
+          handleLike(); // Call the EXACT same function as the like button
         } else if (isSwipe && gestureState.dx < 0) {
-          // Swipe left (dislike)  
-          console.log('👎 SWIPE LEFT DETECTED - SUBMITTING DISLIKE');
-          console.log('🎬 Calling submitSwipe(dislike) directly from gesture');
-          submitSwipe('dislike'); // Call submitSwipe directly, no extra animation needed
-          animateSwipe('left'); // Just animate the exit
+          // Swipe left (dislike) - USE EXACT SAME FUNCTION AS BUTTON
+          console.log('👎 SWIPE LEFT DETECTED - CALLING handleDislike()');
+          handleDislike(); // Call the EXACT same function as the dislike button
         } else {
           // Snap back
           console.log('↩️ Gesture too short - snapping back');
