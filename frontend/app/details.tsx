@@ -403,6 +403,19 @@ export default function DetailsScreen() {
           )}
         </View>
 
+        {/* Trailer Button */}
+        {titleData.trailer && (
+          <View style={styles.section}>
+            <TouchableOpacity
+              style={styles.trailerButton}
+              onPress={() => Linking.openURL(titleData.trailer!)}
+            >
+              <Ionicons name="play-circle" size={24} color="#fff" />
+              <Text style={styles.trailerButtonText}>Watch Trailer</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+
         {/* Cast & Crew */}
         {titleData.cast && titleData.cast.length > 0 && (
           <View style={styles.section}>
