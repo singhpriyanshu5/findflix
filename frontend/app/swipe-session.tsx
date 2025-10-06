@@ -158,12 +158,14 @@ export default function SwipeSessionScreen() {
 
   const handleLike = () => {
     console.log('Like button pressed');
-    animateSwipe('right', () => submitSwipe('like'));
+    submitSwipe('like');
+    animateSwipe('right');
   };
 
   const handleDislike = () => {
     console.log('Dislike button pressed');
-    animateSwipe('left', () => submitSwipe('dislike'));
+    submitSwipe('dislike');
+    animateSwipe('left');
   };
 
   // Pan responder for swipe gestures
