@@ -336,6 +336,38 @@ export default function SwipeSessionScreen() {
           ]}
           {...panResponder.panHandlers}
         >
+          {/* Like/Dislike Overlays */}
+          <Animated.View 
+            style={[
+              styles.overlay,
+              styles.likeOverlay,
+              {
+                opacity: swipeAnimation.x.interpolate({
+                  inputRange: [0, 100],
+                  outputRange: [0, 0.8],
+                  extrapolate: 'clamp',
+                }),
+              }
+            ]}
+          >
+            <Text style={styles.overlayText}>LIKE</Text>
+          </Animated.View>
+          
+          <Animated.View 
+            style={[
+              styles.overlay,
+              styles.dislikeOverlay,
+              {
+                opacity: swipeAnimation.x.interpolate({
+                  inputRange: [-100, 0],
+                  outputRange: [0.8, 0],
+                  extrapolate: 'clamp',
+                }),
+              }
+            ]}
+          >
+            <Text style={styles.overlayText}>PASS</Text>
+          </Animated.View>
           {currentMovie.poster_path ? (
             <Image
               source={{ uri: `${TMDB_IMAGE_BASE}${currentMovie.poster_path}` }}
