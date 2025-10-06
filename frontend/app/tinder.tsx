@@ -104,13 +104,6 @@ export default function TinderScreen() {
     }
   };
 
-  const joinSession = (session: SwipeSession) => {
-    router.push({
-      pathname: '/swipe-session',
-      params: { sessionId: session.id },
-    });
-  };
-
   const addFriend = () => {
     router.push('/add-friend');
   };
@@ -134,48 +127,6 @@ export default function TinderScreen() {
         <Ionicons name="heart" size={20} color="#fff" />
         <Text style={styles.swipeButtonText}>Swipe Movies</Text>
       </TouchableOpacity>
-    </View>
-  );
-
-  const renderSession = ({ item }: { item: SwipeSession }) => (
-    <View style={styles.sessionCard}>
-      <View style={styles.sessionHeader}>
-        <Text style={styles.sessionTitle}>
-          Swipe Session with {item.creator.id === user?.id ? item.friend.name : item.creator.name}
-        </Text>
-        <View style={[
-          styles.statusBadge,
-          item.is_active ? styles.statusActive : styles.statusInactive
-        ]}>
-          <Text style={styles.statusText}>{item.is_active ? 'Active' : 'Ended'}</Text>
-        </View>
-      </View>
-      
-      <View style={styles.sessionStats}>
-        <View style={styles.statItem}>
-          <Text style={styles.statNumber}>{item.my_swipes_count}</Text>
-          <Text style={styles.statLabel}>Your Swipes</Text>
-        </View>
-        <View style={styles.statItem}>
-          <Text style={styles.statNumber}>{item.friend_swipes_count}</Text>
-          <Text style={styles.statLabel}>Friend's Swipes</Text>
-        </View>
-      </View>
-
-      <View style={styles.sessionMeta}>
-        <Text style={styles.contentType}>
-          Content: {item.content_type.charAt(0).toUpperCase() + item.content_type.slice(1)}
-        </Text>
-      </View>
-
-      {item.is_active && (
-        <TouchableOpacity
-          style={styles.joinButton}
-          onPress={() => joinSession(item)}
-        >
-          <Text style={styles.joinButtonText}>Continue Swiping</Text>
-        </TouchableOpacity>
-      )}
     </View>
   );
 
