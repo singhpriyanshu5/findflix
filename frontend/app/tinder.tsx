@@ -208,88 +208,34 @@ export default function TinderScreen() {
         <Text style={styles.subtitle}>Swipe movies with your friends</Text>
       </View>
 
-      {/* Tab Navigation */}
-      <View style={styles.tabContainer}>
-        <TouchableOpacity
-          style={[styles.tab, activeTab === 'sessions' && styles.activeTab]}
-          onPress={() => setActiveTab('sessions')}
-        >
-          <Text style={[styles.tabText, activeTab === 'sessions' && styles.activeTabText]}>
-            Sessions ({sessions.length})
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.tab, activeTab === 'friends' && styles.activeTab]}
-          onPress={() => setActiveTab('friends')}
-        >
-          <Text style={[styles.tabText, activeTab === 'friends' && styles.activeTabText]}>
-            Friends ({friends.length})
-          </Text>
-        </TouchableOpacity>
-      </View>
-
       {/* Content */}
-      {activeTab === 'friends' ? (
-        <View style={styles.content}>
-          {friends.length === 0 ? (
-            <View style={styles.emptyState}>
-              <Ionicons name="people-outline" size={64} color="#666" />
-              <Text style={styles.emptyTitle}>No Friends Yet</Text>
-              <Text style={styles.emptyText}>
-                Add friends to start swiping movies together!
-              </Text>
-              <TouchableOpacity style={styles.addButton} onPress={addFriend}>
-                <Text style={styles.addButtonText}>Add Friends</Text>
-              </TouchableOpacity>
-            </View>
-          ) : (
-            <>
-              <FlashList
-                data={friends}
-                renderItem={renderFriend}
-                keyExtractor={(item) => item.id}
-                estimatedItemSize={80}
-                contentContainerStyle={styles.listContent}
-              />
-              <TouchableOpacity style={styles.fab} onPress={addFriend}>
-                <Ionicons name="add" size={24} color="#fff" />
-              </TouchableOpacity>
-            </>
-          )}
-        </View>
-      ) : (
-        <View style={styles.content}>
-          {sessions.length === 0 ? (
-            <View style={styles.emptyState}>
-              <Ionicons name="heart-outline" size={64} color="#666" />
-              <Text style={styles.emptyTitle}>No Sessions Yet</Text>
-              <Text style={styles.emptyText}>
-                Start a swipe session with a friend to find movies to watch together!
-              </Text>
-              {friends.length > 0 ? (
-                <TouchableOpacity
-                  style={styles.addButton}
-                  onPress={() => setActiveTab('friends')}
-                >
-                  <Text style={styles.addButtonText}>Start Swiping</Text>
-                </TouchableOpacity>
-              ) : (
-                <TouchableOpacity style={styles.addButton} onPress={addFriend}>
-                  <Text style={styles.addButtonText}>Add Friends First</Text>
-                </TouchableOpacity>
-              )}
-            </View>
-          ) : (
+      <View style={styles.content}>
+        {friends.length === 0 ? (
+          <View style={styles.emptyState}>
+            <Ionicons name="people-outline" size={64} color="#666" />
+            <Text style={styles.emptyTitle}>No Friends Yet</Text>
+            <Text style={styles.emptyText}>
+              Add friends to start swiping movies together!
+            </Text>
+            <TouchableOpacity style={styles.addButton} onPress={addFriend}>
+              <Text style={styles.addButtonText}>Add Friends</Text>
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <>
             <FlashList
-              data={sessions}
-              renderItem={renderSession}
+              data={friends}
+              renderItem={renderFriend}
               keyExtractor={(item) => item.id}
-              estimatedItemSize={120}
+              estimatedItemSize={80}
               contentContainerStyle={styles.listContent}
             />
-          )}
-        </View>
-      )}
+            <TouchableOpacity style={styles.fab} onPress={addFriend}>
+              <Ionicons name="add" size={24} color="#fff" />
+            </TouchableOpacity>
+          </>
+        )}
+      </View>
     </SafeAreaView>
   );
 }
