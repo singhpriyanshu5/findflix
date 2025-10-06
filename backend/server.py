@@ -386,37 +386,72 @@ async def get_friends(current_user: User = Depends(require_auth)):
 
 # ===== Swipe System Endpoints =====
 
-@api_router.post("/swipe/session")
-async def create_swipe_session(session_data: CreateSwipeSession, current_user: User = Depends(require_auth)):
-    """Create a new swipe session with a friend"""
+@api_router.get("/swipe/session/{friend_id}")
+async def get_or_create_session(friend_id: str, current_user: User = Depends(require_auth)):
+    """Get existing session or create new one with a friend"""
     try:
         # Verify they are friends
         friendship = await db.friend_requests.find_one({
             "$or": [
-                {"sender_id": current_user.id, "receiver_id": session_data.friend_id, "status": "accepted"},
-                {"sender_id": session_data.friend_id, "receiver_id": current_user.id, "status": "accepted"}
+                {"sender_id": current_user.id, "receiver_id": friend_id, "status": "accepted"},
+                {"sender_id": friend_id, "receiver_id": current_user.id, "status": "accepted"}
             ]
         })
         
         if not friendship:
             raise HTTPException(status_code=400, detail="Not friends with this user")
         
-        # Create session
-        swipe_session = SwipeSession(
-            creator_id=current_user.id,
-            friend_id=session_data.friend_id,
-            content_type=session_data.content_type,
-            content_params=session_data.content_params or {}
-        )
+        # Check for existing session between these two users
+        existing_session = await db.swipe_sessions.find_one({
+            "$or": [
+                {"creator_id": current_user.id, "friend_id": friend_id},
+                {"creator_id": friend_id, "friend_id": current_user.id}
+            ]
+        })
         
-        await db.swipe_sessions.insert_one(swipe_session.dict())
+        if existing_session:
+            # Return existing session
+            session_id = existing_session["id"]
+        else:
+            # Create new session with default popular content
+            swipe_session = SwipeSession(
+                creator_id=current_user.id,
+                friend_id=friend_id,
+                content_type=SwipeContentType.POPULAR,
+                content_params={}
+            )
+            
+            await db.swipe_sessions.insert_one(swipe_session.dict())
+            session_id = swipe_session.id
         
-        return {"message": "Swipe session created", "session_id": swipe_session.id}
+        # Get swipe counts
+        my_swipes = await db.user_swipes.count_documents({
+            "session_id": session_id,
+            "user_id": current_user.id
+        })
+        
+        friend_swipes = await db.user_swipes.count_documents({
+            "session_id": session_id,
+            "user_id": friend_id
+        })
+        
+        # Get match count
+        match_count = await db.swipe_matches.count_documents({
+            "session_id": session_id
+        })
+        
+        return {
+            "session_id": session_id,
+            "my_swipes_count": my_swipes,
+            "friend_swipes_count": friend_swipes,
+            "match_count": match_count
+        }
+        
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Create swipe session error: {str(e)}")
-        raise HTTPException(status_code=500, detail="Failed to create swipe session")
+        logger.error(f"Get/create session error: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to get session")
 
 @api_router.get("/swipe/sessions")
 async def get_swipe_sessions(current_user: User = Depends(require_auth)):
