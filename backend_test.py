@@ -1,26 +1,21 @@
 #!/usr/bin/env python3
-"""
-Backend API Testing for FindFlix API with Tinder Functionality
-Tests all endpoints including new authentication and friend system
-"""
 
-import requests
+import asyncio
+import httpx
 import json
 import sys
 from datetime import datetime
 
-# Backend URL from frontend .env
+# Backend URL from frontend/.env
 BACKEND_URL = "https://tinderflix.preview.emergentagent.com/api"
 
-class FindFlixAPITester:
+class FriendRequestTester:
     def __init__(self):
-        self.base_url = BACKEND_URL
-        self.session = requests.Session()
-        self.test_results = []
-        self.auth_token = None
-        self.user_data = None
-        self.friend_user_data = None
-        self.friend_auth_token = None
+        self.client = httpx.AsyncClient(timeout=30.0)
+        self.user1_token = None
+        self.user2_token = None
+        self.user1_data = None
+        self.user2_data = None
         
     def log_test(self, test_name, success, details="", response_data=None):
         """Log test results"""
