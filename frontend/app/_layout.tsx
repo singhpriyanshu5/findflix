@@ -71,6 +71,12 @@ export default function RootLayout() {
               }}
             />
             <Stack.Screen 
+              name="session-summary" 
+              options={{
+                title: 'Your Matches',
+              }}
+            />
+            <Stack.Screen 
               name="results" 
               options={{
                 title: 'Results',
