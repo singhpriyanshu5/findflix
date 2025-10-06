@@ -1205,6 +1205,21 @@ async def get_title_details(tmdb_id: int, media_type: str = Query("movie", regex
         result["producers"] = producers
         result["production_companies"] = [pc.get("name") for pc in tmdb_data.get("production_companies", [])[:3]]
         
+        # Add trailer information
+        videos = tmdb_data.get("videos", {}).get("results", [])
+        trailer = None
+        
+        # Look for official trailer first, then any trailer
+        for video in videos:
+            if video.get("site") == "YouTube" and "trailer" in video.get("type", "").lower():
+                if video.get("official", False):
+                    trailer = f"https://www.youtube.com/watch?v={video.get('key')}"
+                    break
+                elif not trailer:  # Use first trailer if no official one found
+                    trailer = f"https://www.youtube.com/watch?v={video.get('key')}"
+        
+        result["trailer"] = trailer
+        
         return result
         
     except Exception as e:
