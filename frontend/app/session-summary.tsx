@@ -383,4 +383,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
   },
+  chevron: {
+    marginLeft: 8,
+  },
 });
