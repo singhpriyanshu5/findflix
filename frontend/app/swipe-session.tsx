@@ -169,15 +169,15 @@ export default function SwipeSessionScreen() {
     });
   };
 
-  const handleLike = () => {
+  const handleLike = (movieIndex?: number, moviesList?: Movie[]) => {
     console.log('Like button pressed');
-    submitSwipe('like');
+    submitSwipe('like', movieIndex, moviesList);
     animateSwipe('right');
   };
 
-  const handleDislike = () => {
+  const handleDislike = (movieIndex?: number, moviesList?: Movie[]) => {
     console.log('Dislike button pressed');
-    submitSwipe('dislike');
+    submitSwipe('dislike', movieIndex, moviesList);
     animateSwipe('left');
   };
 
