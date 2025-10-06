@@ -303,10 +303,12 @@ async def get_friend_requests(current_user: User = Depends(require_auth)):
     """Get pending friend requests"""
     try:
         # Get requests where user is receiver
+        logger.info(f"Looking for friend requests for user: {current_user.id}")
         requests = await db.friend_requests.find({
             "receiver_id": current_user.id,
             "status": "pending"
         }).to_list(None)
+        logger.info(f"Found {len(requests)} pending requests for user {current_user.id}")
         
         result = []
         for req in requests:
