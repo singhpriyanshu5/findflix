@@ -64,9 +64,15 @@ export default function SwipeSessionScreen() {
   const loadMovies = async () => {
     setIsLoading(true);
     try {
+      console.log('Loading movies for session:', sessionId);
+      console.log('Backend URL:', BACKEND_URL);
+      
       const response = await axios.get(`${BACKEND_URL}/api/swipe/content/${sessionId}`);
+      console.log('Movies loaded:', response.data.results.length);
       setMovies(response.data.results);
     } catch (error: any) {
+      console.error('Load movies error:', error);
+      console.error('Error response:', error.response?.data);
       const message = error.response?.data?.detail || 'Failed to load movies';
       Alert.alert('Error', message);
       router.goBack();
