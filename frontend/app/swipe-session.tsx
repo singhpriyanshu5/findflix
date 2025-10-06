@@ -81,19 +81,23 @@ export default function SwipeSessionScreen() {
     }
   };
 
-  const submitSwipe = async (action: 'like' | 'dislike') => {
-    console.log('🎬 Submit swipe called:', action, 'Current Index:', currentIndex, 'Total movies:', movies.length);
+  const submitSwipe = async (action: 'like' | 'dislike', movieIndex?: number, moviesList?: Movie[]) => {
+    // Use passed parameters or current state
+    const currentMovieIndex = movieIndex !== undefined ? movieIndex : currentIndex;
+    const currentMoviesList = moviesList || movies;
     
-    if (currentIndex >= movies.length) {
+    console.log('🎬 Submit swipe called:', action, 'Index:', currentMovieIndex, 'Total movies:', currentMoviesList.length);
+    
+    if (currentMovieIndex >= currentMoviesList.length) {
       console.log('❌ No more movies to swipe');
       return;
     }
     
-    const movie = movies[currentIndex];
+    const movie = currentMoviesList[currentMovieIndex];
     console.log('🎭 Swiping on movie:', movie.title, 'ID:', movie.id);
     
     // Move to next movie IMMEDIATELY to prevent UI blocking
-    const nextIndex = currentIndex + 1;
+    const nextIndex = currentMovieIndex + 1;
     console.log('⬆️ Moving to next index:', nextIndex);
     setCurrentIndex(nextIndex);
     
@@ -123,7 +127,7 @@ export default function SwipeSessionScreen() {
       
       // Revert the index on error
       console.log('⬇️ Reverting index due to error');
-      setCurrentIndex(currentIndex);
+      setCurrentIndex(currentMovieIndex);
       
       const message = error.response?.data?.detail || 'Failed to record swipe';
       Alert.alert('Error', message);
