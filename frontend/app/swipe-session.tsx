@@ -217,11 +217,15 @@ export default function SwipeSessionScreen() {
         if (isSwipe && gestureState.dx > 0) {
           // Swipe right (like)
           console.log('Swipe RIGHT detected - LIKE');
-          animateSwipe('right', () => submitSwipe('like'));
+          // Execute the swipe immediately, then animate
+          submitSwipe('like');
+          animateSwipe('right');
         } else if (isSwipe && gestureState.dx < 0) {
           // Swipe left (dislike)  
           console.log('Swipe LEFT detected - DISLIKE');
-          animateSwipe('left', () => submitSwipe('dislike'));
+          // Execute the swipe immediately, then animate
+          submitSwipe('dislike');
+          animateSwipe('left');
         } else {
           // Snap back
           console.log('Gesture too short - snapping back');
