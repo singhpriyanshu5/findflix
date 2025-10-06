@@ -101,7 +101,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const register = async (name: string, email: string, password: string): Promise<boolean> => {
     try {
       setIsLoading(true);
-      const response = await axios.post(`${BACKEND_URL}/auth/register`, {
+      const response = await axios.post(`${BACKEND_URL}/api/auth/register`, {
         name,
         email,
         password,
