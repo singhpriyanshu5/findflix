@@ -52,11 +52,16 @@ export default function TinderScreen() {
   };
 
   const handleFriendClick = async (friend: Friend) => {
+    console.log('Button clicked for friend:', friend.name);
     setIsLoading(true);
     try {
+      console.log('Making API call to:', `${BACKEND_URL}/api/swipe/session/${friend.id}`);
+      
       // Get or create session with this friend
       const response = await axios.get(`${BACKEND_URL}/api/swipe/session/${friend.id}`);
       const sessionData = response.data;
+      
+      console.log('Session data received:', sessionData);
       
       // Show options modal
       Alert.alert(
@@ -84,9 +89,10 @@ export default function TinderScreen() {
           },
         ]
       );
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to get session:', error);
-      Alert.alert('Error', 'Failed to load session with friend');
+      console.error('Error response:', error.response?.data);
+      Alert.alert('Error', `Failed to load session: ${error.response?.data?.detail || error.message}`);
     } finally {
       setIsLoading(false);
     }
