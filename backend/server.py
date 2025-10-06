@@ -773,11 +773,7 @@ async def get_swipe_content(session_id: str, page: int = 1, current_user: User =
 
 # ===== Helper Functions (from original server) =====
 async def fetch_tmdb_data(endpoint: str, params: Dict = None):
-    """Fetch data from TMDB API with mock fallback"""
-    if not TMDB_API_KEY or TMDB_API_KEY == 'your_tmdb_api_key_here':
-        # Return mock data when API key is not available
-        return get_mock_data(endpoint, params)
-    
+    """Fetch data from TMDB API"""
     base_url = "https://api.themoviedb.org/3"
     default_params = {"api_key": TMDB_API_KEY}
     if params:
@@ -789,8 +785,8 @@ async def fetch_tmdb_data(endpoint: str, params: Dict = None):
             response.raise_for_status()
             return response.json()
         except Exception as e:
-            logger.error(f"TMDB API error: {str(e)}, falling back to mock data")
-            return get_mock_data(endpoint, params)
+            logger.error(f"TMDB API error: {str(e)}")
+            raise HTTPException(status_code=500, detail=f"TMDB API error: {str(e)}")
 
 def get_mock_data(endpoint: str, params: Dict = None):
     """Return mock movie/TV data for testing"""
