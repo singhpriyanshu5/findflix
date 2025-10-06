@@ -192,7 +192,7 @@ export default function SwipeSessionScreen() {
     animateSwipe('left');
   };
 
-  // Pan responder for swipe gestures
+  // Pan responder for swipe gestures - use useCallback to ensure fresh handlers
   const panResponder = useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: () => true,
