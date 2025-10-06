@@ -82,9 +82,15 @@ export default function SwipeSessionScreen() {
   };
 
   const submitSwipe = async (action: 'like' | 'dislike') => {
-    if (currentIndex >= movies.length) return;
+    console.log('Submit swipe called:', action, 'Index:', currentIndex, 'Total movies:', movies.length);
+    
+    if (currentIndex >= movies.length) {
+      console.log('No more movies to swipe');
+      return;
+    }
     
     const movie = movies[currentIndex];
+    console.log('Swiping on movie:', movie.title);
     setIsSwipeLoading(true);
 
     try {
@@ -97,7 +103,10 @@ export default function SwipeSessionScreen() {
         movie_poster: movie.poster_path,
       });
 
+      console.log('Swipe response:', response.data);
+
       if (response.data.match_created) {
+        console.log('Match created!');
         setMatchedMovie(movie);
         setMatches(prev => [...prev, movie]);
         setShowMatchModal(true);
@@ -106,6 +115,7 @@ export default function SwipeSessionScreen() {
       // Move to next movie
       setCurrentIndex(prev => prev + 1);
     } catch (error: any) {
+      console.error('Submit swipe error:', error);
       const message = error.response?.data?.detail || 'Failed to record swipe';
       Alert.alert('Error', message);
     } finally {
