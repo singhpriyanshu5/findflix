@@ -283,7 +283,13 @@ async def send_friend_request(request_data: SendFriendRequest, current_user: Use
             receiver_id=receiver_user.id
         )
         
-        await db.friend_requests.insert_one(friend_request.dict())
+        logger.info(f"Creating friend request: {friend_request.dict()}")
+        result = await db.friend_requests.insert_one(friend_request.dict())
+        logger.info(f"Friend request created with ID: {result.inserted_id}")
+        
+        # Verify insertion
+        verify = await db.friend_requests.find_one({"id": friend_request.id})
+        logger.info(f"Verification query result: {verify}")
         
         return {"message": "Friend request sent successfully"}
     except HTTPException:
