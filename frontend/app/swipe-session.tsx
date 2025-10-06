@@ -720,4 +720,29 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  overlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 20,
+  },
+  likeOverlay: {
+    backgroundColor: 'rgba(34, 197, 94, 0.2)',
+  },
+  dislikeOverlay: {
+    backgroundColor: 'rgba(239, 68, 68, 0.2)',
+  },
+  overlayText: {
+    fontSize: 48,
+    fontWeight: 'bold',
+    color: '#fff',
+    textShadowColor: 'rgba(0, 0, 0, 0.75)',
+    textShadowOffset: { width: 2, height: 2 },
+    textShadowRadius: 4,
+    transform: [{ rotate: '-15deg' }],
+  },
 });
