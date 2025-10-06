@@ -37,9 +37,7 @@ interface SwipeSession {
 
 export default function TinderScreen() {
   const [friends, setFriends] = useState<Friend[]>([]);
-  const [sessions, setSessions] = useState<SwipeSession[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'friends' | 'sessions'>('sessions');
   const { user, isAuthenticated } = useAuth();
   const router = useRouter();
 
