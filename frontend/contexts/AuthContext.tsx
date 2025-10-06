@@ -159,7 +159,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const logout = async () => {
     try {
       // Call backend logout
-      await axios.post(`${BACKEND_URL}/api/auth/logout`);
+      await axios.post(`${BACKEND_URL}/auth/logout`);
     } catch (error) {
       console.error('Logout API failed:', error);
     } finally {
