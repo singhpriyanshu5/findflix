@@ -23,18 +23,6 @@ interface Friend {
   picture?: string;
 }
 
-interface SwipeSession {
-  id: string;
-  creator: Friend;
-  friend: Friend;
-  content_type: 'popular' | 'search' | 'genre';
-  content_params: Record<string, any>;
-  is_active: boolean;
-  created_at: string;
-  my_swipes_count: number;
-  friend_swipes_count: number;
-}
-
 export default function TinderScreen() {
   const [friends, setFriends] = useState<Friend[]>([]);
   const [isLoading, setIsLoading] = useState(true);
