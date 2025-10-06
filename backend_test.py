@@ -304,6 +304,210 @@ class FindFlixAPITester:
         except Exception as e:
             self.log_test("User Logout", False, f"Error: {str(e)}")
             return False
+
+    # ===== Swipe Session Tests =====
+
+    def test_create_swipe_session(self):
+        """Test GET /api/swipe/session/{friend_id} - Create/get swipe session"""
+        try:
+            if not self.auth_token or not self.friend_user_data:
+                self.log_test("Create Swipe Session", False, "Missing authentication or friend user data")
+                return False
+                
+            friend_id = self.friend_user_data["id"]
+            headers = {"Authorization": f"Bearer {self.auth_token}"}
+            response = self.session.get(f"{self.base_url}/swipe/session/{friend_id}", headers=headers)
+            
+            if response.status_code == 200:
+                data = response.json()
+                if "session_id" in data:
+                    self.swipe_session_id = data["session_id"]
+                    self.log_test("Create Swipe Session", True, 
+                                f"Session created/retrieved: {data['session_id']}, My swipes: {data.get('my_swipes_count', 0)}, Friend swipes: {data.get('friend_swipes_count', 0)}")
+                    return True
+                else:
+                    self.log_test("Create Swipe Session", False, "Invalid response format")
+                    return False
+            else:
+                self.log_test("Create Swipe Session", False, f"HTTP {response.status_code}: {response.text}")
+                return False
+        except Exception as e:
+            self.log_test("Create Swipe Session", False, f"Error: {str(e)}")
+            return False
+
+    def test_get_swipe_content(self):
+        """Test GET /api/swipe/content/{session_id} - Get content for swiping"""
+        try:
+            if not self.auth_token or not hasattr(self, 'swipe_session_id'):
+                self.log_test("Get Swipe Content", False, "Missing authentication or session ID")
+                return False
+                
+            headers = {"Authorization": f"Bearer {self.auth_token}"}
+            response = self.session.get(f"{self.base_url}/swipe/content/{self.swipe_session_id}", headers=headers)
+            
+            if response.status_code == 200:
+                data = response.json()
+                if "results" in data and len(data["results"]) > 0:
+                    # Store first movie for swipe testing
+                    self.test_movie = data["results"][0]
+                    self.log_test("Get Swipe Content", True, 
+                                f"Retrieved {len(data['results'])} movies for swiping")
+                    return True
+                else:
+                    self.log_test("Get Swipe Content", False, "No content available for swiping")
+                    return False
+            else:
+                self.log_test("Get Swipe Content", False, f"HTTP {response.status_code}: {response.text}")
+                return False
+        except Exception as e:
+            self.log_test("Get Swipe Content", False, f"Error: {str(e)}")
+            return False
+
+    def test_submit_swipe_like(self):
+        """Test POST /api/swipe - Submit a like swipe"""
+        try:
+            if not self.auth_token or not hasattr(self, 'test_movie') or not hasattr(self, 'swipe_session_id'):
+                self.log_test("Submit Swipe (Like)", False, "Missing authentication, session ID, or test movie")
+                return False
+                
+            payload = {
+                "session_id": self.swipe_session_id,
+                "movie_id": self.test_movie["id"],
+                "media_type": self.test_movie.get("media_type", "movie"),
+                "action": "like",
+                "movie_title": self.test_movie["title"],
+                "movie_poster": self.test_movie.get("poster_path")
+            }
+            headers = {"Authorization": f"Bearer {self.auth_token}"}
+            response = self.session.post(f"{self.base_url}/swipe", json=payload, headers=headers)
+            
+            if response.status_code == 200:
+                data = response.json()
+                if "message" in data:
+                    match_created = data.get("match_created", False)
+                    self.log_test("Submit Swipe (Like)", True, 
+                                f"Liked '{self.test_movie['title']}', Match created: {match_created}")
+                    return True
+                else:
+                    self.log_test("Submit Swipe (Like)", False, "Invalid response format")
+                    return False
+            else:
+                self.log_test("Submit Swipe (Like)", False, f"HTTP {response.status_code}: {response.text}")
+                return False
+        except Exception as e:
+            self.log_test("Submit Swipe (Like)", False, f"Error: {str(e)}")
+            return False
+
+    def test_submit_swipe_like_friend(self):
+        """Test friend also liking the same movie to create a match"""
+        try:
+            if not self.friend_auth_token or not hasattr(self, 'test_movie') or not hasattr(self, 'swipe_session_id'):
+                self.log_test("Submit Swipe (Like) - Friend", False, "Missing friend authentication, session ID, or test movie")
+                return False
+                
+            payload = {
+                "session_id": self.swipe_session_id,
+                "movie_id": self.test_movie["id"],
+                "media_type": self.test_movie.get("media_type", "movie"),
+                "action": "like",
+                "movie_title": self.test_movie["title"],
+                "movie_poster": self.test_movie.get("poster_path")
+            }
+            headers = {"Authorization": f"Bearer {self.friend_auth_token}"}
+            response = self.session.post(f"{self.base_url}/swipe", json=payload, headers=headers)
+            
+            if response.status_code == 200:
+                data = response.json()
+                if "message" in data:
+                    match_created = data.get("match_created", False)
+                    self.log_test("Submit Swipe (Like) - Friend", True, 
+                                f"Friend liked '{self.test_movie['title']}', Match created: {match_created}")
+                    return True
+                else:
+                    self.log_test("Submit Swipe (Like) - Friend", False, "Invalid response format")
+                    return False
+            else:
+                self.log_test("Submit Swipe (Like) - Friend", False, f"HTTP {response.status_code}: {response.text}")
+                return False
+        except Exception as e:
+            self.log_test("Submit Swipe (Like) - Friend", False, f"Error: {str(e)}")
+            return False
+
+    def test_get_matches(self):
+        """Test GET /api/swipe/matches/{session_id} - Get matches for session"""
+        try:
+            if not self.auth_token or not hasattr(self, 'swipe_session_id'):
+                self.log_test("Get Matches", False, "Missing authentication or session ID")
+                return False
+                
+            headers = {"Authorization": f"Bearer {self.auth_token}"}
+            response = self.session.get(f"{self.base_url}/swipe/matches/{self.swipe_session_id}", headers=headers)
+            
+            if response.status_code == 200:
+                data = response.json()
+                if isinstance(data, list):
+                    self.log_test("Get Matches", True, f"Retrieved {len(data)} matches")
+                    return True
+                else:
+                    self.log_test("Get Matches", False, "Invalid response format")
+                    return False
+            else:
+                self.log_test("Get Matches", False, f"HTTP {response.status_code}: {response.text}")
+                return False
+        except Exception as e:
+            self.log_test("Get Matches", False, f"Error: {str(e)}")
+            return False
+
+    def test_get_session_summary(self):
+        """Test GET /api/swipe/summary/{session_id} - Get session summary"""
+        try:
+            if not self.auth_token or not hasattr(self, 'swipe_session_id'):
+                self.log_test("Get Session Summary", False, "Missing authentication or session ID")
+                return False
+                
+            headers = {"Authorization": f"Bearer {self.auth_token}"}
+            response = self.session.get(f"{self.base_url}/swipe/summary/{self.swipe_session_id}", headers=headers)
+            
+            if response.status_code == 200:
+                data = response.json()
+                if "total_swipes" in data and "total_matches" in data:
+                    self.log_test("Get Session Summary", True, 
+                                f"Session summary - Total swipes: {data['total_swipes']}, Total matches: {data['total_matches']}")
+                    return True
+                else:
+                    self.log_test("Get Session Summary", False, "Invalid response format")
+                    return False
+            else:
+                self.log_test("Get Session Summary", False, f"HTTP {response.status_code}: {response.text}")
+                return False
+        except Exception as e:
+            self.log_test("Get Session Summary", False, f"Error: {str(e)}")
+            return False
+
+    def test_get_swipe_sessions(self):
+        """Test GET /api/swipe/sessions - Get all swipe sessions"""
+        try:
+            if not self.auth_token:
+                self.log_test("Get Swipe Sessions", False, "Missing authentication")
+                return False
+                
+            headers = {"Authorization": f"Bearer {self.auth_token}"}
+            response = self.session.get(f"{self.base_url}/swipe/sessions", headers=headers)
+            
+            if response.status_code == 200:
+                data = response.json()
+                if isinstance(data, list):
+                    self.log_test("Get Swipe Sessions", True, f"Retrieved {len(data)} swipe sessions")
+                    return True
+                else:
+                    self.log_test("Get Swipe Sessions", False, "Invalid response format")
+                    return False
+            else:
+                self.log_test("Get Swipe Sessions", False, f"HTTP {response.status_code}: {response.text}")
+                return False
+        except Exception as e:
+            self.log_test("Get Swipe Sessions", False, f"Error: {str(e)}")
+            return False
     
     def test_search_by_title(self):
         """Test search with query='Inception' scope='title'"""
