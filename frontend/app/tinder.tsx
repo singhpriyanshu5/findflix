@@ -203,30 +203,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#888',
   },
-  tabContainer: {
-    flexDirection: 'row',
-    paddingHorizontal: 16,
-    marginBottom: 16,
-  },
-  tab: {
-    flex: 1,
-    paddingVertical: 12,
-    alignItems: 'center',
-    backgroundColor: '#1a1a1a',
-    marginHorizontal: 4,
-    borderRadius: 8,
-  },
-  activeTab: {
-    backgroundColor: '#e50914',
-  },
-  tabText: {
-    color: '#888',
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  activeTabText: {
-    color: '#fff',
-  },
   content: {
     flex: 1,
     paddingHorizontal: 16,
