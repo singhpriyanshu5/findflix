@@ -238,27 +238,42 @@ class FindFlixAPITester:
     def test_accept_friend_request(self):
         """Test POST /api/friends/respond - Accept friend request"""
         try:
-            if not self.friend_auth_token or not hasattr(self, 'friend_request_id'):
-                self.log_test("Accept Friend Request", False, "Missing friend auth token or request ID")
+            if not self.friend_auth_token:
+                self.log_test("Accept Friend Request", False, "Missing friend auth token")
                 return False
-                
-            payload = {
-                "request_id": self.friend_request_id,
-                "accept": True
-            }
+            
+            # First, try to get friend requests again to find the request ID
             headers = {"Authorization": f"Bearer {self.friend_auth_token}"}
-            response = self.session.post(f"{self.base_url}/friends/respond", json=payload, headers=headers)
+            response = self.session.get(f"{self.base_url}/friends/requests", headers=headers)
             
             if response.status_code == 200:
                 data = response.json()
-                if "message" in data:
-                    self.log_test("Accept Friend Request", True, f"Friend request accepted: {data['message']}")
-                    return True
+                if isinstance(data, list) and len(data) > 0:
+                    request_id = data[0]["id"]
+                    
+                    # Now accept the request
+                    payload = {
+                        "request_id": request_id,
+                        "accept": True
+                    }
+                    response = self.session.post(f"{self.base_url}/friends/respond", json=payload, headers=headers)
+                    
+                    if response.status_code == 200:
+                        data = response.json()
+                        if "message" in data:
+                            self.log_test("Accept Friend Request", True, f"Friend request accepted: {data['message']}")
+                            return True
+                        else:
+                            self.log_test("Accept Friend Request", False, "Invalid response format")
+                            return False
+                    else:
+                        self.log_test("Accept Friend Request", False, f"HTTP {response.status_code}: {response.text}")
+                        return False
                 else:
-                    self.log_test("Accept Friend Request", False, "Invalid response format")
+                    self.log_test("Accept Friend Request", False, "No friend requests found to accept")
                     return False
             else:
-                self.log_test("Accept Friend Request", False, f"HTTP {response.status_code}: {response.text}")
+                self.log_test("Accept Friend Request", False, f"Failed to get friend requests: HTTP {response.status_code}")
                 return False
         except Exception as e:
             self.log_test("Accept Friend Request", False, f"Error: {str(e)}")
