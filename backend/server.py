@@ -1106,7 +1106,7 @@ async def get_title_details(tmdb_id: int, media_type: str = Query("movie", regex
     """Get detailed information for a specific title"""
     try:
         endpoint = f"{media_type}/{tmdb_id}"
-        tmdb_data = await fetch_tmdb_data(endpoint, {"append_to_response": "credits,external_ids"})
+        tmdb_data = await fetch_tmdb_data(endpoint, {"append_to_response": "credits,external_ids,videos"})
         
         imdb_id = tmdb_data.get("external_ids", {}).get("imdb_id")
         
