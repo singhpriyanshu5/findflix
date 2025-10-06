@@ -55,7 +55,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         axios.defaults.headers.common['Authorization'] = `Bearer ${sessionToken}`;
         
         // Verify session with backend
-        const response = await axios.get(`${BACKEND_URL}/api/auth/me`);
+        const response = await axios.get(`${BACKEND_URL}/auth/me`);
         setUser(response.data);
       }
     } catch (error) {
