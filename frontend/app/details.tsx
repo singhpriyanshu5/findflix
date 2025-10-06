@@ -55,6 +55,7 @@ interface TitleDetails {
   directors: string[];
   producers: string[];
   production_companies: string[];
+  trailer?: string;
 }
 
 interface StreamingData {
