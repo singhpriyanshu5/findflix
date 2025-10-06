@@ -301,7 +301,17 @@ backend:
           comment: "Hit/Flop calculation working correctly. Inception correctly calculated as 'Hit' (revenue $839M vs budget $160M = 5.24x ratio)"
 
 frontend:
-  # No frontend testing performed as per instructions
+  - task: "Swipe Gesture State Synchronization Fix"
+    implemented: true
+    working: false
+    file: "frontend/app/swipe-session.tsx"
+    stuck_count: 1
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: false
+          agent: "main"
+          comment: "Fixed state synchronization issue in PanResponder. Updated submitSwipe to accept explicit state parameters, added useRef for current state values, and modified gesture handlers to use fresh state instead of stale closures. Need testing to verify fix."
 
 metadata:
   created_by: "testing_agent"
