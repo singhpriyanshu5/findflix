@@ -70,14 +70,45 @@ export default function TinderScreen() {
     }
   };
 
-  const createSwipeSession = (friend: Friend) => {
-    router.push({
-      pathname: '/create-session',
-      params: { 
-        friendId: friend.id,
-        friendName: friend.name,
-      },
-    });
+  const handleFriendClick = async (friend: Friend) => {
+    setIsLoading(true);
+    try {
+      // Get or create session with this friend
+      const response = await axios.get(`${BACKEND_URL}/api/swipe/session/${friend.id}`);
+      const sessionData = response.data;
+      
+      // Show options modal
+      Alert.alert(
+        `Swipe with ${friend.name}`,
+        `You have ${sessionData.match_count} matches together`,
+        [
+          {
+            text: 'View Matches',
+            onPress: () => router.push({
+              pathname: '/session-summary',
+              params: { sessionId: sessionData.session_id },
+            }),
+          },
+          {
+            text: 'Continue Swiping',
+            style: 'default',
+            onPress: () => router.push({
+              pathname: '/swipe-session',
+              params: { sessionId: sessionData.session_id },
+            }),
+          },
+          {
+            text: 'Cancel',
+            style: 'cancel',
+          },
+        ]
+      );
+    } catch (error) {
+      console.error('Failed to get session:', error);
+      Alert.alert('Error', 'Failed to load session with friend');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const joinSession = (session: SwipeSession) => {
