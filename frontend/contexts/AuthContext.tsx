@@ -129,7 +129,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       setIsLoading(true);
       const response = await axios.post(
-        `${BACKEND_URL}/api/auth/oauth/session`,
+        `${BACKEND_URL}/auth/oauth/session`,
         {},
         {
           headers: {
