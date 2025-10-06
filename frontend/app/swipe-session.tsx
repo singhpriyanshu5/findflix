@@ -82,15 +82,21 @@ export default function SwipeSessionScreen() {
   };
 
   const submitSwipe = async (action: 'like' | 'dislike') => {
-    console.log('Submit swipe called:', action, 'Index:', currentIndex, 'Total movies:', movies.length);
+    console.log('🎬 Submit swipe called:', action, 'Current Index:', currentIndex, 'Total movies:', movies.length);
     
     if (currentIndex >= movies.length) {
-      console.log('No more movies to swipe');
+      console.log('❌ No more movies to swipe');
       return;
     }
     
     const movie = movies[currentIndex];
-    console.log('Swiping on movie:', movie.title);
+    console.log('🎭 Swiping on movie:', movie.title, 'ID:', movie.id);
+    
+    // Move to next movie IMMEDIATELY to prevent UI blocking
+    const nextIndex = currentIndex + 1;
+    console.log('⬆️ Moving to next index:', nextIndex);
+    setCurrentIndex(nextIndex);
+    
     setIsSwipeLoading(true);
 
     try {
@@ -103,19 +109,22 @@ export default function SwipeSessionScreen() {
         movie_poster: movie.poster_path,
       });
 
-      console.log('Swipe response:', response.data);
+      console.log('✅ Swipe response:', response.data);
 
       if (response.data.match_created) {
-        console.log('Match created!');
+        console.log('💖 Match created!');
         setMatchedMovie(movie);
         setMatches(prev => [...prev, movie]);
         setShowMatchModal(true);
       }
-
-      // Move to next movie
-      setCurrentIndex(prev => prev + 1);
     } catch (error: any) {
-      console.error('Submit swipe error:', error);
+      console.error('❌ Submit swipe error:', error);
+      console.error('Error details:', error.response?.data);
+      
+      // Revert the index on error
+      console.log('⬇️ Reverting index due to error');
+      setCurrentIndex(currentIndex);
+      
       const message = error.response?.data?.detail || 'Failed to record swipe';
       Alert.alert('Error', message);
     } finally {
