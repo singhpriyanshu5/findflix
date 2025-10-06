@@ -232,11 +232,21 @@ export default function SwipeSessionScreen() {
         if (isSwipe && gestureState.dx > 0) {
           // Swipe right (like) - USE EXACT SAME FUNCTION AS BUTTON
           console.log('👍 SWIPE RIGHT DETECTED - CALLING handleLike()');
-          handleLike(); // Call the EXACT same function as the like button
+          console.log('🎬 State check before handleLike: movies=', movies.length, 'currentIndex=', currentIndex);
+          // Use setTimeout to ensure we're not in the middle of gesture processing
+          setTimeout(() => {
+            console.log('🎬 Delayed handleLike execution: movies=', movies.length, 'currentIndex=', currentIndex);
+            handleLike();
+          }, 0);
         } else if (isSwipe && gestureState.dx < 0) {
           // Swipe left (dislike) - USE EXACT SAME FUNCTION AS BUTTON
           console.log('👎 SWIPE LEFT DETECTED - CALLING handleDislike()');
-          handleDislike(); // Call the EXACT same function as the dislike button
+          console.log('🎬 State check before handleDislike: movies=', movies.length, 'currentIndex=', currentIndex);
+          // Use setTimeout to ensure we're not in the middle of gesture processing
+          setTimeout(() => {
+            console.log('🎬 Delayed handleDislike execution: movies=', movies.length, 'currentIndex=', currentIndex);
+            handleDislike();
+          }, 0);
         } else {
           // Snap back
           console.log('↩️ Gesture too short - snapping back');
