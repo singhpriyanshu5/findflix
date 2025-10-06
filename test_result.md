@@ -107,15 +107,18 @@ user_problem_statement: "Fix swipe gesture functionality in FindFlix Tinder-like
 backend:
   - task: "Swipe Session API Integration"
     implemented: true
-    working: true
+    working: false
     file: "backend/server.py"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: true
           agent: "main"
           comment: "Backend swipe endpoints working correctly. Need to verify they still work after frontend gesture fix."
+        - working: false
+          agent: "testing"
+          comment: "Critical issue found: Friend request system not working properly. Friend requests are sent successfully but not retrieved by the receiving user, preventing swipe session creation. Authentication endpoints work correctly. Most movie API endpoints work correctly. Swipe session endpoints cannot be tested without working friend system."
 
   - task: "Health Check Endpoint"
     implemented: true
