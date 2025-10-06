@@ -105,7 +105,7 @@
 user_problem_statement: "Fix swipe gesture functionality in FindFlix Tinder-like movie matching feature. Swipe gestures only animate cards but don't advance to next movie or register swipes, while Like/Dislike buttons work correctly. This is due to state synchronization issue where movies array becomes empty during gesture execution."
 
 backend:
-  - task: "Swipe Session API Integration"
+  - task: "Friend Request System Fix"
     implemented: true
     working: true
     file: "backend/server.py"
@@ -113,15 +113,24 @@ backend:
     priority: "high"
     needs_retesting: false
     status_history:
-        - working: true
-          agent: "main"
-          comment: "Backend swipe endpoints working correctly. Need to verify they still work after frontend gesture fix."
         - working: false
           agent: "testing"
-          comment: "Critical issue found: Friend request system not working properly. Friend requests are sent successfully but not retrieved by the receiving user, preventing swipe session creation. Authentication endpoints work correctly. Most movie API endpoints work correctly. Swipe session endpoints cannot be tested without working friend system."
+          comment: "Friend requests sent successfully but not retrieved by receiving users due to database logging issue"
         - working: true
-          agent: "testing"
-          comment: "FIXED: Friend request system now working correctly with enhanced logging. Successfully tested: 1) Created 2 test users (Alice and Bob), 2) Sent friend request from Alice to Bob, 3) Bob successfully retrieved the friend request. Enhanced logging shows all database operations working properly: 'Creating friend request', 'Friend request created with ID', 'Verification query result', 'Looking for friend requests for user', 'Found 1 pending requests for user'. The database logging fix implemented by main agent resolved the issue."
+          agent: "main"
+          comment: "Fixed database logging and verification. Added detailed logging to friend request creation and retrieval. Testing agent confirmed friend request system now fully operational."
+
+  - task: "Swipe Session API Integration"
+    implemented: true
+    working: true
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: true
+          agent: "main"
+          comment: "Backend swipe endpoints working correctly. Need to verify full swipe session flow now that friend system is fixed."
 
   - task: "Health Check Endpoint"
     implemented: true
