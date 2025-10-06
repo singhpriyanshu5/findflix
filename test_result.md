@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Test the Movie Recommendation API backend thoroughly with 3 external API integrations: TMDB, OMDb, Streaming Availability API"
+user_problem_statement: "Fix swipe gesture functionality in FindFlix Tinder-like movie matching feature. Swipe gestures only animate cards but don't advance to next movie or register swipes, while Like/Dislike buttons work correctly. This is due to state synchronization issue where movies array becomes empty during gesture execution."
 
 backend:
   - task: "Health Check Endpoint"
