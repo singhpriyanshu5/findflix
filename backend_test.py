@@ -655,6 +655,17 @@ class FindFlixAPITester:
             self.test_get_friend_requests,
             self.test_accept_friend_request,
             self.test_get_friends_list,
+        ]
+        
+        # Swipe Session Tests (Core Tinder Functionality)
+        swipe_tests = [
+            self.test_create_swipe_session,
+            self.test_get_swipe_content,
+            self.test_submit_swipe_like,
+            self.test_submit_swipe_like_friend,
+            self.test_get_matches,
+            self.test_get_session_summary,
+            self.test_get_swipe_sessions,
             self.test_logout
         ]
         
