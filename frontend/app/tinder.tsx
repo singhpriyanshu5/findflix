@@ -66,26 +66,33 @@ export default function TinderScreen() {
       // Show options modal
       Alert.alert(
         `Swipe with ${friend.name}`,
-        `You have ${sessionData.match_count} matches together`,
+        `You have ${sessionData.match_count} matches together. Choose an option:`,
         [
           {
             text: 'View Matches',
-            onPress: () => router.push({
-              pathname: '/session-summary',
-              params: { sessionId: sessionData.session_id },
-            }),
+            onPress: () => {
+              console.log('View Matches selected');
+              router.push({
+                pathname: '/session-summary',
+                params: { sessionId: sessionData.session_id },
+              });
+            },
           },
           {
             text: 'Continue Swiping',
             style: 'default',
-            onPress: () => router.push({
-              pathname: '/swipe-session',
-              params: { sessionId: sessionData.session_id },
-            }),
+            onPress: () => {
+              console.log('Continue Swiping selected');
+              router.push({
+                pathname: '/swipe-session',
+                params: { sessionId: sessionData.session_id },
+              });
+            },
           },
           {
             text: 'Cancel',
             style: 'cancel',
+            onPress: () => console.log('Cancelled'),
           },
         ]
       );
