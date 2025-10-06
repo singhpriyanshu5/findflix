@@ -147,8 +147,38 @@ export default function SearchScreen() {
       >
         {/* Header */}
         <View style={styles.header}>
-          <Text style={styles.title}>FindFlix</Text>
-          <Text style={styles.subtitle}>Find your next movie/tv show to watch</Text>
+          <View style={styles.headerLeft}>
+            <Text style={styles.title}>FindFlix</Text>
+            <Text style={styles.subtitle}>Find your next movie/tv show to watch</Text>
+          </View>
+          <View style={styles.headerRight}>
+            {isAuthenticated ? (
+              <View style={styles.userSection}>
+                <TouchableOpacity
+                  style={styles.tinderButton}
+                  onPress={() => router.push('/tinder')}
+                >
+                  <Ionicons name="heart" size={20} color="#fff" />
+                  <Text style={styles.tinderButtonText}>Tinder</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.profileButton}
+                  onPress={() => logout()}
+                >
+                  <Text style={styles.profileButtonText}>
+                    {user?.name.charAt(0).toUpperCase()}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            ) : (
+              <TouchableOpacity
+                style={styles.loginButton}
+                onPress={() => router.push('/auth')}
+              >
+                <Text style={styles.loginButtonText}>Sign In</Text>
+              </TouchableOpacity>
+            )}
+          </View>
         </View>
 
         {/* Search Bar */}
