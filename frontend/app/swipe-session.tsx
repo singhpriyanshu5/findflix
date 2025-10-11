@@ -113,16 +113,22 @@ export default function SwipeSessionScreen() {
       if (response.data.trailer_key) {
         setTrailerKey(response.data.trailer_key);
         
-        // Show poster for 1.5 seconds, then immediately show and play trailer
+        // Show poster for 1.5 seconds, then show trailer
         posterTimerRef.current = setTimeout(() => {
+          console.log('Showing trailer');
           setShowTrailer(true);
-          setIsTrailerPlaying(true);
         }, 1500);
       }
     } catch (error) {
       console.error('Failed to load trailer:', error);
       // Silently fail - just show poster
     }
+  };
+
+  const handlePlayerReady = () => {
+    console.log('Player is ready, starting autoplay');
+    setPlayerReady(true);
+    setIsTrailerPlaying(true);
   };
 
   const loadMovies = async () => {
