@@ -163,7 +163,7 @@ export default function SearchScreen() {
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={styles.profileButton}
-                  onPress={() => logout()}
+                  onPress={() => router.push('/profile')}
                 >
                   <Text style={styles.profileButtonText}>
                     {user?.name.charAt(0).toUpperCase()}
