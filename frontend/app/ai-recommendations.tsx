@@ -148,29 +148,14 @@ export default function AIRecommendationsScreen() {
         console.log('setOptions method available:', typeof chatkit.setOptions === 'function');
         
         // Set authentication and theme options
+        const clientSecret = '${clientSecret}';
+        console.log('Using client secret from parent:', !!clientSecret);
+        
         chatkit.setOptions({
           api: {
             getClientSecret: async (existingSecret) => {
-              console.log('getClientSecret called');
-              try {
-                const response = await fetch('${BACKEND_URL}/api/chatkit/session', {
-                  method: 'POST',
-                  headers: {
-                    'Content-Type': 'application/json'
-                  }
-                });
-                
-                if (!response.ok) {
-                  throw new Error('Failed to fetch client secret');
-                }
-                
-                const data = await response.json();
-                console.log('Got client secret from backend');
-                return data.client_secret;
-              } catch (error) {
-                console.error('Error fetching client secret:', error);
-                throw error;
-              }
+              console.log('getClientSecret called, returning pre-fetched secret');
+              return clientSecret;
             }
           },
           theme: 'dark'
