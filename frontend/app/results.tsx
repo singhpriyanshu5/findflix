@@ -183,8 +183,16 @@ export default function ResultsScreen() {
 
   return (
     <SafeAreaView style={styles.container} edges={['bottom']}>
-      {/* Sort Button Header */}
+      {/* Header with optional back button */}
       <View style={styles.header}>
+        {fromDetails && (
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => router.push(`/details?id=${detailsId}&mediaType=${detailsMediaType}`)}
+          >
+            <Ionicons name="arrow-back" size={24} color="#fff" />
+          </TouchableOpacity>
+        )}
         <TouchableOpacity
           style={styles.sortButton}
           onPress={() => setShowSortModal(true)}
