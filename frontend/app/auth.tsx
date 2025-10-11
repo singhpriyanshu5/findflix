@@ -452,4 +452,49 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
   },
+  forgotPassword: {
+    alignSelf: 'flex-end',
+    marginTop: 8,
+    marginBottom: 16,
+  },
+  forgotPasswordText: {
+    color: '#e50914',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  modalContent: {
+    backgroundColor: '#1a1a1a',
+    borderRadius: 16,
+    padding: 24,
+    width: '100%',
+    maxWidth: 400,
+  },
+  modalTitle: {
+    color: '#fff',
+    fontSize: 24,
+    fontWeight: '700',
+    marginBottom: 8,
+  },
+  modalSubtitle: {
+    color: '#888',
+    fontSize: 14,
+    marginBottom: 24,
+  },
+  cancelButton: {
+    marginTop: 12,
+    paddingVertical: 12,
+    alignItems: 'center',
+  },
+  cancelButtonText: {
+    color: '#888',
+    fontSize: 16,
+    fontWeight: '600',
+  },
 });
