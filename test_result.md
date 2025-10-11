@@ -321,11 +321,11 @@ test_plan:
 frontend:
   - task: "AI Recommendations Chat UI"
     implemented: true
-    working: "NA"
+    working: false
     file: "frontend/app/ai-recommendations.tsx"
-    stuck_count: 1
+    stuck_count: 2
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: false
           agent: "user"
@@ -333,6 +333,9 @@ frontend:
         - working: "NA"
           agent: "main"
           comment: "Fixed ChatKit integration: Changed from <chatkit-root> to <openai-chatkit> custom element (correct element per 2025 docs). Updated authentication to use setOptions({auth: {token}}) instead of getClientSecret callback. Added better error handling and event listeners. Frontend service restarted to pick up changes. Ready for testing."
+        - working: false
+          agent: "testing"
+          comment: "CRITICAL ISSUES FOUND: 1) Mode selector with 'AI Recommendations' button is NOT visible on home page - users cannot access the feature. 2) Frontend is calling wrong backend URL (findflix-1 instead of findflix-2) causing all API calls to fail with CORS errors. 3) ChatKit iframe element found on /ai-recommendations page but no loading messages or success indicators appear. 4) No authentication possible due to API failures. The main issue is URL mismatch - frontend calls https://findflix-1.preview.emergentagent.com/api/ but should call https://findflix-2.preview.emergentagent.com/api/ per .env config."
 
 agent_communication:
     - agent: "testing"
