@@ -236,6 +236,14 @@ TMDB_API_KEY="your_tmdb_api_key_here"
 RAPIDAPI_KEY="your_rapidapi_key_here"
 OMDB_API_KEY="your_omdb_api_key_here"
 WATCHMODE_API_KEY="your_watchmode_api_key_here"
+
+# Email Configuration (Optional - for password reset emails)
+SMTP_SERVER="smtp.gmail.com"
+SMTP_PORT="587"
+SMTP_USERNAME="your-email@gmail.com"
+SMTP_PASSWORD="your-app-password"
+FROM_EMAIL="your-email@gmail.com"
+APP_URL="https://your-app-url.com"
 ```
 
 ### Frontend (.env)
