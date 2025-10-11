@@ -72,6 +72,16 @@ export default function DetailsScreen() {
   const mediaType = params.mediaType as string;
   const [refreshKey, setRefreshKey] = useState(0);
   const router = useRouter();
+  
+  // Check if we came from results page
+  const fromResults = params.fromResults === 'true';
+  const resultsQuery = params.resultsQuery as string;
+  const resultsScope = params.resultsScope as string;
+  const resultsGenre = params.resultsGenre as string;
+  const resultsLanguage = params.resultsLanguage as string;
+  const resultsContentType = params.resultsContentType as string;
+  const resultsSortBy = params.resultsSortBy as string;
+  const resultsPage = params.resultsPage as string;
 
   const { data: titleData, isLoading, refetch } = useQuery<TitleDetails>({
     queryKey: ['title', id, mediaType, refreshKey],
