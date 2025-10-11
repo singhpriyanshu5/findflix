@@ -72,26 +72,21 @@ export default function AIRecommendationsScreen() {
     );
   }
 
-  // HTML content that will be loaded in WebView with ChatKit
-  const htmlContent = `
-<!DOCTYPE html>
+  // HTML content that will be loaded with ChatKit
+  const htmlContent = `<!DOCTYPE html>
 <html>
 <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <script src="https://cdn.platform.openai.com/deployments/chatkit/chatkit.js" async></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.platform.openai.com/deployments/chatkit/chatkit.js"></script>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       background-color: #0c0c0c;
       height: 100vh;
       overflow: hidden;
     }
-    #chatkit-container {
+    #container {
       width: 100%;
       height: 100vh;
       display: flex;
@@ -102,24 +97,13 @@ export default function AIRecommendationsScreen() {
       padding: 16px;
       border-bottom: 1px solid #2a2a2a;
     }
-    .header-title {
-      color: #fff;
-      font-size: 18px;
-      font-weight: 600;
-    }
-    .header-subtitle {
-      color: #888;
-      font-size: 13px;
-      margin-top: 4px;
-    }
-    #chatkit {
-      flex: 1;
-      width: 100%;
-    }
+    .header-title { color: #fff; font-size: 18px; font-weight: 600; }
+    .header-subtitle { color: #888; font-size: 13px; margin-top: 4px; }
+    #chatkit { flex: 1; width: 100%; }
   </style>
 </head>
 <body>
-  <div id="chatkit-container">
+  <div id="container">
     <div class="header">
       <div class="header-title">🎬 AI Movie Recommendations</div>
       <div class="header-subtitle">Get personalized movie suggestions</div>
@@ -128,33 +112,39 @@ export default function AIRecommendationsScreen() {
   </div>
   
   <script>
-    (async function() {
+    console.log('ChatKit HTML loaded');
+    window.addEventListener('DOMContentLoaded', function() {
+      console.log('DOM loaded, initializing ChatKit');
       const chatkit = document.getElementById('chatkit');
-      const clientSecret = '${clientSecret}';
+      const secret = '${clientSecret}';
+      console.log('Client secret available:', !!secret);
       
-      chatkit.setOptions({
-        api: {
-          async getClientSecret(currentClientSecret) {
-            // Return the client secret we got from the backend
-            return clientSecret;
-          }
-        },
-        theme: {
-          colors: {
-            primary: '#e50914',
-            background: '#0c0c0c',
-            surface: '#1a1a1a',
-            text: '#ffffff',
-            textSecondary: '#888888',
+      if (chatkit && chatkit.setOptions) {
+        chatkit.setOptions({
+          api: {
+            async getClientSecret() {
+              console.log('getClientSecret called');
+              return secret;
+            }
           },
-          borderRadius: '12px',
-        }
-      });
-    })();
+          theme: {
+            colors: {
+              primary: '#e50914',
+              background: '#0c0c0c',
+              surface: '#1a1a1a',
+              text: '#ffffff',
+              textSecondary: '#888888',
+            }
+          }
+        });
+        console.log('ChatKit options set');
+      } else {
+        console.error('ChatKit element not found or setOptions not available');
+      }
+    });
   </script>
 </body>
-</html>
-`;
+</html>`;
 
   // For web platform, use iframe
   if (Platform.OS === 'web') {
