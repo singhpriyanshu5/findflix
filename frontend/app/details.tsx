@@ -289,6 +289,29 @@ export default function DetailsScreen() {
           </View>
         </View>
 
+        {/* Trailer Section */}
+        {trailerData?.trailer_key && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Trailer</Text>
+            <View style={styles.trailerContainer}>
+              <YoutubePlayer
+                height={220}
+                play={false}
+                videoId={trailerData.trailer_key}
+                initialPlayerParams={{
+                  controls: 1,
+                  modestbranding: 1,
+                  rel: 0,
+                }}
+                mute={true}
+                webViewStyle={{
+                  opacity: 0.99,
+                }}
+              />
+            </View>
+          </View>
+        )}
+
         {/* Streaming Availability */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Where to Watch (US)</Text>
