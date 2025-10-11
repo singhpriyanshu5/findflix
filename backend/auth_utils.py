@@ -7,6 +7,9 @@ import os
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from models import User, UserSession
 import logging
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 logger = logging.getLogger(__name__)
 
