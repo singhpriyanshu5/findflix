@@ -505,4 +505,32 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
   },
+  messageBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 12,
+    borderRadius: 8,
+    marginBottom: 16,
+    gap: 8,
+  },
+  successBox: {
+    backgroundColor: 'rgba(76, 175, 80, 0.1)',
+    borderWidth: 1,
+    borderColor: '#4CAF50',
+  },
+  errorBox: {
+    backgroundColor: 'rgba(229, 9, 20, 0.1)',
+    borderWidth: 1,
+    borderColor: '#e50914',
+  },
+  messageText: {
+    flex: 1,
+    fontSize: 14,
+  },
+  successText: {
+    color: '#4CAF50',
+  },
+  errorText: {
+    color: '#e50914',
+  },
 });
