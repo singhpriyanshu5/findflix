@@ -1380,11 +1380,12 @@ async def search_titles(request: SearchRequest, current_user: User = Depends(get
             elif request.sort_by == "year_asc":
                 formatted_results.sort(key=lambda x: x["year"] or "0")
         
-        # Save search history (only if results found)
-        if formatted_results:
+        # Save search history (only if results found and user is authenticated)
+        if formatted_results and current_user:
             try:
                 history_item = {
                     "id": str(uuid.uuid4()),
+                    "user_id": current_user.id,
                     "query": request.query,
                     "scope": request.scope.value,
                     "genre": request.genre,
