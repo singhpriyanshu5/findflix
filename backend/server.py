@@ -1010,15 +1010,8 @@ async def search_titles(request: SearchRequest):
         results = []
         
         if request.scope == SearchScope.TITLE:
-            search_params = {
-                "query": request.query,
-                "page": request.page,
-                "include_adult": False
-            }
-            if request.language:
-                search_params["language"] = request.language
-            
-            data = await fetch_tmdb_data("search/multi", search_params)
+            # Use fuzzy search for better typo tolerance
+            data = await fuzzy_search_tmdb(request.query, "multi", request.page)
             results = data.get("results", [])
             total_pages = data.get("total_pages", 1)
             
