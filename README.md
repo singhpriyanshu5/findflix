@@ -65,14 +65,32 @@ FindFlix is a comprehensive native mobile application built with React Native (E
 - **Original Language**: Display with icon in Facts section
 
 ### 📜 Smart Search History
-- **Auto-refresh**: Updates instantly when returning to search screen
+- **User-Specific**: Each user's search history is private and saved automatically
+- **Auto-Save**: Searches saved only for logged-in users (requires authentication)
+- **Recent Searches Page**: Access from profile to view up to 50 recent searches
 - **Filter Preservation**: Saves all filters (scope, genre, language, content type)
-- **Visual Tags**: Color-coded tags for easy identification
-  - Gray: Scope (title/cast/director)
-  - Orange: Genre
-  - Red: Language
-  - Blue: Content Type
+- **Visual Display**: Shows query, scope badge, content type, and relative timestamps
 - **Quick Replay**: Tap any history item to re-run the exact same search
+- **Clear History**: Delete all search history with one tap
+
+### 👤 User Profile & Stats
+- **Profile Page**: View account info and app statistics
+- **Stats Dashboard**: 
+  - Friends count
+  - Pending invites (sent + received)
+  - Total matches from swipe sessions
+  - Total swipe sessions
+- **Quick Actions**: Navigate to Movie Tinder, Add Friends, Recent Searches
+- **Sign Out**: Secure logout with confirmation
+
+### 🎬 Enhanced Swipe Experience
+- **Real Swipe Gestures**: Drag cards left/right to swipe (20% threshold or quick flick)
+- **Visual Feedback**: "LIKE" (green) and "NOPE" (red) indicators appear while swiping
+- **Movie Trailers**: Auto-loading trailers on swipe cards (poster → trailer after 1.5s)
+- **One-Tap Playback**: Tap YouTube play button to watch trailer
+- **Pending Invites UI**: View sent/received friend requests on Tinder screen
+- **Session Management**: Create, view, and end swipe sessions
+- **Match Navigation**: Tap matched movies to view full details
 
 ### 🎨 Beautiful UI/UX
 - **Dark Theme**: Eye-friendly dark mode
