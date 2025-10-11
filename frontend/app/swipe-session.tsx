@@ -375,15 +375,10 @@ export default function SwipeSessionScreen() {
                 ref={playerRef}
                 key={`${trailerKey}-${currentIndex}`}
                 height={SCREEN_HEIGHT * 0.6}
-                play={isTrailerPlaying}
+                play={false}
                 videoId={trailerKey}
-                onReady={handlePlayerReady}
                 onChangeState={(state) => {
                   console.log('Video state:', state);
-                  if (state === 'playing') {
-                    console.log('Video is now playing!');
-                    setShowPlayOverlay(false);
-                  }
                 }}
                 initialPlayerParams={{
                   controls: 1,
@@ -392,7 +387,7 @@ export default function SwipeSessionScreen() {
                   loop: 0,
                 }}
                 mute={true}
-                forceAndroidAutoplay={true}
+                forceAndroidAutoplay={false}
                 allowWebViewZoom={false}
                 webViewStyle={{
                   opacity: 0.99,
@@ -404,20 +399,6 @@ export default function SwipeSessionScreen() {
                   domStorageEnabled: true,
                 }}
               />
-              
-              {/* Tap to Play Overlay - iOS autoplay workaround */}
-              {showPlayOverlay && (
-                <TouchableOpacity
-                  style={styles.playOverlay}
-                  onPress={handlePlayButtonPress}
-                  activeOpacity={0.9}
-                >
-                  <View style={styles.playButton}>
-                    <Ionicons name="play" size={48} color="#fff" />
-                  </View>
-                  <Text style={styles.playText}>Tap to watch trailer</Text>
-                </TouchableOpacity>
-              )}
             </View>
           ) : (
             <>
