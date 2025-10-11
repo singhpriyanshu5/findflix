@@ -826,6 +826,8 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     backgroundColor: '#1a1a1a',
     alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'center',
   },
   modeButtonActive: {
     backgroundColor: '#e50914',
