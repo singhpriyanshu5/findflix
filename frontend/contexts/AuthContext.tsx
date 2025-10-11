@@ -126,7 +126,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  const register = async (name: string, email: string, password: string): Promise<boolean> => {
+  const register = async (name: string, email: string, password: string): Promise<AuthResponse> => {
     try {
       setIsLoading(true);
       const response = await axios.post(`${BACKEND_URL}/api/auth/register`, {
@@ -144,10 +144,31 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       axios.defaults.headers.common['Authorization'] = `Bearer ${session_token}`;
       
       setUser(userData);
-      return true;
-    } catch (error) {
+      return { success: true };
+    } catch (error: any) {
       console.error('Registration failed:', error);
-      return false;
+      
+      // Extract specific error message
+      let errorMessage = 'Registration failed. Please try again.';
+      
+      if (error.response) {
+        const status = error.response.status;
+        const detail = error.response.data?.detail || '';
+        
+        if (status === 400) {
+          if (detail.toLowerCase().includes('already registered') || detail.toLowerCase().includes('already exists')) {
+            errorMessage = 'This email is already registered. Please sign in instead.';
+          } else if (detail) {
+            errorMessage = detail;
+          }
+        } else if (detail) {
+          errorMessage = detail;
+        }
+      } else if (error.message) {
+        errorMessage = `Connection error: ${error.message}`;
+      }
+      
+      return { success: false, error: errorMessage };
     } finally {
       setIsLoading(false);
     }
