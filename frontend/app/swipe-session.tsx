@@ -42,11 +42,15 @@ export default function SwipeSessionScreen() {
   const [matches, setMatches] = useState<Movie[]>([]);
   const [showMatchModal, setShowMatchModal] = useState(false);
   const [matchedMovie, setMatchedMovie] = useState<Movie | null>(null);
+  const [trailerKey, setTrailerKey] = useState<string | null>(null);
+  const [showTrailer, setShowTrailer] = useState(false);
+  const [isTrailerPlaying, setIsTrailerPlaying] = useState(false);
   
   const { isAuthenticated } = useAuth();
   const router = useRouter();
   const params = useLocalSearchParams();
   const sessionId = params.sessionId as string;
+  const posterTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   // Animation refs
   const swipeAnimation = useRef(new Animated.ValueXY()).current;
