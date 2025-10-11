@@ -197,6 +197,17 @@ export default function ProfileScreen() {
           </TouchableOpacity>
 
           <TouchableOpacity
+            style={styles.actionItem}
+            onPress={() => router.push('/recent-searches')}
+          >
+            <View style={styles.actionLeft}>
+              <Ionicons name="time-outline" size={24} color="#fff" />
+              <Text style={styles.actionText}>Recent Searches</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={20} color="#666" />
+          </TouchableOpacity>
+
+          <TouchableOpacity
             style={[styles.actionItem, styles.logoutAction]}
             onPress={handleLogout}
           >
