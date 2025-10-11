@@ -53,6 +53,7 @@ export default function SwipeSessionScreen() {
   const sessionId = params.sessionId as string;
   const posterTimerRef = useRef<NodeJS.Timeout | null>(null);
   const playTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const playerRef = useRef<any>(null);
 
   // Animation refs
   const swipeAnimation = useRef(new Animated.ValueXY()).current;
