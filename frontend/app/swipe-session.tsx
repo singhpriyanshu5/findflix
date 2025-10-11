@@ -340,12 +340,17 @@ export default function SwipeSessionScreen() {
           {showTrailer && trailerKey ? (
             <View style={styles.trailerContainer}>
               <YoutubePlayer
+                ref={playerRef}
                 key={`${trailerKey}-${currentIndex}`}
                 height={SCREEN_HEIGHT * 0.6}
-                play={true}
+                play={isTrailerPlaying}
                 videoId={trailerKey}
+                onReady={handlePlayerReady}
                 onChangeState={(state) => {
                   console.log('Video state:', state);
+                  if (state === 'playing') {
+                    console.log('Video is now playing!');
+                  }
                 }}
                 initialPlayerParams={{
                   controls: 1,
