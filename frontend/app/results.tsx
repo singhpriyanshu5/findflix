@@ -32,6 +32,7 @@ interface SearchResult {
   vote_average: number;
   overview: string;
   original_language: string;
+  release_date?: string;
 }
 
 export default function ResultsScreen() {
