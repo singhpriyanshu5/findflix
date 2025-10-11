@@ -56,8 +56,12 @@ export default function AuthScreen() {
   };
 
   const handleForgotPassword = async () => {
+    setResetMessage('');
+    setResetMessageType('');
+    
     if (!resetEmail || !resetEmail.includes('@')) {
-      Alert.alert('Error', 'Please enter a valid email address');
+      setResetMessage('Please enter a valid email address');
+      setResetMessageType('error');
       return;
     }
 
@@ -76,43 +80,26 @@ export default function AuthScreen() {
       const data = await response.json();
 
       if (response.ok) {
-        Alert.alert(
-          'Success',
-          'Password reset instructions have been sent to your email',
-          [
-            {
-              text: 'OK',
-              onPress: () => {
-                setShowForgotPassword(false);
-                setResetEmail('');
-              },
-            },
-          ]
-        );
+        setResetMessage('Password reset instructions have been sent to your email!');
+        setResetMessageType('success');
+        setTimeout(() => {
+          setShowForgotPassword(false);
+          setResetEmail('');
+          setResetMessage('');
+          setResetMessageType('');
+        }, 3000);
       } else {
         if (response.status === 404) {
-          Alert.alert(
-            'Account Not Found',
-            "This email doesn't have an account yet. Would you like to sign up?",
-            [
-              { text: 'Cancel', style: 'cancel' },
-              {
-                text: 'Sign Up',
-                onPress: () => {
-                  setShowForgotPassword(false);
-                  setIsLogin(false);
-                  setEmail(resetEmail);
-                  setResetEmail('');
-                },
-              },
-            ]
-          );
+          setResetMessage("This email doesn't have an account yet. Please sign up first.");
+          setResetMessageType('error');
         } else {
-          Alert.alert('Error', data.detail || 'Failed to send reset email');
+          setResetMessage(data.detail || 'Failed to send reset email');
+          setResetMessageType('error');
         }
       }
     } catch (error) {
-      Alert.alert('Error', 'Network error. Please try again.');
+      setResetMessage('Network error. Please try again.');
+      setResetMessageType('error');
     } finally {
       setIsLoading(false);
     }
