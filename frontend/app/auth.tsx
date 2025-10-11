@@ -296,6 +296,25 @@ export default function AuthScreen() {
               <Text style={styles.modalSubtitle}>
                 Enter your email and we'll send you instructions to reset your password
               </Text>
+
+              {resetMessage && (
+                <View style={[
+                  styles.messageBox,
+                  resetMessageType === 'success' ? styles.successBox : styles.errorBox
+                ]}>
+                  <Ionicons 
+                    name={resetMessageType === 'success' ? 'checkmark-circle' : 'alert-circle'} 
+                    size={20} 
+                    color={resetMessageType === 'success' ? '#4CAF50' : '#e50914'} 
+                  />
+                  <Text style={[
+                    styles.messageText,
+                    resetMessageType === 'success' ? styles.successText : styles.errorText
+                  ]}>
+                    {resetMessage}
+                  </Text>
+                </View>
+              )}
               
               <View style={styles.inputContainer}>
                 <Ionicons name="mail-outline" size={20} color="#888" style={styles.inputIcon} />
