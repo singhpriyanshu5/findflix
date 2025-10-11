@@ -93,6 +93,7 @@ export default function SwipeSessionScreen() {
     setTrailerKey(null);
     setIsTrailerPlaying(false);
     setPlayerReady(false);
+    setShowPlayOverlay(true);
     
     // Clear any existing timers
     if (posterTimerRef.current) {
@@ -114,9 +115,9 @@ export default function SwipeSessionScreen() {
       if (response.data.trailer_key) {
         setTrailerKey(response.data.trailer_key);
         
-        // Show poster for 1.5 seconds, then show trailer
+        // Show poster for 1.5 seconds, then show trailer with overlay
         posterTimerRef.current = setTimeout(() => {
-          console.log('Showing trailer');
+          console.log('Showing trailer with tap-to-play overlay');
           setShowTrailer(true);
         }, 1500);
       }
@@ -127,8 +128,15 @@ export default function SwipeSessionScreen() {
   };
 
   const handlePlayerReady = () => {
-    console.log('Player is ready, starting autoplay');
+    console.log('Player is ready');
     setPlayerReady(true);
+    // Try autoplay, but it will likely fail on iOS
+    setIsTrailerPlaying(true);
+  };
+
+  const handlePlayButtonPress = () => {
+    console.log('User tapped play button');
+    setShowPlayOverlay(false);
     setIsTrailerPlaying(true);
   };
 
