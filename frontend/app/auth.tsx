@@ -52,6 +52,69 @@ export default function AuthScreen() {
     }
   };
 
+  const handleForgotPassword = async () => {
+    if (!resetEmail || !resetEmail.includes('@')) {
+      Alert.alert('Error', 'Please enter a valid email address');
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL || '';
+      const response = await fetch(`${BACKEND_URL}/api/auth/forgot-password`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email: resetEmail }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        Alert.alert(
+          'Success',
+          'Password reset instructions have been sent to your email',
+          [
+            {
+              text: 'OK',
+              onPress: () => {
+                setShowForgotPassword(false);
+                setResetEmail('');
+              },
+            },
+          ]
+        );
+      } else {
+        if (response.status === 404) {
+          Alert.alert(
+            'Account Not Found',
+            "This email doesn't have an account yet. Would you like to sign up?",
+            [
+              { text: 'Cancel', style: 'cancel' },
+              {
+                text: 'Sign Up',
+                onPress: () => {
+                  setShowForgotPassword(false);
+                  setIsLogin(false);
+                  setEmail(resetEmail);
+                  setResetEmail('');
+                },
+              },
+            ]
+          );
+        } else {
+          Alert.alert('Error', data.detail || 'Failed to send reset email');
+        }
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Network error. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleGoogleLogin = async () => {
     try {
       setIsLoading(true);
