@@ -558,6 +558,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  trailerContainer: {
+    width: '100%',
+    height: '70%',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    backgroundColor: '#000',
+    overflow: 'hidden',
+  },
   movieInfo: {
     flex: 1,
     padding: 20,
