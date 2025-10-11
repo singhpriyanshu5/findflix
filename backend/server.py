@@ -1377,6 +1377,22 @@ async def search_titles(request: SearchRequest):
             elif request.sort_by == "year_asc":
                 formatted_results.sort(key=lambda x: x["year"] or "0")
         
+        # Save search history (only if results found)
+        if formatted_results:
+            try:
+                history_item = {
+                    "id": str(uuid.uuid4()),
+                    "query": request.query,
+                    "scope": request.scope.value,
+                    "genre": request.genre,
+                    "language": request.language,
+                    "content_type": request.content_type,
+                    "timestamp": datetime.now(timezone.utc).isoformat()
+                }
+                await db.search_history.insert_one(history_item)
+            except Exception as e:
+                logger.error(f"Error saving search history: {str(e)}")
+        
         return {
             "results": formatted_results,
             "page": request.page,
