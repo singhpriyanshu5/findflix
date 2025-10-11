@@ -907,6 +907,97 @@ def calculate_hit_flop(budget: Optional[int], revenue: Optional[int]) -> str:
     else:
         return "Average"
 
+def apply_manual_sort(results: List[Dict], sort_by: Optional[str]) -> List[Dict]:
+    """Apply sorting to a list of results (for manual pagination)"""
+    if not sort_by:
+        # Default: sort by popularity
+        results.sort(key=lambda x: x.get("popularity", 0), reverse=True)
+    elif sort_by == "rating_desc":
+        results.sort(key=lambda x: x.get("vote_average", 0), reverse=True)
+    elif sort_by == "rating_asc":
+        results.sort(key=lambda x: x.get("vote_average", 0))
+    elif sort_by == "year_desc":
+        # Sort by release_date or first_air_date, putting items without dates at the end
+        results.sort(key=lambda x: (x.get("release_date") or x.get("first_air_date") or "0000-00-00"), reverse=True)
+    elif sort_by == "year_asc":
+        # Sort by release_date or first_air_date, putting items without dates at the end
+        results.sort(key=lambda x: (x.get("release_date") or x.get("first_air_date") or "9999-99-99"))
+    
+    return results
+
+def calculate_similarity(str1: str, str2: str) -> float:
+    """Calculate similarity ratio between two strings (0-1)"""
+    str1 = str1.lower().strip()
+    str2 = str2.lower().strip()
+    
+    if str1 == str2:
+        return 1.0
+    
+    # Simple character-based similarity
+    if not str1 or not str2:
+        return 0.0
+    
+    # Check if one string contains the other
+    if str1 in str2 or str2 in str1:
+        return 0.9
+    
+    # Calculate Levenshtein distance (character differences)
+    len1, len2 = len(str1), len(str2)
+    if len1 > len2:
+        str1, str2 = str2, str1
+        len1, len2 = len2, len1
+    
+    current_row = range(len1 + 1)
+    for i in range(1, len2 + 1):
+        previous_row, current_row = current_row, [i] + [0] * len1
+        for j in range(1, len1 + 1):
+            add, delete, change = previous_row[j] + 1, current_row[j-1] + 1, previous_row[j-1]
+            if str1[j-1] != str2[i-1]:
+                change += 1
+            current_row[j] = min(add, delete, change)
+    
+    distance = current_row[len1]
+    max_len = max(len(str1), len(str2))
+    similarity = 1 - (distance / max_len)
+    
+    return similarity
+
+async def fuzzy_search_tmdb(query: str, search_type: str = "multi", page: int = 1) -> Dict:
+    """
+    Perform fuzzy search with typo tolerance
+    Returns TMDB search results even with typos
+    """
+    # First try exact search
+    search_params = {
+        "query": query,
+        "page": page,
+        "include_adult": False
+    }
+    
+    endpoint = f"search/{search_type}"
+    try:
+        # Try original query first
+        data = await fetch_tmdb_data(endpoint, search_params)
+        
+        # If we got results, return them
+        if data.get("results") and len(data["results"]) > 0:
+            return data
+        
+        # If no results, try relaxed search (remove special chars, extra spaces)
+        cleaned_query = " ".join(query.strip().split())
+        if cleaned_query != query:
+            search_params["query"] = cleaned_query
+            data = await fetch_tmdb_data(endpoint, search_params)
+            if data.get("results") and len(data["results"]) > 0:
+                return data
+        
+        # Return empty results if nothing found
+        return {"results": [], "total_pages": 0}
+        
+    except Exception as e:
+        logger.error(f"Fuzzy search error: {str(e)}")
+        return {"results": [], "total_pages": 0}
+
 # ===== Original Movie/TV Endpoints =====
 
 @api_router.post("/search")
