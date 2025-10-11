@@ -303,6 +303,36 @@ test_plan:
   test_all: true
   test_priority: "high_first"
 
+  - task: "ChatKit Session Creation"
+    implemented: true
+    working: "NA"
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "ChatKit session endpoint implemented at POST /api/chatkit/session. Creates OpenAI ChatKit session and returns client_secret (token). Needs testing to verify it works correctly."
+
+frontend:
+  - task: "AI Recommendations Chat UI"
+    implemented: true
+    working: "NA"
+    file: "frontend/app/ai-recommendations.tsx"
+    stuck_count: 1
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: false
+          agent: "user"
+          comment: "User reported that after clicking 'AI Recommendations', page loads but shows 'Waiting for chatkit-root custom element...' and no chat UI appears"
+        - working: "NA"
+          agent: "main"
+          comment: "Fixed ChatKit integration: Changed from <chatkit-root> to <openai-chatkit> custom element (correct element per 2025 docs). Updated authentication to use setOptions({auth: {token}}) instead of getClientSecret callback. Added better error handling and event listeners. Needs retesting."
+
 agent_communication:
     - agent: "testing"
       message: "Completed comprehensive backend API testing. All 13 test cases passed after fixing TV show episode_runtime handling. All external API integrations (TMDB, OMDb, Streaming) working correctly with proper error handling. MongoDB integration for search history working. Hit/Flop calculation accurate. Streaming API has rate limits but graceful fallback implemented."
+    - agent: "main"
+      message: "Fixed ChatKit integration issue. Research showed we were using wrong custom element (<chatkit-root> instead of <openai-chatkit>) and wrong auth method. Updated ai-recommendations.tsx with correct implementation. Need to test: 1) Backend ChatKit session endpoint to verify it returns valid token, 2) Frontend to verify ChatKit UI now loads and works. Please test the backend ChatKit endpoint first."
