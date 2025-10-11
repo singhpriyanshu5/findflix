@@ -478,16 +478,38 @@ For questions or suggestions, please open an issue on GitHub.
 
 ---
 
-## 🎯 Future Enhancements
+## 🎯 Recent Updates & Bug Fixes
 
-- [ ] User accounts and watchlists
-- [ ] Personalized recommendations
+### ✅ Implemented (Latest)
+- **Tinder-Style Social Feature**: Swipe movies with friends and find matches
+- **Complete Auth System**: Email/password registration, login, forgot password
+- **Friend System**: Send/accept friend requests, manage friendships
+- **Swipe Sessions**: Create collaborative movie discovery sessions
+- **Enhanced Search**: Fuzzy search with typo tolerance
+- **Improved Ratings**: IMDb/TMDB ratings with source labels
+- **Better Pagination**: Server-side caching for consistent results
+- **Unreleased Content**: Badges for upcoming movies
+- **Session Navigation**: Tap matched movies to view full details
+
+### 🐛 Fixed
+- Search result pagination and sorting consistency
+- Backend TMDB API caching for combined_credits
+- Node.js version compatibility (deployment)
+- Frontend icon loading for web builds
+- TV show episode runtime handling
+- Empty query search with filters
+- Rating fallback logic (IMDb → TMDB)
+
+### 🎯 Future Enhancements
+- [ ] Personal watchlists and favorites
+- [ ] AI-powered personalized recommendations
 - [ ] Movie trailers integration
-- [ ] Social features (share with friends)
-- [ ] Advanced filters (certification, runtime range)
+- [ ] Group chat in swipe sessions
+- [ ] Advanced filters (certification, runtime range, release date)
 - [ ] Offline mode with cached data
-- [ ] Push notifications for new releases
+- [ ] Push notifications for new releases and matches
 - [ ] Multi-language app interface
+- [ ] Password reset page (currently generates token only)
 
 ---
 
