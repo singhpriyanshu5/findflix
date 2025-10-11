@@ -44,6 +44,9 @@ interface FriendRequest {
 
 export default function TinderScreen() {
   const [friends, setFriends] = useState<Friend[]>([]);
+  const [receivedRequests, setReceivedRequests] = useState<FriendRequest[]>([]);
+  const [sentRequests, setSentRequests] = useState<FriendRequest[]>([]);
+  const [showPendingInvites, setShowPendingInvites] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [selectedFriend, setSelectedFriend] = useState<Friend | null>(null);
