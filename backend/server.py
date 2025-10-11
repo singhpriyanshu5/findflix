@@ -14,7 +14,16 @@ from enum import Enum
 
 # Import our new models and auth utilities
 from models import *
-from auth_utils import *
+from auth_utils import (
+    hash_password,
+    verify_password,
+    generate_session_token,
+    verify_emergent_session,
+    create_or_get_user,
+    get_user_from_session,
+    cleanup_expired_sessions,
+    send_password_reset_email
+)
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
