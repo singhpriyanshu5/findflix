@@ -846,4 +846,35 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  swipeIndicator: {
+    position: 'absolute',
+    top: 50,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 8,
+    borderWidth: 3,
+    zIndex: 5,
+  },
+  likeIndicator: {
+    right: 30,
+    borderColor: '#22c55e',
+    transform: [{ rotate: '15deg' }],
+  },
+  nopeIndicator: {
+    left: 30,
+    borderColor: '#ef4444',
+    transform: [{ rotate: '-15deg' }],
+  },
+  likeText: {
+    color: '#22c55e',
+    fontSize: 32,
+    fontWeight: 'bold',
+    letterSpacing: 2,
+  },
+  nopeText: {
+    color: '#ef4444',
+    fontSize: 32,
+    fontWeight: 'bold',
+    letterSpacing: 2,
+  },
 });
