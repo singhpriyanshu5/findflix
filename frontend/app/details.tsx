@@ -698,6 +698,11 @@ const styles = StyleSheet.create({
     color: '#fff',
     marginBottom: 2,
   },
+  castNameRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
   castCharacter: {
     fontSize: 13,
     color: '#888',
