@@ -113,35 +113,53 @@ export default function AIRecommendationsScreen() {
   
   <script>
     console.log('ChatKit HTML loaded');
-    window.addEventListener('DOMContentLoaded', function() {
-      console.log('DOM loaded, initializing ChatKit');
-      const chatkit = document.getElementById('chatkit');
-      const secret = '${clientSecret}';
-      console.log('Client secret available:', !!secret);
+    
+    // Wait for ChatKit custom element to be defined
+    async function initializeChatKit() {
+      console.log('Waiting for chatkit-root custom element...');
       
-      if (chatkit && chatkit.setOptions) {
-        chatkit.setOptions({
-          api: {
-            async getClientSecret() {
-              console.log('getClientSecret called');
-              return secret;
+      try {
+        // Wait for the custom element to be defined
+        await customElements.whenDefined('chatkit-root');
+        console.log('chatkit-root element is defined!');
+        
+        const chatkit = document.getElementById('chatkit');
+        const secret = '${clientSecret}';
+        console.log('Client secret available:', !!secret);
+        
+        if (chatkit && typeof chatkit.setOptions === 'function') {
+          chatkit.setOptions({
+            api: {
+              async getClientSecret() {
+                console.log('getClientSecret called');
+                return secret;
+              }
+            },
+            theme: {
+              colors: {
+                primary: '#e50914',
+                background: '#0c0c0c',
+                surface: '#1a1a1a',
+                text: '#ffffff',
+                textSecondary: '#888888',
+              }
             }
-          },
-          theme: {
-            colors: {
-              primary: '#e50914',
-              background: '#0c0c0c',
-              surface: '#1a1a1a',
-              text: '#ffffff',
-              textSecondary: '#888888',
-            }
-          }
-        });
-        console.log('ChatKit options set');
-      } else {
-        console.error('ChatKit element not found or setOptions not available');
+          });
+          console.log('ChatKit options set successfully!');
+        } else {
+          console.error('ChatKit element found but setOptions not available');
+        }
+      } catch (error) {
+        console.error('Error waiting for ChatKit:', error);
       }
-    });
+    }
+    
+    // Start initialization when DOM is ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initializeChatKit);
+    } else {
+      initializeChatKit();
+    }
   </script>
 </body>
 </html>`;
