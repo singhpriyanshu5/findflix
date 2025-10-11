@@ -351,6 +351,38 @@ export default function SwipeSessionScreen() {
           ]}
           {...panResponder.panHandlers}
         >
+          {/* Swipe Direction Indicators */}
+          <Animated.View
+            style={[
+              styles.swipeIndicator,
+              styles.likeIndicator,
+              {
+                opacity: swipeAnimation.x.interpolate({
+                  inputRange: [0, SCREEN_WIDTH * 0.2],
+                  outputRange: [0, 1],
+                  extrapolate: 'clamp',
+                }),
+              },
+            ]}
+          >
+            <Text style={styles.likeText}>LIKE</Text>
+          </Animated.View>
+
+          <Animated.View
+            style={[
+              styles.swipeIndicator,
+              styles.nopeIndicator,
+              {
+                opacity: swipeAnimation.x.interpolate({
+                  inputRange: [-SCREEN_WIDTH * 0.2, 0],
+                  outputRange: [1, 0],
+                  extrapolate: 'clamp',
+                }),
+              },
+            ]}
+          >
+            <Text style={styles.nopeText}>NOPE</Text>
+          </Animated.View>
           {/* Show trailer if available and ready, otherwise show poster */}
           {showTrailer && trailerKey ? (
             <View style={styles.trailerContainer}>
