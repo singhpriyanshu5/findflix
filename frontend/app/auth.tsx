@@ -23,6 +23,8 @@ export default function AuthScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [resetEmail, setResetEmail] = useState('');
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
   const { login, register, processOAuthSession } = useAuth();
   const router = useRouter();
 
