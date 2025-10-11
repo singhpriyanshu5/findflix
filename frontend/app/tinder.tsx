@@ -169,6 +169,8 @@ export default function TinderScreen() {
     );
   }
 
+  const totalPendingCount = receivedRequests.length + sentRequests.length;
+
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       {/* Header */}
@@ -176,6 +178,99 @@ export default function TinderScreen() {
         <Text style={styles.title}>Movie Tinder</Text>
         <Text style={styles.subtitle}>Swipe movies with your friends</Text>
       </View>
+
+      {/* Pending Invites Section */}
+      {totalPendingCount > 0 && (
+        <View style={styles.pendingSection}>
+          <TouchableOpacity
+            style={styles.pendingHeader}
+            onPress={() => setShowPendingInvites(!showPendingInvites)}
+          >
+            <View style={styles.pendingHeaderLeft}>
+              <Ionicons
+                name={showPendingInvites ? 'chevron-down' : 'chevron-forward'}
+                size={20}
+                color="#fff"
+              />
+              <Text style={styles.pendingTitle}>Pending Invites</Text>
+              <View style={styles.badge}>
+                <Text style={styles.badgeText}>{totalPendingCount}</Text>
+              </View>
+            </View>
+            <Ionicons name="people" size={20} color="#888" />
+          </TouchableOpacity>
+
+          {showPendingInvites && (
+            <View style={styles.pendingContent}>
+              {/* Received Requests */}
+              {receivedRequests.length > 0 && (
+                <View style={styles.requestGroup}>
+                  <Text style={styles.requestGroupTitle}>
+                    Received ({receivedRequests.length})
+                  </Text>
+                  {receivedRequests.map((request) => (
+                    <View key={request.id} style={styles.requestCard}>
+                      <View style={styles.requestInfo}>
+                        <View style={styles.avatar}>
+                          <Text style={styles.avatarText}>
+                            {request.sender.name.charAt(0).toUpperCase()}
+                          </Text>
+                        </View>
+                        <View style={styles.requestDetails}>
+                          <Text style={styles.requestName}>{request.sender.name}</Text>
+                          <Text style={styles.requestEmail}>{request.sender.email}</Text>
+                        </View>
+                      </View>
+                      <View style={styles.requestActions}>
+                        <TouchableOpacity
+                          style={[styles.actionButton, styles.acceptButton]}
+                          onPress={() => respondToRequest(request.id, true)}
+                        >
+                          <Ionicons name="checkmark" size={18} color="#fff" />
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                          style={[styles.actionButton, styles.declineButton]}
+                          onPress={() => respondToRequest(request.id, false)}
+                        >
+                          <Ionicons name="close" size={18} color="#fff" />
+                        </TouchableOpacity>
+                      </View>
+                    </View>
+                  ))}
+                </View>
+              )}
+
+              {/* Sent Requests */}
+              {sentRequests.length > 0 && (
+                <View style={[styles.requestGroup, receivedRequests.length > 0 && { marginTop: 16 }]}>
+                  <Text style={styles.requestGroupTitle}>
+                    Sent ({sentRequests.length})
+                  </Text>
+                  {sentRequests.map((request) => (
+                    <View key={request.id} style={styles.requestCard}>
+                      <View style={styles.requestInfo}>
+                        <View style={styles.avatar}>
+                          <Text style={styles.avatarText}>
+                            {request.receiver.name.charAt(0).toUpperCase()}
+                          </Text>
+                        </View>
+                        <View style={styles.requestDetails}>
+                          <Text style={styles.requestName}>{request.receiver.name}</Text>
+                          <Text style={styles.requestEmail}>{request.receiver.email}</Text>
+                        </View>
+                      </View>
+                      <View style={styles.pendingStatus}>
+                        <Ionicons name="time-outline" size={18} color="#888" />
+                        <Text style={styles.pendingStatusText}>Pending</Text>
+                      </View>
+                    </View>
+                  ))}
+                </View>
+              )}
+            </View>
+          )}
+        </View>
+      )}
 
       {/* Content */}
       <View style={styles.content}>
