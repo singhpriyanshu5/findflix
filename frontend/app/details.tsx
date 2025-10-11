@@ -442,10 +442,20 @@ export default function DetailsScreen() {
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Cast</Text>
             {titleData.cast.map((member, idx) => (
-              <View key={idx} style={styles.castItem}>
-                <Text style={styles.castName}>{member.name || 'Unknown'}</Text>
+              <TouchableOpacity
+                key={idx}
+                style={styles.castItem}
+                onPress={() => {
+                  router.push(`/?query=${encodeURIComponent(member.name)}&scope=cast`);
+                }}
+                activeOpacity={0.7}
+              >
+                <View style={styles.castNameRow}>
+                  <Text style={styles.castName}>{member.name || 'Unknown'}</Text>
+                  <Ionicons name="chevron-forward" size={16} color="#666" />
+                </View>
                 <Text style={styles.castCharacter}>{member.character || 'Unknown role'}</Text>
-              </View>
+              </TouchableOpacity>
             ))}
           </View>
         )}
