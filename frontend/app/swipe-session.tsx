@@ -46,6 +46,7 @@ export default function SwipeSessionScreen() {
   const [showTrailer, setShowTrailer] = useState(false);
   const [isTrailerPlaying, setIsTrailerPlaying] = useState(false);
   const [playerReady, setPlayerReady] = useState(false);
+  const [showPlayOverlay, setShowPlayOverlay] = useState(true);
   
   const { isAuthenticated } = useAuth();
   const router = useRouter();
