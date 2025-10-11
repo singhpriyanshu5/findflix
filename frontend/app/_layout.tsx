@@ -94,6 +94,12 @@ export default function RootLayout() {
                 title: 'Profile',
               }}
             />
+            <Stack.Screen 
+              name="recent-searches" 
+              options={{
+                title: 'Recent Searches',
+              }}
+            />
           </Stack>
         </AuthProvider>
       </QueryClientProvider>
