@@ -790,4 +790,29 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
   },
+  modeSelector: {
+    flexDirection: 'row',
+    paddingHorizontal: 16,
+    marginBottom: 16,
+    gap: 8,
+  },
+  modeButton: {
+    flex: 1,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    backgroundColor: '#1a1a1a',
+    alignItems: 'center',
+  },
+  modeButtonActive: {
+    backgroundColor: '#e50914',
+  },
+  modeButtonText: {
+    color: '#888',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  modeButtonTextActive: {
+    color: '#fff',
+  },
 });
