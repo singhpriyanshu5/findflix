@@ -362,7 +362,7 @@ async def send_friend_request(request_data: SendFriendRequest, current_user: Use
 
 @api_router.get("/friends/requests")
 async def get_friend_requests(current_user: User = Depends(require_auth)):
-    """Get pending friend requests"""
+    """Get pending friend requests (received)"""
     try:
         # Get requests where user is receiver
         requests = await db.friend_requests.find({
@@ -390,6 +390,37 @@ async def get_friend_requests(current_user: User = Depends(require_auth)):
     except Exception as e:
         logger.error(f"Get friend requests error: {str(e)}")
         raise HTTPException(status_code=500, detail="Failed to get friend requests")
+
+@api_router.get("/friends/requests/sent")
+async def get_sent_friend_requests(current_user: User = Depends(require_auth)):
+    """Get sent friend requests (pending)"""
+    try:
+        # Get requests where user is sender
+        requests = await db.friend_requests.find({
+            "sender_id": current_user.id,
+            "status": "pending"
+        }).to_list(None)
+        
+        result = []
+        for req in requests:
+            # Get receiver info
+            receiver_data = await db.users.find_one({"id": req["receiver_id"]})
+            if receiver_data:
+                sender = FriendInfo(**current_user.dict())
+                receiver = FriendInfo(**receiver_data)
+                
+                result.append(FriendRequestResponse(
+                    id=req["id"],
+                    sender=sender,
+                    receiver=receiver,
+                    status=req["status"],
+                    created_at=req["created_at"]
+                ))
+        
+        return result
+    except Exception as e:
+        logger.error(f"Get sent friend requests error: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to get sent friend requests")
 
 @api_router.post("/friends/respond")
 async def respond_to_friend_request(response_data: RespondFriendRequest, current_user: User = Depends(require_auth)):
