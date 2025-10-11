@@ -194,8 +194,9 @@ async def forgot_password(request: dict):
     """
     Handle forgot password requests
     - Checks if user exists in database
+    - Generates reset token and stores it
+    - Sends password reset email
     - Returns 404 if user doesn't exist
-    - Returns 200 if account found (would send email in production)
     """
     try:
         email = request.get("email")
@@ -208,13 +209,33 @@ async def forgot_password(request: dict):
         if not user:
             raise HTTPException(status_code=404, detail="Account not found")
         
-        # TODO: In production, implement actual password reset:
-        # 1. Generate secure reset token (uuid4 or secrets.token_urlsafe)
-        # 2. Store token in database with expiry (e.g., 1 hour)
-        # 3. Send email with reset link containing token
-        # 4. Create reset password endpoint that verifies token
+        # Generate secure reset token
+        reset_token = secrets.token_urlsafe(32)
+        expires_at = datetime.now(timezone.utc) + timedelta(hours=1)
         
-        logger.info(f"Password reset requested for: {email}")
+        # Store reset token in database
+        await db.password_resets.update_one(
+            {"user_id": user["id"]},
+            {
+                "$set": {
+                    "user_id": user["id"],
+                    "email": email,
+                    "reset_token": reset_token,
+                    "expires_at": expires_at,
+                    "used": False
+                }
+            },
+            upsert=True
+        )
+        
+        # Send password reset email
+        app_url = os.getenv("APP_URL", "https://findflix-2.emergent.host")
+        email_sent = send_password_reset_email(email, reset_token, app_url)
+        
+        if email_sent:
+            logger.info(f"Password reset email sent to: {email}")
+        else:
+            logger.warning(f"Password reset token generated but email not sent (SMTP not configured) for: {email}")
         
         return {
             "message": "Password reset instructions sent to email",
