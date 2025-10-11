@@ -236,23 +236,29 @@ export default function SwipeSessionScreen() {
       },
       
       onPanResponderRelease: (evt, gestureState) => {
-        const threshold = SCREEN_WIDTH * 0.25;
+        // Lower threshold for easier swiping (20% of screen)
+        const threshold = SCREEN_WIDTH * 0.20;
         
-        if (gestureState.dx > threshold) {
+        // Also consider swipe velocity for quick flicks
+        const isQuickSwipe = Math.abs(gestureState.vx) > 0.5;
+        
+        if (gestureState.dx > threshold || (isQuickSwipe && gestureState.vx > 0)) {
           // Swipe right (like)
           animateSwipe('right', () => submitSwipe('like'));
-        } else if (gestureState.dx < -threshold) {
+        } else if (gestureState.dx < -threshold || (isQuickSwipe && gestureState.vx < 0)) {
           // Swipe left (dislike)
           animateSwipe('left', () => submitSwipe('dislike'));
         } else {
-          // Snap back
+          // Snap back to center
           Animated.parallel([
             Animated.spring(swipeAnimation.x, {
               toValue: 0,
+              friction: 5,
               useNativeDriver: false,
             }),
             Animated.spring(rotateAnimation, {
               toValue: 0,
+              friction: 5,
               useNativeDriver: false,
             }),
           ]).start();
