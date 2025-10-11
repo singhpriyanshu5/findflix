@@ -47,6 +47,7 @@ interface PopularTitle {
 }
 
 export default function SearchScreen() {
+  const [searchMode, setSearchMode] = useState<'search' | 'ai'>('search');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedScope, setSelectedScope] = useState<SearchScope>('title');
   const [selectedGenre, setSelectedGenre] = useState('');
