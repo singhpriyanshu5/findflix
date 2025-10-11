@@ -71,6 +71,7 @@ export default function DetailsScreen() {
   const id = Number(params.id);
   const mediaType = params.mediaType as string;
   const [refreshKey, setRefreshKey] = useState(0);
+  const router = useRouter();
 
   const { data: titleData, isLoading, refetch } = useQuery<TitleDetails>({
     queryKey: ['title', id, mediaType, refreshKey],
