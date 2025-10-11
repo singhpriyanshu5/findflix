@@ -352,29 +352,32 @@ export default function SwipeSessionScreen() {
                 height={SCREEN_HEIGHT * 0.6}
                 play={isTrailerPlaying}
                 videoId={trailerKey}
-                onChangeState={(state) => {
-                  if (state === 'ended') {
-                    setIsTrailerPlaying(false);
-                  }
-                }}
+                onReady={handlePlayerReady}
+                onChangeState={handlePlayerStateChange}
                 initialPlayerParams={{
-                  controls: false,
-                  modestbranding: true,
-                  rel: false,
-                  showinfo: false,
+                  controls: true,
+                  modestbranding: 1,
+                  rel: 0,
                   preventFullScreen: false,
                   start: 0,
                 }}
                 mute={true}
+                forceAndroidAutoplay={true}
                 webViewStyle={{
                   opacity: 0.99, // Fix for Android
                 }}
+                webViewProps={{
+                  allowsInlineMediaPlayback: true,
+                  mediaPlaybackRequiresUserAction: false,
+                }}
               />
-              {/* Muted indicator */}
-              <View style={styles.muteIndicator}>
-                <Ionicons name="volume-mute" size={16} color="#fff" />
-                <Text style={styles.muteText}>Tap to unmute</Text>
-              </View>
+              {/* Muted indicator - only show initially */}
+              {!isTrailerPlaying && (
+                <View style={styles.muteIndicator}>
+                  <Ionicons name="volume-mute" size={16} color="#fff" />
+                  <Text style={styles.muteText}>Loading trailer...</Text>
+                </View>
+              )}
             </View>
           ) : (
             <>
