@@ -15,11 +15,12 @@ FindFlix is a comprehensive native mobile application built with React Native (E
 - **Smart Navigation**: Tap any matched movie to view full details
 
 ### 🔐 User Authentication
-- **Email/Password**: Secure JWT-based authentication
-- **OAuth Integration**: Sign in with Google via Emergent Auth
-- **Forgot Password**: Email-based password reset with secure tokens
-- **Session Management**: 7-day sessions with auto-cleanup
-- **Secure Storage**: PBKDF2-HMAC-SHA256 password hashing with salt
+- **Email/Password Registration**: Secure JWT-based authentication with PBKDF2-HMAC-SHA256 password hashing
+- **Login System**: 7-day session tokens with httpOnly cookies
+- **Forgot Password**: Email-based password reset with secure tokens (requires SMTP configuration)
+- **OAuth Integration**: Sign in with Google via Emergent Auth (optional)
+- **Session Management**: Automatic cleanup of expired sessions
+- **Secure Storage**: Password hashes stored separately from user data
 
 ### 🔍 Advanced Search & Discovery
 - **Multi-scope Search**: Search by Title, Cast, or Director
