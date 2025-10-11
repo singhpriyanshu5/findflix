@@ -66,13 +66,40 @@ export default function TinderScreen() {
   const loadData = async () => {
     setIsLoading(true);
     try {
-      const friendsResponse = await axios.get(`${BACKEND_URL}/api/friends`);
+      const [friendsResponse, receivedResponse, sentResponse] = await Promise.all([
+        axios.get(`${BACKEND_URL}/api/friends`),
+        axios.get(`${BACKEND_URL}/api/friends/requests`),
+        axios.get(`${BACKEND_URL}/api/friends/requests/sent`),
+      ]);
+      
       setFriends(friendsResponse.data);
+      setReceivedRequests(receivedResponse.data);
+      setSentRequests(sentResponse.data);
     } catch (error) {
-      console.error('Failed to load friends:', error);
-      Alert.alert('Error', 'Failed to load friends');
+      console.error('Failed to load data:', error);
+      Alert.alert('Error', 'Failed to load data');
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const respondToRequest = async (requestId: string, accept: boolean) => {
+    try {
+      await axios.post(`${BACKEND_URL}/api/friends/respond`, {
+        request_id: requestId,
+        accept,
+      });
+      
+      Alert.alert(
+        'Success',
+        accept ? 'Friend request accepted!' : 'Friend request declined!'
+      );
+      
+      // Reload data
+      loadData();
+    } catch (error: any) {
+      const message = error.response?.data?.detail || 'Failed to respond to friend request';
+      Alert.alert('Error', message);
     }
   };
 
