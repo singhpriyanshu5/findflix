@@ -79,6 +79,7 @@ export default function AIRecommendationsScreen() {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script 
     src="https://cdn.platform.openai.com/deployments/chatkit/chatkit.js"
+    async
     onload="console.log('ChatKit script loaded successfully')"
     onerror="console.error('Failed to load ChatKit script from CDN')"
   ></script>
@@ -103,7 +104,19 @@ export default function AIRecommendationsScreen() {
     }
     .header-title { color: #fff; font-size: 18px; font-weight: 600; }
     .header-subtitle { color: #888; font-size: 13px; margin-top: 4px; }
-    #chatkit { flex: 1; width: 100%; }
+    #chatkit { 
+      flex: 1; 
+      width: 100%; 
+      height: 100%;
+    }
+    .loading {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+      color: #888;
+      font-size: 14px;
+    }
   </style>
 </head>
 <body>
@@ -112,53 +125,76 @@ export default function AIRecommendationsScreen() {
       <div class="header-title">🎬 AI Movie Recommendations</div>
       <div class="header-subtitle">Get personalized movie suggestions</div>
     </div>
-    <chatkit-root id="chatkit"></chatkit-root>
+    <div id="loading-message" class="loading">Initializing AI chat...</div>
+    <openai-chatkit id="chatkit" style="height:100%;width:100%;display:none;"></openai-chatkit>
   </div>
   
   <script>
-    console.log('ChatKit HTML loaded');
+    console.log('ChatKit HTML loaded, starting initialization...');
     
     // Wait for ChatKit custom element to be defined
     async function initializeChatKit() {
-      console.log('Waiting for chatkit-root custom element...');
+      console.log('Waiting for openai-chatkit custom element...');
       
       try {
         // Wait for the custom element to be defined
-        await customElements.whenDefined('chatkit-root');
-        console.log('chatkit-root element is defined!');
+        await customElements.whenDefined('openai-chatkit');
+        console.log('openai-chatkit element is defined!');
         
         const chatkit = document.getElementById('chatkit');
-        const secret = '${clientSecret}';
-        console.log('Client secret available:', !!secret);
+        const loadingMessage = document.getElementById('loading-message');
+        const token = '${clientSecret}';
         
-        if (chatkit && typeof chatkit.setOptions === 'function') {
-          chatkit.setOptions({
-            api: {
-              async getClientSecret() {
-                console.log('getClientSecret called');
-                return secret;
-              }
-            },
-            theme: {
-              colors: {
-                primary: '#e50914',
-                background: '#0c0c0c',
-                surface: '#1a1a1a',
-                text: '#ffffff',
-                textSecondary: '#888888',
-              }
-            }
-          });
-          console.log('ChatKit options set successfully!');
-        } else {
-          console.error('ChatKit element found but setOptions not available');
+        console.log('Token available:', !!token);
+        console.log('Token length:', token ? token.length : 0);
+        
+        if (!chatkit) {
+          console.error('ChatKit element not found in DOM');
+          return;
         }
+        
+        console.log('ChatKit element found, setting options...');
+        console.log('setOptions method available:', typeof chatkit.setOptions === 'function');
+        
+        // Set authentication and theme options
+        chatkit.setOptions({
+          auth: {
+            token: token
+          },
+          theme: 'dark',
+          accentColor: '#e50914'
+        });
+        
+        console.log('ChatKit options set successfully!');
+        
+        // Hide loading message and show chat
+        if (loadingMessage) loadingMessage.style.display = 'none';
+        chatkit.style.display = 'block';
+        
+        // Add event listeners for debugging
+        chatkit.addEventListener('chatkit.ready', () => {
+          console.log('ChatKit is ready!');
+        });
+        
+        chatkit.addEventListener('chatkit.error', (e) => {
+          console.error('ChatKit error:', e.detail);
+        });
+        
+        chatkit.addEventListener('chatkit.response.start', () => {
+          console.log('ChatKit response streaming started...');
+        });
+        
       } catch (error) {
-        console.error('Error waiting for ChatKit:', error);
+        console.error('Error initializing ChatKit:', error);
+        const loadingMessage = document.getElementById('loading-message');
+        if (loadingMessage) {
+          loadingMessage.textContent = 'Failed to load chat. Please try again.';
+          loadingMessage.style.color = '#e50914';
+        }
       }
     }
     
-    // Start initialization when DOM is ready
+    // Start initialization when script loads
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', initializeChatKit);
     } else {
