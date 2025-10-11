@@ -255,6 +255,55 @@ EXPO_PUBLIC_BACKEND_URL=http://your-backend-url:8001
 
 ---
 
+## 📧 Email Configuration (Optional)
+
+The forgot password feature requires SMTP configuration to send password reset emails. Gmail is the easiest free option:
+
+### Gmail Setup (Recommended - Free)
+
+1. **Enable 2-Step Verification**
+   - Go to https://myaccount.google.com/security
+   - Turn on 2-Step Verification if not already enabled
+
+2. **Generate App Password**
+   - Go to https://myaccount.google.com/apppasswords
+   - Select "Mail" and your device
+   - Click "Generate"
+   - Copy the 16-character password
+
+3. **Update backend/.env**
+   ```env
+   SMTP_SERVER="smtp.gmail.com"
+   SMTP_PORT="587"
+   SMTP_USERNAME="your-email@gmail.com"
+   SMTP_PASSWORD="your-16-char-app-password"
+   FROM_EMAIL="your-email@gmail.com"
+   APP_URL="http://localhost:3000"  # Your frontend URL
+   ```
+
+4. **Restart Backend**
+   ```bash
+   # Stop and restart the backend server to load new env variables
+   uvicorn server:app --host 0.0.0.0 --port 8001 --reload
+   ```
+
+### Alternative: Brevo (formerly Sendinblue)
+- Free tier: 300 emails/day
+- Sign up: https://www.brevo.com/
+- Get SMTP credentials from account settings
+- Update `.env` with Brevo SMTP details
+
+### Testing Email Sending
+After configuration, test the forgot password flow:
+1. Go to login screen
+2. Click "Forgot Password?"
+3. Enter registered email
+4. Check inbox for reset email
+
+**Note**: Without SMTP configuration, the forgot password feature will generate reset tokens but won't send emails.
+
+---
+
 ## 📡 API Endpoints
 
 ### Search
