@@ -150,13 +150,16 @@ export default function AIRecommendationsScreen() {
   if (Platform.OS === 'web') {
     return (
       <SafeAreaView style={styles.container} edges={['top']}>
-        <div
+        <iframe
+          srcDoc={htmlContent}
           style={{
-            flex: 1,
             width: '100%',
             height: '100%',
+            border: 'none',
+            flex: 1,
           }}
-          dangerouslySetInnerHTML={{ __html: htmlContent }}
+          title="AI Movie Recommendations"
+          sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
         />
       </SafeAreaView>
     );
