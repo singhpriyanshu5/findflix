@@ -295,6 +295,7 @@ export default function DetailsScreen() {
             <Text style={styles.sectionTitle}>Trailer</Text>
             <View style={styles.trailerContainer}>
               <YoutubePlayer
+                key={`trailer-${trailerData.trailer_key}-${id}`}
                 height={220}
                 play={false}
                 videoId={trailerData.trailer_key}
@@ -303,9 +304,14 @@ export default function DetailsScreen() {
                   modestbranding: 1,
                   rel: 0,
                 }}
-                mute={true}
+                mute={false}
                 webViewStyle={{
                   opacity: 0.99,
+                }}
+                webViewProps={{
+                  allowsInlineMediaPlayback: true,
+                  javaScriptEnabled: true,
+                  domStorageEnabled: true,
                 }}
               />
             </View>
