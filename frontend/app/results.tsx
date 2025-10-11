@@ -38,7 +38,7 @@ export default function ResultsScreen() {
   const params = useLocalSearchParams();
   const router = useRouter();
   const [page, setPage] = useState(1);
-  const [sortBy, setSortBy] = useState('');
+  const [sortBy, setSortBy] = useState(params.sort_by as string || 'year_desc');
   const [showSortModal, setShowSortModal] = useState(false);
 
   const query = params.query as string;
@@ -46,6 +46,9 @@ export default function ResultsScreen() {
   const genre = params.genre as string || '';
   const language = params.language as string || '';
   const contentType = params.contentType as string || '';
+  const fromDetails = params.from as string === 'details';
+  const detailsId = params.detailsId as string;
+  const detailsMediaType = params.detailsMediaType as string;
 
   const { data, isLoading, isFetching, refetch } = useQuery({
     queryKey: ['search', query, scope, genre, language, contentType, sortBy, page],
