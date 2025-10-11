@@ -1353,6 +1353,8 @@ async def search_titles(request: SearchRequest):
             except Exception as e:
                 logger.error(f"Error fetching IMDb rating for {tmdb_id}: {str(e)}")
             
+            release_date = item.get("release_date") or item.get("first_air_date", "")
+            
             formatted_item = {
                 "id": tmdb_id,
                 "title": title,
@@ -1362,7 +1364,8 @@ async def search_titles(request: SearchRequest):
                 "genres": item.get("genre_ids", []),
                 "vote_average": imdb_rating,
                 "overview": item.get("overview", ""),
-                "original_language": item.get("original_language", "")
+                "original_language": item.get("original_language", ""),
+                "release_date": release_date
             }
             formatted_results.append(formatted_item)
         
