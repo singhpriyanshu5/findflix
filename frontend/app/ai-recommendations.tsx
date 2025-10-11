@@ -5,12 +5,18 @@ import {
   StyleSheet,
   ActivityIndicator,
   Alert,
+  Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { WebView } from 'react-native-webview';
 import { useRouter } from 'expo-router';
 import { useAuth } from '../contexts/AuthContext';
 import axios from 'axios';
+
+// Conditionally import WebView only for native platforms
+let WebView: any;
+if (Platform.OS !== 'web') {
+  WebView = require('react-native-webview').WebView;
+}
 
 const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL || '';
 
