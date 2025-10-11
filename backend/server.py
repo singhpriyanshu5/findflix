@@ -1387,6 +1387,43 @@ async def search_titles(request: SearchRequest):
         logger.error(f"Search error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+@api_router.get("/trailer/{title_id}")
+async def get_trailer(title_id: int, media_type: str = Query(..., description="Type: movie or tv")):
+    """Get trailer video key for a movie or TV show"""
+    try:
+        # Fetch videos from TMDB
+        videos_data = await fetch_tmdb_data(f"{media_type}/{title_id}/videos")
+        videos = videos_data.get("results", [])
+        
+        # Filter for trailers and teasers, prefer official ones
+        trailers = [
+            v for v in videos 
+            if v.get("type") in ["Trailer", "Teaser"] 
+            and v.get("site") == "YouTube"
+        ]
+        
+        # Prefer official trailers
+        official_trailers = [t for t in trailers if t.get("official", False)]
+        
+        if official_trailers:
+            # Return the first official trailer
+            trailer = official_trailers[0]
+        elif trailers:
+            # Return the first available trailer
+            trailer = trailers[0]
+        else:
+            # No trailer found
+            return {"trailer_key": None, "trailer_name": None}
+        
+        return {
+            "trailer_key": trailer.get("key"),
+            "trailer_name": trailer.get("name"),
+            "trailer_type": trailer.get("type"),
+        }
+    except Exception as e:
+        logger.error(f"Get trailer error: {str(e)}")
+        return {"trailer_key": None, "trailer_name": None}
+
 @api_router.get("/title/{tmdb_id}")
 async def get_title_details(tmdb_id: int, media_type: str = Query("movie", regex="^(movie|tv)$")):
     """Get detailed information for a specific title"""
