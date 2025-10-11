@@ -24,6 +24,24 @@ interface Friend {
   picture?: string;
 }
 
+interface FriendRequest {
+  id: string;
+  sender: {
+    id: string;
+    name: string;
+    email: string;
+    picture?: string;
+  };
+  receiver: {
+    id: string;
+    name: string;
+    email: string;
+    picture?: string;
+  };
+  status: 'pending' | 'accepted' | 'declined';
+  created_at: string;
+}
+
 export default function TinderScreen() {
   const [friends, setFriends] = useState<Friend[]>([]);
   const [isLoading, setIsLoading] = useState(true);
