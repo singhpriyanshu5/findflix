@@ -180,6 +180,23 @@ export default function SearchScreen() {
             )}
           </View>
         </View>
+        {/* Mode Selector */}
+        <View style={styles.modeSelector}>
+          <TouchableOpacity
+            style={[styles.modeButton, styles.modeButtonActive]}
+          >
+            <Text style={[styles.modeButtonText, styles.modeButtonTextActive]}>
+              Search
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.modeButton}
+          >
+            <Text style={styles.modeButtonText}>
+              Discover
+            </Text>
+          </TouchableOpacity>
+        </View>
 
         {/* Search Bar */}
         <View style={styles.searchContainer}>
