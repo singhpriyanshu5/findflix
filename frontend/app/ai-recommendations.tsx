@@ -109,6 +109,9 @@ export default function AIRecommendationsScreen() {
       width: 100%; 
       height: 100%;
     }
+    openai-chatkit {
+      --ck-accent-color: #e50914;
+    }
     .loading {
       display: flex;
       justify-content: center;
