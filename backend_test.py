@@ -9,8 +9,8 @@ import json
 import sys
 from datetime import datetime
 
-# Backend URL from frontend .env
-BACKEND_URL = "https://findflix-2.preview.emergentagent.com/api"
+# Backend URL - using localhost for testing since external URL is not working
+BACKEND_URL = "http://localhost:8001/api"
 
 class FindFlixAPITester:
     def __init__(self):
