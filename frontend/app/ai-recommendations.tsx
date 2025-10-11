@@ -39,10 +39,17 @@ export default function AIRecommendationsScreen() {
   const initializeChatKit = async () => {
     try {
       setIsLoading(true);
+      console.log('Initializing ChatKit...');
+      console.log('Backend URL:', BACKEND_URL);
+      
       const response = await axios.post(`${BACKEND_URL}/api/chatkit/session`);
+      console.log('ChatKit session response:', response.data);
+      
       setClientSecret(response.data.client_secret);
+      console.log('Client secret set successfully');
     } catch (error: any) {
       console.error('Failed to initialize ChatKit:', error);
+      console.error('Error response:', error.response?.data);
       const message = error.response?.data?.detail || 'Failed to load AI chat';
       Alert.alert('Error', message);
     } finally {
