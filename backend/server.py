@@ -56,6 +56,7 @@ class SearchScope(str, Enum):
 
 class SearchHistoryItem(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    user_id: str
     query: str
     scope: SearchScope
     genre: Optional[str] = None
