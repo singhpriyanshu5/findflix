@@ -142,13 +142,7 @@ export default function SessionSummaryScreen() {
                 style={styles.matchCard}
                 onPress={() => {
                   console.log('Match clicked:', match.movie_id, match.media_type);
-                  router.push({
-                    pathname: '/details',
-                    params: { 
-                      id: String(match.movie_id), 
-                      mediaType: match.media_type 
-                    }
-                  });
+                  router.push(`/details?id=${match.movie_id}&mediaType=${match.media_type}`);
                 }}
                 activeOpacity={0.7}
               >
