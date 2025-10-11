@@ -140,13 +140,16 @@ export default function SessionSummaryScreen() {
               <TouchableOpacity 
                 key={`${match.movie_id}-${index}`} 
                 style={styles.matchCard}
-                onPress={() => router.push({
-                  pathname: '/details',
-                  params: { 
-                    id: match.movie_id, 
-                    mediaType: match.media_type 
-                  }
-                })}
+                onPress={() => {
+                  console.log('Match clicked:', match.movie_id, match.media_type);
+                  router.push({
+                    pathname: '/details',
+                    params: { 
+                      id: String(match.movie_id), 
+                      mediaType: match.media_type 
+                    }
+                  });
+                }}
                 activeOpacity={0.7}
               >
                 <View style={styles.matchPoster}>
