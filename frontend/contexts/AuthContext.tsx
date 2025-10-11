@@ -73,7 +73,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  const login = async (email: string, password: string): Promise<boolean> => {
+  const login = async (email: string, password: string): Promise<AuthResponse> => {
     try {
       setIsLoading(true);
       console.log('Attempting login with backend URL:', BACKEND_URL);
@@ -93,11 +93,34 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       axios.defaults.headers.common['Authorization'] = `Bearer ${session_token}`;
       
       setUser(userData);
-      return true;
-    } catch (error) {
+      return { success: true };
+    } catch (error: any) {
       console.error('Login failed:', error);
       console.error('Error details:', error.response?.data);
-      return false;
+      
+      // Extract specific error message
+      let errorMessage = 'Login failed. Please try again.';
+      
+      if (error.response) {
+        const status = error.response.status;
+        const detail = error.response.data?.detail || '';
+        
+        if (status === 401) {
+          if (detail.toLowerCase().includes('credentials')) {
+            errorMessage = 'Incorrect email or password';
+          } else {
+            errorMessage = 'Invalid credentials';
+          }
+        } else if (status === 404) {
+          errorMessage = "Account doesn't exist. Please sign up first.";
+        } else if (detail) {
+          errorMessage = detail;
+        }
+      } else if (error.message) {
+        errorMessage = `Connection error: ${error.message}`;
+      }
+      
+      return { success: false, error: errorMessage };
     } finally {
       setIsLoading(false);
     }
