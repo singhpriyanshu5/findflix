@@ -93,6 +93,16 @@ export default function DetailsScreen() {
     },
   });
 
+  const { data: trailerData } = useQuery<{ trailer_key: string | null }>({
+    queryKey: ['trailer', id, mediaType],
+    queryFn: async () => {
+      const response = await axios.get(
+        `${BACKEND_URL}/api/trailer/${id}?media_type=${mediaType}`
+      );
+      return response.data;
+    },
+  });
+
   const handleShare = async () => {
     if (titleData) {
       try {
