@@ -149,6 +149,23 @@ export default function AIRecommendationsScreen() {
 </html>
 `;
 
+  // For web platform, use iframe
+  if (Platform.OS === 'web') {
+    return (
+      <SafeAreaView style={styles.container} edges={['top']}>
+        <div
+          style={{
+            flex: 1,
+            width: '100%',
+            height: '100%',
+          }}
+          dangerouslySetInnerHTML={{ __html: htmlContent }}
+        />
+      </SafeAreaView>
+    );
+  }
+
+  // For native platforms (iOS/Android), use WebView
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <WebView
