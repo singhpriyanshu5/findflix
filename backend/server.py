@@ -1267,10 +1267,8 @@ async def search_titles(request: SearchRequest):
                 total_pages = 1
                 
         elif request.scope == SearchScope.DIRECTOR:
-            person_data = await fetch_tmdb_data("search/person", {
-                "query": request.query,
-                "page": 1
-            })
+            # Use fuzzy search for better person name matching
+            person_data = await fuzzy_search_tmdb(request.query, "person", 1)
             persons = person_data.get("results", [])
             
             if persons:
