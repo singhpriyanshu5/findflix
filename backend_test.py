@@ -681,6 +681,7 @@ class FindFlixAPITester:
             self.test_user_registration,
             self.test_user_login,
             self.test_get_current_user,
+            self.test_chatkit_session_creation,
             self.test_friend_user_registration,
             self.test_send_friend_request,
             self.test_get_friend_requests,
