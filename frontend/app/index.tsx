@@ -184,17 +184,39 @@ export default function SearchScreen() {
         {/* Mode Selector */}
         <View style={styles.modeSelector}>
           <TouchableOpacity
-            style={[styles.modeButton, styles.modeButtonActive]}
+            style={[styles.modeButton, searchMode === 'search' && styles.modeButtonActive]}
+            onPress={() => setSearchMode('search')}
+            activeOpacity={0.7}
           >
-            <Text style={[styles.modeButtonText, styles.modeButtonTextActive]}>
-              Search
+            <Ionicons 
+              name="search" 
+              size={18} 
+              color={searchMode === 'search' ? '#fff' : '#888'} 
+              style={{marginRight: 8}}
+            />
+            <Text style={[styles.modeButtonText, searchMode === 'search' && styles.modeButtonTextActive]}>
+              Movie Search
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={styles.modeButton}
+            style={[styles.modeButton, searchMode === 'ai' && styles.modeButtonActive]}
+            onPress={() => {
+              if (!isAuthenticated) {
+                router.push('/auth');
+                return;
+              }
+              router.push('/ai-recommendations');
+            }}
+            activeOpacity={0.7}
           >
-            <Text style={styles.modeButtonText}>
-              Discover
+            <Ionicons 
+              name="sparkles" 
+              size={18} 
+              color={searchMode === 'ai' ? '#fff' : '#888'} 
+              style={{marginRight: 8}}
+            />
+            <Text style={[styles.modeButtonText, searchMode === 'ai' && styles.modeButtonTextActive]}>
+              AI Recommendations
             </Text>
           </TouchableOpacity>
         </View>
