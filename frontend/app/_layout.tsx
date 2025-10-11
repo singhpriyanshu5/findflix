@@ -100,6 +100,12 @@ export default function RootLayout() {
                 title: 'Recent Searches',
               }}
             />
+            <Stack.Screen 
+              name="ai-recommendations" 
+              options={{
+                title: 'AI Movie Recommendations',
+              }}
+            />
           </Stack>
         </AuthProvider>
       </QueryClientProvider>
