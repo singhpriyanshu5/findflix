@@ -12,12 +12,17 @@ interface User {
   created_at: string;
 }
 
+interface AuthResponse {
+  success: boolean;
+  error?: string;
+}
+
 interface AuthContextType {
   user: User | null;
   isLoading: boolean;
   isAuthenticated: boolean;
-  login: (email: string, password: string) => Promise<boolean>;
-  register: (name: string, email: string, password: string) => Promise<boolean>;
+  login: (email: string, password: string) => Promise<AuthResponse>;
+  register: (name: string, email: string, password: string) => Promise<AuthResponse>;
   logout: () => Promise<void>;
   processOAuthSession: (sessionId: string) => Promise<boolean>;
 }
