@@ -180,6 +180,44 @@ async def login(user_data: UserLogin, response: Response):
         logger.error(f"Login error: {str(e)}")
         raise HTTPException(status_code=500, detail="Login failed")
 
+@api_router.post("/auth/forgot-password")
+async def forgot_password(request: dict):
+    """
+    Handle forgot password requests
+    - Checks if user exists in database
+    - Returns 404 if user doesn't exist
+    - Returns 200 if account found (would send email in production)
+    """
+    try:
+        email = request.get("email")
+        if not email:
+            raise HTTPException(status_code=400, detail="Email is required")
+        
+        # Check if user exists in database
+        user = await db.users.find_one({"email": email})
+        
+        if not user:
+            raise HTTPException(status_code=404, detail="Account not found")
+        
+        # TODO: In production, implement actual password reset:
+        # 1. Generate secure reset token (uuid4 or secrets.token_urlsafe)
+        # 2. Store token in database with expiry (e.g., 1 hour)
+        # 3. Send email with reset link containing token
+        # 4. Create reset password endpoint that verifies token
+        
+        logger.info(f"Password reset requested for: {email}")
+        
+        return {
+            "message": "Password reset instructions sent to email",
+            "email": email
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Forgot password error: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to process request")
+
 @api_router.post("/auth/oauth/session")
 async def process_oauth_session(request: Request, response: Response):
     """Process OAuth session from Emergent Auth"""
