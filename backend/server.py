@@ -1408,6 +1408,42 @@ async def search_titles(request: SearchRequest, current_user: User = Depends(get
         logger.error(f"Search error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+@api_router.post("/chatkit/session")
+async def create_chatkit_session(current_user: User = Depends(get_current_user)):
+    """Create a ChatKit session for AI movie recommendations"""
+    try:
+        import httpx
+        
+        # Use Emergent LLM key for OpenAI
+        openai_api_key = "sk-emergent-c21A48b819eDb2720C"
+        workflow_id = "wf_68e5cff942888190aa154df1857b377a00f2b918184ecd24"
+        
+        async with httpx.AsyncClient() as client:
+            response = await client.post(
+                "https://api.openai.com/v1/chatkit/sessions",
+                headers={
+                    "Content-Type": "application/json",
+                    "OpenAI-Beta": "chatkit_beta=v1",
+                    "Authorization": f"Bearer {openai_api_key}",
+                },
+                json={
+                    "workflow": {"id": workflow_id},
+                    "user": current_user.id,
+                },
+                timeout=30.0
+            )
+            
+            if response.status_code != 200:
+                logger.error(f"ChatKit session creation failed: {response.text}")
+                raise HTTPException(status_code=response.status_code, detail="Failed to create ChatKit session")
+            
+            data = response.json()
+            return {"client_secret": data.get("client_secret")}
+            
+    except Exception as e:
+        logger.error(f"ChatKit session error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 @api_router.get("/trailer/{title_id}")
 async def get_trailer(title_id: int, media_type: str = Query(..., description="Type: movie or tv")):
     """Get trailer video key for a movie or TV show"""
