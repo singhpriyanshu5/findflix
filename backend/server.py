@@ -1257,11 +1257,19 @@ async def search_titles(request: SearchRequest):
                     credits = await fetch_tmdb_data(f"person/{person_id}/combined_credits")
                     cast_results = credits.get("cast", [])
                     
-                    cast_results.sort(key=lambda x: x.get("popularity", 0), reverse=True)
+                    # Filter to only include main cast (order < 15 indicates top billing)
+                    # order field: 0 = lead role, 1-5 = main cast, 6-15 = supporting cast
+                    # This filters out cameos, special appearances, and minor roles
+                    main_cast_results = [
+                        movie for movie in cast_results 
+                        if movie.get("order", 999) < 15
+                    ]
+                    
+                    main_cast_results.sort(key=lambda x: x.get("popularity", 0), reverse=True)
                     start_idx = (request.page - 1) * 20
                     end_idx = start_idx + 20
-                    results = cast_results[start_idx:end_idx]
-                    total_pages = (len(cast_results) + 19) // 20
+                    results = main_cast_results[start_idx:end_idx]
+                    total_pages = (len(main_cast_results) + 19) // 20
             else:
                 results = []
                 total_pages = 1
