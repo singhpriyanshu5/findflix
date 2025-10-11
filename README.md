@@ -24,13 +24,18 @@ FindFlix is a comprehensive native mobile application built with React Native (E
 
 ### 🔍 Advanced Search & Discovery
 - **Multi-scope Search**: Search by Title, Cast, or Director
-- **Fuzzy Search**: Typo-tolerant search with smart corrections (e.g., "spidermn" → "spider-man")
+- **Fuzzy Search**: Enhanced typo-tolerant search with smart corrections
+  - Movie titles: "spidermn" → "spider-man"
+  - Actor names: "leornardo dicapro" → "Leonardo DiCaprio"
+  - Director names: "christopher nolen" → "Christopher Nolan"
+- **Main Cast Filter**: Cast searches only show movies where actor is in top 15 billing
 - **Empty Query Search**: Filter by genre/language without text input
 - **Genre Filter**: 18 popular genres including Action, Comedy, Drama, Horror, Sci-Fi, and more
 - **Language Filter**: 38+ languages including English, Hindi, Telugu, Tamil, Spanish, French, Japanese, Korean
 - **Content Type Filter**: Filter by Movies only, TV Shows only, or All content
 - **Smart Person Search**: Automatically selects the most popular person when searching by cast/director
-- **Unreleased Tags**: Orange badges for upcoming movies not yet released
+- **Unreleased Tags**: Badges for upcoming movies not yet released
+- **Search Results Caching**: 10-minute cache for stable navigation experience
 
 ### 📊 Comprehensive Ratings
 - **TMDB Rating**: Community-driven ratings
