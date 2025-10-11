@@ -13,11 +13,12 @@ import {
   Dimensions,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { getLanguageName } from '../utils/languages';
+import YoutubePlayer from 'react-native-youtube-iframe';
 
 const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL || '';
 const TMDB_IMAGE_BASE = 'https://image.tmdb.org/t/p/w500';
@@ -70,6 +71,17 @@ export default function DetailsScreen() {
   const id = Number(params.id);
   const mediaType = params.mediaType as string;
   const [refreshKey, setRefreshKey] = useState(0);
+  const router = useRouter();
+  
+  // Check if we came from results page
+  const fromResults = params.fromResults === 'true';
+  const resultsQuery = params.resultsQuery as string;
+  const resultsScope = params.resultsScope as string;
+  const resultsGenre = params.resultsGenre as string;
+  const resultsLanguage = params.resultsLanguage as string;
+  const resultsContentType = params.resultsContentType as string;
+  const resultsSortBy = params.resultsSortBy as string;
+  const resultsPage = params.resultsPage as string;
 
   const { data: titleData, isLoading, refetch } = useQuery<TitleDetails>({
     queryKey: ['title', id, mediaType, refreshKey],
@@ -86,6 +98,16 @@ export default function DetailsScreen() {
     queryFn: async () => {
       const response = await axios.get(
         `${BACKEND_URL}/api/streaming/${id}?media_type=${mediaType}`
+      );
+      return response.data;
+    },
+  });
+
+  const { data: trailerData } = useQuery<{ trailer_key: string | null }>({
+    queryKey: ['trailer', id, mediaType],
+    queryFn: async () => {
+      const response = await axios.get(
+        `${BACKEND_URL}/api/trailer/${id}?media_type=${mediaType}`
       );
       return response.data;
     },
@@ -277,6 +299,35 @@ export default function DetailsScreen() {
           </View>
         </View>
 
+        {/* Trailer Section */}
+        {trailerData?.trailer_key && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Trailer</Text>
+            <View style={styles.trailerContainer}>
+              <YoutubePlayer
+                key={`trailer-${trailerData.trailer_key}-${id}`}
+                height={220}
+                play={false}
+                videoId={trailerData.trailer_key}
+                initialPlayerParams={{
+                  controls: 1,
+                  modestbranding: 1,
+                  rel: 0,
+                }}
+                mute={false}
+                webViewStyle={{
+                  opacity: 0.99,
+                }}
+                webViewProps={{
+                  allowsInlineMediaPlayback: true,
+                  javaScriptEnabled: true,
+                  domStorageEnabled: true,
+                }}
+              />
+            </View>
+          </View>
+        )}
+
         {/* Streaming Availability */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Where to Watch (US)</Text>
@@ -407,10 +458,20 @@ export default function DetailsScreen() {
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Cast</Text>
             {titleData.cast.map((member, idx) => (
-              <View key={idx} style={styles.castItem}>
-                <Text style={styles.castName}>{member.name || 'Unknown'}</Text>
+              <TouchableOpacity
+                key={idx}
+                style={styles.castItem}
+                onPress={() => {
+                  router.push(`/results?query=${encodeURIComponent(member.name)}&scope=cast&sort_by=year_desc&from=details&detailsId=${id}&detailsMediaType=${mediaType}`);
+                }}
+                activeOpacity={0.7}
+              >
+                <View style={styles.castNameRow}>
+                  <Text style={styles.castName}>{member.name || 'Unknown'}</Text>
+                  <Ionicons name="chevron-forward" size={16} color="#666" />
+                </View>
                 <Text style={styles.castCharacter}>{member.character || 'Unknown role'}</Text>
-              </View>
+              </TouchableOpacity>
             ))}
           </View>
         )}
@@ -558,6 +619,12 @@ const styles = StyleSheet.create({
     color: '#fff',
     marginBottom: 12,
   },
+  trailerContainer: {
+    width: '100%',
+    borderRadius: 12,
+    overflow: 'hidden',
+    backgroundColor: '#000',
+  },
   overview: {
     fontSize: 15,
     color: '#ccc',
@@ -646,6 +713,11 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#fff',
     marginBottom: 2,
+  },
+  castNameRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   castCharacter: {
     fontSize: 13,

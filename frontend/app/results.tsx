@@ -38,7 +38,7 @@ export default function ResultsScreen() {
   const params = useLocalSearchParams();
   const router = useRouter();
   const [page, setPage] = useState(1);
-  const [sortBy, setSortBy] = useState('');
+  const [sortBy, setSortBy] = useState(params.sort_by as string || 'year_desc');
   const [showSortModal, setShowSortModal] = useState(false);
 
   const query = params.query as string;
@@ -46,6 +46,9 @@ export default function ResultsScreen() {
   const genre = params.genre as string || '';
   const language = params.language as string || '';
   const contentType = params.contentType as string || '';
+  const fromDetails = params.from as string === 'details';
+  const detailsId = params.detailsId as string;
+  const detailsMediaType = params.detailsMediaType as string;
 
   const { data, isLoading, isFetching, refetch } = useQuery({
     queryKey: ['search', query, scope, genre, language, contentType, sortBy, page],
@@ -62,13 +65,15 @@ export default function ResultsScreen() {
       return response.data;
     },
     enabled: !!query,
+    staleTime: 10 * 60 * 1000, // 10 minutes - keep results fresh
+    gcTime: 30 * 60 * 1000, // 30 minutes - keep in cache
+    refetchOnMount: false, // Don't refetch when remounting
+    refetchOnWindowFocus: false, // Don't refetch when window gains focus
   });
 
   const handleItemPress = (item: SearchResult) => {
-    router.push({
-      pathname: '/details',
-      params: { id: item.id, mediaType: item.media_type },
-    });
+    // Pass current search context to details page for proper back navigation
+    router.push(`/details?id=${item.id}&mediaType=${item.media_type}&fromResults=true&resultsQuery=${encodeURIComponent(query || '')}&resultsScope=${scope}&resultsGenre=${genre}&resultsLanguage=${language}&resultsContentType=${contentType}&resultsSortBy=${sortBy}&resultsPage=${page}`);
   };
 
   const loadMore = useCallback(() => {
@@ -180,8 +185,16 @@ export default function ResultsScreen() {
 
   return (
     <SafeAreaView style={styles.container} edges={['bottom']}>
-      {/* Sort Button Header */}
+      {/* Header with optional back button */}
       <View style={styles.header}>
+        {fromDetails && (
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => router.push(`/details?id=${detailsId}&mediaType=${detailsMediaType}`)}
+          >
+            <Ionicons name="arrow-back" size={24} color="#fff" />
+          </TouchableOpacity>
+        )}
         <TouchableOpacity
           style={styles.sortButton}
           onPress={() => setShowSortModal(true)}
@@ -389,12 +402,24 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
   },
   header: {
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderBottomWidth: 1,
     borderBottomColor: '#1a1a1a',
+    gap: 12,
+  },
+  backButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#1a1a1a',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   sortButton: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#1a1a1a',

@@ -20,6 +20,7 @@ import axios from 'axios';
 import { POPULAR_LANGUAGES, getLanguageName } from '../utils/languages';
 import { POPULAR_GENRES, getGenreName } from '../utils/genres';
 import { useCallback } from 'react';
+import { useAuth } from '../contexts/AuthContext';
 
 const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL || '';
 const TMDB_IMAGE_BASE = 'https://image.tmdb.org/t/p/w500';
@@ -56,6 +57,7 @@ export default function SearchScreen() {
   const [showContentTypeModal, setShowContentTypeModal] = useState(false);
   const router = useRouter();
   const queryClient = useQueryClient();
+  const { isAuthenticated, user, logout } = useAuth();
 
   // Fetch search history
   const { data: searchHistory, refetch: refetchHistory } = useQuery<SearchHistoryItem[]>({
@@ -145,8 +147,38 @@ export default function SearchScreen() {
       >
         {/* Header */}
         <View style={styles.header}>
-          <Text style={styles.title}>FindFlix</Text>
-          <Text style={styles.subtitle}>Find your next movie/tv show to watch</Text>
+          <View style={styles.headerLeft}>
+            <Text style={styles.title}>FindFlix</Text>
+            <Text style={styles.subtitle}>Find your next movie/tv show to watch</Text>
+          </View>
+          <View style={styles.headerRight}>
+            {isAuthenticated ? (
+              <View style={styles.userSection}>
+                <TouchableOpacity
+                  style={styles.tinderButton}
+                  onPress={() => router.push('/tinder')}
+                >
+                  <Ionicons name="heart" size={20} color="#fff" />
+                  <Text style={styles.tinderButtonText}>Tinder</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.profileButton}
+                  onPress={() => router.push('/profile')}
+                >
+                  <Text style={styles.profileButtonText}>
+                    {user?.name.charAt(0).toUpperCase()}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            ) : (
+              <TouchableOpacity
+                style={styles.loginButton}
+                onPress={() => router.push('/auth')}
+              >
+                <Text style={styles.loginButtonText}>Sign In</Text>
+              </TouchableOpacity>
+            )}
+          </View>
         </View>
 
         {/* Search Bar */}
@@ -451,9 +483,18 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
     paddingHorizontal: 16,
     paddingTop: 16,
     paddingBottom: 24,
+  },
+  headerLeft: {
+    flex: 1,
+  },
+  headerRight: {
+    marginLeft: 16,
   },
   title: {
     fontSize: 32,
@@ -464,6 +505,49 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: 16,
     color: '#888',
+  },
+  userSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  tinderButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#e50914',
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 20,
+    gap: 4,
+  },
+  tinderButtonText: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  profileButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#2a2a2a',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  profileButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  loginButton: {
+    backgroundColor: '#1a1a1a',
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 20,
+  },
+  loginButtonText: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: '600',
   },
   searchContainer: {
     paddingHorizontal: 16,

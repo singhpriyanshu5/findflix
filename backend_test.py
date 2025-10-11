@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Backend API Testing for Movie Recommendation API
-Tests all endpoints with comprehensive test cases
+Backend API Testing for FindFlix API with Tinder Functionality
+Tests all endpoints including new authentication and friend system
 """
 
 import requests
@@ -10,13 +10,17 @@ import sys
 from datetime import datetime
 
 # Backend URL from frontend .env
-BACKEND_URL = "https://findflix-1.preview.emergentagent.com/api"
+BACKEND_URL = "https://watchmatch-5.preview.emergentagent.com/api"
 
-class MovieAPITester:
+class FindFlixAPITester:
     def __init__(self):
         self.base_url = BACKEND_URL
         self.session = requests.Session()
         self.test_results = []
+        self.auth_token = None
+        self.user_data = None
+        self.friend_user_data = None
+        self.friend_auth_token = None
         
     def log_test(self, test_name, success, details="", response_data=None):
         """Log test results"""
@@ -32,14 +36,19 @@ class MovieAPITester:
         print(f"{status} {test_name}: {details}")
         
     def test_health_check(self):
-        """Test GET /api/ - Health check"""
+        """Test GET /api/ - Health check with Tinder feature message"""
         try:
             response = self.session.get(f"{self.base_url}/")
             if response.status_code == 200:
                 data = response.json()
                 if "message" in data and "status" in data:
-                    self.log_test("Health Check", True, f"API is running: {data['message']}")
-                    return True
+                    # Check for Tinder feature message
+                    if "Tinder" in data["message"]:
+                        self.log_test("Health Check", True, f"API is running with Tinder feature: {data['message']}")
+                        return True
+                    else:
+                        self.log_test("Health Check", True, f"API is running: {data['message']}")
+                        return True
                 else:
                     self.log_test("Health Check", False, "Invalid response format")
                     return False
@@ -48,6 +57,252 @@ class MovieAPITester:
                 return False
         except Exception as e:
             self.log_test("Health Check", False, f"Connection error: {str(e)}")
+            return False
+
+    # ===== Authentication Tests =====
+    
+    def test_user_registration(self):
+        """Test POST /api/auth/register - User registration"""
+        try:
+            payload = {
+                "name": "Emma Watson",
+                "email": "emma.watson@findflix.com",
+                "password": "SecurePass123!"
+            }
+            response = self.session.post(f"{self.base_url}/auth/register", json=payload)
+            
+            if response.status_code == 200:
+                data = response.json()
+                if "message" in data and "user" in data and "session_token" in data:
+                    self.user_data = data["user"]
+                    self.auth_token = data["session_token"]
+                    self.log_test("User Registration", True, f"User registered: {data['user']['name']} ({data['user']['email']})")
+                    return True
+                else:
+                    self.log_test("User Registration", False, "Invalid response format")
+                    return False
+            else:
+                self.log_test("User Registration", False, f"HTTP {response.status_code}: {response.text}")
+                return False
+        except Exception as e:
+            self.log_test("User Registration", False, f"Error: {str(e)}")
+            return False
+
+    def test_user_login(self):
+        """Test POST /api/auth/login - User login"""
+        try:
+            payload = {
+                "email": "emma.watson@findflix.com",
+                "password": "SecurePass123!"
+            }
+            response = self.session.post(f"{self.base_url}/auth/login", json=payload)
+            
+            if response.status_code == 200:
+                data = response.json()
+                if "message" in data and "user" in data and "session_token" in data:
+                    # Update auth token from login
+                    self.auth_token = data["session_token"]
+                    self.log_test("User Login", True, f"User logged in: {data['user']['name']}")
+                    return True
+                else:
+                    self.log_test("User Login", False, "Invalid response format")
+                    return False
+            else:
+                self.log_test("User Login", False, f"HTTP {response.status_code}: {response.text}")
+                return False
+        except Exception as e:
+            self.log_test("User Login", False, f"Error: {str(e)}")
+            return False
+
+    def test_get_current_user(self):
+        """Test GET /api/auth/me - Get current user profile"""
+        try:
+            headers = {"Authorization": f"Bearer {self.auth_token}"} if self.auth_token else {}
+            response = self.session.get(f"{self.base_url}/auth/me", headers=headers)
+            
+            if response.status_code == 200:
+                data = response.json()
+                if "id" in data and "name" in data and "email" in data:
+                    self.log_test("Get Current User", True, f"Retrieved user profile: {data['name']} ({data['email']})")
+                    return True
+                else:
+                    self.log_test("Get Current User", False, "Invalid response format")
+                    return False
+            elif response.status_code == 401:
+                self.log_test("Get Current User", False, "Authentication required (expected if no token)")
+                return False
+            else:
+                self.log_test("Get Current User", False, f"HTTP {response.status_code}: {response.text}")
+                return False
+        except Exception as e:
+            self.log_test("Get Current User", False, f"Error: {str(e)}")
+            return False
+
+    def test_friend_user_registration(self):
+        """Test registering a second user for friend system testing"""
+        try:
+            payload = {
+                "name": "Ryan Gosling",
+                "email": "ryan.gosling@findflix.com",
+                "password": "AnotherSecurePass456!"
+            }
+            response = self.session.post(f"{self.base_url}/auth/register", json=payload)
+            
+            if response.status_code == 200:
+                data = response.json()
+                if "message" in data and "user" in data and "session_token" in data:
+                    self.friend_user_data = data["user"]
+                    self.friend_auth_token = data["session_token"]
+                    self.log_test("Friend User Registration", True, f"Friend user registered: {data['user']['name']}")
+                    return True
+                else:
+                    self.log_test("Friend User Registration", False, "Invalid response format")
+                    return False
+            else:
+                self.log_test("Friend User Registration", False, f"HTTP {response.status_code}: {response.text}")
+                return False
+        except Exception as e:
+            self.log_test("Friend User Registration", False, f"Error: {str(e)}")
+            return False
+
+    # ===== Friend System Tests =====
+
+    def test_send_friend_request(self):
+        """Test POST /api/friends/request - Send friend request"""
+        try:
+            if not self.auth_token or not self.friend_user_data:
+                self.log_test("Send Friend Request", False, "Missing authentication or friend user data")
+                return False
+                
+            payload = {
+                "receiver_email": self.friend_user_data["email"]
+            }
+            headers = {"Authorization": f"Bearer {self.auth_token}"}
+            response = self.session.post(f"{self.base_url}/friends/request", json=payload, headers=headers)
+            
+            if response.status_code == 200:
+                data = response.json()
+                if "message" in data:
+                    self.log_test("Send Friend Request", True, f"Friend request sent: {data['message']}")
+                    return True
+                else:
+                    self.log_test("Send Friend Request", False, "Invalid response format")
+                    return False
+            else:
+                self.log_test("Send Friend Request", False, f"HTTP {response.status_code}: {response.text}")
+                return False
+        except Exception as e:
+            self.log_test("Send Friend Request", False, f"Error: {str(e)}")
+            return False
+
+    def test_get_friend_requests(self):
+        """Test GET /api/friends/requests - Get pending friend requests"""
+        try:
+            if not self.friend_auth_token:
+                self.log_test("Get Friend Requests", False, "Missing friend authentication token")
+                return False
+                
+            headers = {"Authorization": f"Bearer {self.friend_auth_token}"}
+            response = self.session.get(f"{self.base_url}/friends/requests", headers=headers)
+            
+            if response.status_code == 200:
+                data = response.json()
+                if isinstance(data, list):
+                    if len(data) > 0:
+                        # Store the request ID for responding
+                        self.friend_request_id = data[0]["id"]
+                        self.log_test("Get Friend Requests", True, f"Found {len(data)} pending friend requests")
+                        return True
+                    else:
+                        self.log_test("Get Friend Requests", True, "No pending friend requests found")
+                        return True
+                else:
+                    self.log_test("Get Friend Requests", False, "Invalid response format")
+                    return False
+            else:
+                self.log_test("Get Friend Requests", False, f"HTTP {response.status_code}: {response.text}")
+                return False
+        except Exception as e:
+            self.log_test("Get Friend Requests", False, f"Error: {str(e)}")
+            return False
+
+    def test_accept_friend_request(self):
+        """Test POST /api/friends/respond - Accept friend request"""
+        try:
+            if not self.friend_auth_token or not hasattr(self, 'friend_request_id'):
+                self.log_test("Accept Friend Request", False, "Missing friend auth token or request ID")
+                return False
+                
+            payload = {
+                "request_id": self.friend_request_id,
+                "accept": True
+            }
+            headers = {"Authorization": f"Bearer {self.friend_auth_token}"}
+            response = self.session.post(f"{self.base_url}/friends/respond", json=payload, headers=headers)
+            
+            if response.status_code == 200:
+                data = response.json()
+                if "message" in data:
+                    self.log_test("Accept Friend Request", True, f"Friend request accepted: {data['message']}")
+                    return True
+                else:
+                    self.log_test("Accept Friend Request", False, "Invalid response format")
+                    return False
+            else:
+                self.log_test("Accept Friend Request", False, f"HTTP {response.status_code}: {response.text}")
+                return False
+        except Exception as e:
+            self.log_test("Accept Friend Request", False, f"Error: {str(e)}")
+            return False
+
+    def test_get_friends_list(self):
+        """Test GET /api/friends - Get friends list"""
+        try:
+            if not self.auth_token:
+                self.log_test("Get Friends List", False, "Missing authentication token")
+                return False
+                
+            headers = {"Authorization": f"Bearer {self.auth_token}"}
+            response = self.session.get(f"{self.base_url}/friends", headers=headers)
+            
+            if response.status_code == 200:
+                data = response.json()
+                if isinstance(data, list):
+                    self.log_test("Get Friends List", True, f"Retrieved {len(data)} friends")
+                    return True
+                else:
+                    self.log_test("Get Friends List", False, "Invalid response format")
+                    return False
+            else:
+                self.log_test("Get Friends List", False, f"HTTP {response.status_code}: {response.text}")
+                return False
+        except Exception as e:
+            self.log_test("Get Friends List", False, f"Error: {str(e)}")
+            return False
+
+    def test_logout(self):
+        """Test POST /api/auth/logout - User logout"""
+        try:
+            if not self.auth_token:
+                self.log_test("User Logout", False, "Missing authentication token")
+                return False
+                
+            headers = {"Authorization": f"Bearer {self.auth_token}"}
+            response = self.session.post(f"{self.base_url}/auth/logout", headers=headers)
+            
+            if response.status_code == 200:
+                data = response.json()
+                if "message" in data:
+                    self.log_test("User Logout", True, f"User logged out: {data['message']}")
+                    return True
+                else:
+                    self.log_test("User Logout", False, "Invalid response format")
+                    return False
+            else:
+                self.log_test("User Logout", False, f"HTTP {response.status_code}: {response.text}")
+                return False
+        except Exception as e:
+            self.log_test("User Logout", False, f"Error: {str(e)}")
             return False
     
     def test_search_by_title(self):
@@ -385,12 +640,26 @@ class MovieAPITester:
     
     def run_all_tests(self):
         """Run all tests"""
-        print(f"🚀 Starting Movie Recommendation API Tests")
+        print(f"🚀 Starting FindFlix API Tests with Tinder Functionality")
         print(f"Backend URL: {self.base_url}")
-        print("=" * 60)
+        print("=" * 70)
         
-        tests = [
+        # Authentication and Friend System Tests (New Tinder Features)
+        auth_tests = [
             self.test_health_check,
+            self.test_user_registration,
+            self.test_user_login,
+            self.test_get_current_user,
+            self.test_friend_user_registration,
+            self.test_send_friend_request,
+            self.test_get_friend_requests,
+            self.test_accept_friend_request,
+            self.test_get_friends_list,
+            self.test_logout
+        ]
+        
+        # Original Movie API Tests (Backward Compatibility)
+        movie_tests = [
             self.test_search_by_title,
             self.test_search_by_genre,
             self.test_search_by_cast,
@@ -405,17 +674,29 @@ class MovieAPITester:
             self.test_genres
         ]
         
+        all_tests = auth_tests + movie_tests
+        
         passed = 0
         failed = 0
         
-        for test in tests:
+        print("\n🔐 Testing Authentication & Friend System (New Tinder Features):")
+        print("-" * 70)
+        for test in auth_tests:
             if test():
                 passed += 1
             else:
                 failed += 1
         
-        print("=" * 60)
-        print(f"📊 Test Results: {passed} passed, {failed} failed")
+        print(f"\n🎬 Testing Movie API Compatibility (Original Features):")
+        print("-" * 70)
+        for test in movie_tests:
+            if test():
+                passed += 1
+            else:
+                failed += 1
+        
+        print("=" * 70)
+        print(f"📊 Final Test Results: {passed} passed, {failed} failed")
         
         if failed > 0:
             print("\n❌ Failed Tests:")
@@ -426,7 +707,7 @@ class MovieAPITester:
         return passed, failed, self.test_results
 
 if __name__ == "__main__":
-    tester = MovieAPITester()
+    tester = FindFlixAPITester()
     passed, failed, results = tester.run_all_tests()
     
     # Exit with error code if tests failed

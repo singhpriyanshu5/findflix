@@ -1,17 +1,41 @@
 # FindFlix 🎬
 
-**Find your next movie/tv show to watch**
+**Find your next movie/tv show to watch - Now with Tinder-style matching!**
 
-FindFlix is a comprehensive native mobile application built with React Native (Expo) that helps users discover movies and TV shows, view detailed information including ratings from multiple sources, and find where to stream them in the US.
+FindFlix is a comprehensive native mobile application built with React Native (Expo) that helps users discover movies and TV shows, view detailed information including ratings from multiple sources, find where to stream them in the US, and swipe through movies with friends to find perfect matches!
 
 ## ✨ Features
 
+### 🎯 NEW: Tinder-Style Movie Matching
+- **Swipe Sessions**: Create movie swipe sessions with friends
+- **Social Discovery**: Swipe right on movies you like, left on ones you don't
+- **Instant Matches**: See movies both you and your friends swiped right on
+- **Friend System**: Add friends and create private swipe sessions
+- **Session History**: View all your past sessions and matches
+- **Smart Navigation**: Tap any matched movie to view full details
+
+### 🔐 User Authentication
+- **Email/Password Registration**: Secure JWT-based authentication with PBKDF2-HMAC-SHA256 password hashing
+- **Login System**: 7-day session tokens with httpOnly cookies
+- **Forgot Password**: Email-based password reset with secure tokens (requires SMTP configuration)
+- **OAuth Integration**: Sign in with Google via Emergent Auth (optional)
+- **Session Management**: Automatic cleanup of expired sessions
+- **Secure Storage**: Password hashes stored separately from user data
+
 ### 🔍 Advanced Search & Discovery
 - **Multi-scope Search**: Search by Title, Cast, or Director
+- **Fuzzy Search**: Enhanced typo-tolerant search with smart corrections
+  - Movie titles: "spidermn" → "spider-man"
+  - Actor names: "leornardo dicapro" → "Leonardo DiCaprio"
+  - Director names: "christopher nolen" → "Christopher Nolan"
+- **Main Cast Filter**: Cast searches only show movies where actor is in top 15 billing
+- **Empty Query Search**: Filter by genre/language without text input
 - **Genre Filter**: 18 popular genres including Action, Comedy, Drama, Horror, Sci-Fi, and more
 - **Language Filter**: 38+ languages including English, Hindi, Telugu, Tamil, Spanish, French, Japanese, Korean
 - **Content Type Filter**: Filter by Movies only, TV Shows only, or All content
-- **Smart Person Search**: Automatically selects the most popular person when searching by cast/director (e.g., "Akshay Kumar" returns the Bollywood actor, not namesakes)
+- **Smart Person Search**: Automatically selects the most popular person when searching by cast/director
+- **Unreleased Tags**: Badges for upcoming movies not yet released
+- **Search Results Caching**: 10-minute cache for stable navigation experience
 
 ### 📊 Comprehensive Ratings
 - **TMDB Rating**: Community-driven ratings
@@ -32,21 +56,41 @@ FindFlix is a comprehensive native mobile application built with React Native (E
 - **Deep Links**: Direct links to streaming platforms
 
 ### 🎭 Rich Movie/TV Details
+- **Trailer Player**: Watch movie/show trailers directly in the app (YouTube integration)
 - **Hit/Flop Indicator**: Based on box office vs budget analysis
 - **Movie Info**: Runtime, budget, box office revenue, production companies
 - **TV Show Info**: Number of seasons, total episodes, average episode runtime
 - **Cast & Crew**: Top 5 cast members with character names, directors, producers
+- **Clickable Cast**: Tap any actor's name to see their entire filmography (newest first)
 - **Original Language**: Display with icon in Facts section
 
 ### 📜 Smart Search History
-- **Auto-refresh**: Updates instantly when returning to search screen
+- **User-Specific**: Each user's search history is private and saved automatically
+- **Auto-Save**: Searches saved only for logged-in users (requires authentication)
+- **Recent Searches Page**: Access from profile to view up to 50 recent searches
 - **Filter Preservation**: Saves all filters (scope, genre, language, content type)
-- **Visual Tags**: Color-coded tags for easy identification
-  - Gray: Scope (title/cast/director)
-  - Orange: Genre
-  - Red: Language
-  - Blue: Content Type
+- **Visual Display**: Shows query, scope badge, content type, and relative timestamps
 - **Quick Replay**: Tap any history item to re-run the exact same search
+- **Clear History**: Delete all search history with one tap
+
+### 👤 User Profile & Stats
+- **Profile Page**: View account info and app statistics
+- **Stats Dashboard**: 
+  - Friends count
+  - Pending invites (sent + received)
+  - Total matches from swipe sessions
+  - Total swipe sessions
+- **Quick Actions**: Navigate to Movie Tinder, Add Friends, Recent Searches
+- **Sign Out**: Secure logout with confirmation
+
+### 🎬 Enhanced Swipe Experience
+- **Real Swipe Gestures**: Drag cards left/right to swipe (20% threshold or quick flick)
+- **Visual Feedback**: "LIKE" (green) and "NOPE" (red) indicators appear while swiping
+- **Movie Trailers**: Auto-loading trailers on swipe cards (poster → trailer after 1.5s)
+- **One-Tap Playback**: Tap YouTube play button to watch trailer
+- **Pending Invites UI**: View sent/received friend requests on Tinder screen
+- **Session Management**: Create, view, and end swipe sessions
+- **Match Navigation**: Tap matched movies to view full details
 
 ### 🎨 Beautiful UI/UX
 - **Dark Theme**: Eye-friendly dark mode
@@ -87,14 +131,26 @@ FindFlix is a comprehensive native mobile application built with React Native (E
 FindFlix/
 ├── backend/
 │   ├── server.py              # FastAPI application with all endpoints
+│   ├── auth_utils.py          # Authentication utilities and helpers
+│   ├── models.py              # Pydantic models for user, session, friends, swipes
 │   ├── requirements.txt       # Python dependencies
 │   └── .env                   # Backend environment variables
 ├── frontend/
 │   ├── app/
 │   │   ├── _layout.tsx        # Root layout with navigation setup
 │   │   ├── index.tsx          # Search screen (home)
-│   │   ├── results.tsx        # Search results with sorting
-│   │   └── details.tsx        # Movie/TV details screen
+│   │   ├── results.tsx        # Search results with sorting & caching
+│   │   ├── details.tsx        # Movie/TV details with trailers & clickable cast
+│   │   ├── auth.tsx           # Login/Register screen
+│   │   ├── profile.tsx        # User profile with stats
+│   │   ├── recent-searches.tsx # Search history page
+│   │   ├── tinder.tsx         # Movie Tinder home (friends & sessions)
+│   │   ├── add-friend.tsx     # Add friends by email
+│   │   ├── create-session.tsx # Create swipe session
+│   │   ├── swipe-session.tsx  # Swipe interface with trailers
+│   │   └── session-summary.tsx # View matches from session
+│   ├── contexts/
+│   │   └── AuthContext.tsx    # Authentication context provider
 │   ├── utils/
 │   │   ├── languages.ts       # Language codes and utilities
 │   │   └── genres.ts          # Genre IDs and utilities
@@ -217,6 +273,14 @@ TMDB_API_KEY="your_tmdb_api_key_here"
 RAPIDAPI_KEY="your_rapidapi_key_here"
 OMDB_API_KEY="your_omdb_api_key_here"
 WATCHMODE_API_KEY="your_watchmode_api_key_here"
+
+# Email Configuration (Optional - for password reset emails)
+SMTP_SERVER="smtp.gmail.com"
+SMTP_PORT="587"
+SMTP_USERNAME="your-email@gmail.com"
+SMTP_PASSWORD="your-app-password"
+FROM_EMAIL="your-email@gmail.com"
+APP_URL="https://your-app-url.com"
 ```
 
 ### Frontend (.env)
@@ -228,7 +292,85 @@ EXPO_PUBLIC_BACKEND_URL=http://your-backend-url:8001
 
 ---
 
+## 📧 Email Configuration (Optional)
+
+The forgot password feature requires SMTP configuration to send password reset emails. Gmail is the easiest free option:
+
+### Gmail Setup (Recommended - Free)
+
+1. **Enable 2-Step Verification**
+   - Go to https://myaccount.google.com/security
+   - Turn on 2-Step Verification if not already enabled
+
+2. **Generate App Password**
+   - Go to https://myaccount.google.com/apppasswords
+   - Select "Mail" and your device
+   - Click "Generate"
+   - Copy the 16-character password
+
+3. **Update backend/.env**
+   ```env
+   SMTP_SERVER="smtp.gmail.com"
+   SMTP_PORT="587"
+   SMTP_USERNAME="your-email@gmail.com"
+   SMTP_PASSWORD="your-16-char-app-password"
+   FROM_EMAIL="your-email@gmail.com"
+   APP_URL="http://localhost:3000"  # Your frontend URL
+   ```
+
+4. **Restart Backend**
+   ```bash
+   # Stop and restart the backend server to load new env variables
+   uvicorn server:app --host 0.0.0.0 --port 8001 --reload
+   ```
+
+### Alternative: Brevo (formerly Sendinblue)
+- Free tier: 300 emails/day
+- Sign up: https://www.brevo.com/
+- Get SMTP credentials from account settings
+- Update `.env` with Brevo SMTP details
+
+### Testing Email Sending
+After configuration, test the forgot password flow:
+1. Go to login screen
+2. Click "Forgot Password?"
+3. Enter registered email
+4. Check inbox for reset email
+
+**Note**: Without SMTP configuration, the forgot password feature will generate reset tokens but won't send emails.
+
+---
+
 ## 📡 API Endpoints
+
+### Authentication
+```http
+POST /api/auth/register
+POST /api/auth/login
+POST /api/auth/logout
+POST /api/auth/forgot-password
+GET  /api/auth/me
+POST /api/auth/oauth/session
+```
+
+### Friend System
+```http
+POST /api/friends/request        # Send friend request
+GET  /api/friends/requests       # Get pending requests
+POST /api/friends/respond        # Accept/decline request
+GET  /api/friends                # Get friends list
+```
+
+### Swipe System
+```http
+GET  /api/swipe/session/{friend_id}    # Get/create swipe session
+GET  /api/swipe/sessions               # Get all sessions
+GET  /api/swipe/content/{session_id}   # Get movies to swipe
+POST /api/swipe                        # Submit swipe
+GET  /api/swipe/matches/{session_id}   # Get matches
+GET  /api/swipe/summary/{session_id}   # Get session summary
+POST /api/swipe/session/{session_id}/end
+```
 
 ### Search
 ```http
@@ -259,6 +401,11 @@ GET /api/streaming/{tmdb_id}?media_type=movie
 ### Popular Titles
 ```http
 GET /api/popular?page=1
+```
+
+### Fuzzy Search
+```http
+GET /api/search/fuzzy?query=spidermn&media_type=multi&page=1
 ```
 
 ### Search History
@@ -368,16 +515,38 @@ For questions or suggestions, please open an issue on GitHub.
 
 ---
 
-## 🎯 Future Enhancements
+## 🎯 Recent Updates & Bug Fixes
 
-- [ ] User accounts and watchlists
-- [ ] Personalized recommendations
+### ✅ Implemented (Latest)
+- **Tinder-Style Social Feature**: Swipe movies with friends and find matches
+- **Complete Auth System**: Email/password registration, login, forgot password
+- **Friend System**: Send/accept friend requests, manage friendships
+- **Swipe Sessions**: Create collaborative movie discovery sessions
+- **Enhanced Search**: Fuzzy search with typo tolerance
+- **Improved Ratings**: IMDb/TMDB ratings with source labels
+- **Better Pagination**: Server-side caching for consistent results
+- **Unreleased Content**: Badges for upcoming movies
+- **Session Navigation**: Tap matched movies to view full details
+
+### 🐛 Fixed
+- Search result pagination and sorting consistency
+- Backend TMDB API caching for combined_credits
+- Node.js version compatibility (deployment)
+- Frontend icon loading for web builds
+- TV show episode runtime handling
+- Empty query search with filters
+- Rating fallback logic (IMDb → TMDB)
+
+### 🎯 Future Enhancements
+- [ ] Personal watchlists and favorites
+- [ ] AI-powered personalized recommendations
 - [ ] Movie trailers integration
-- [ ] Social features (share with friends)
-- [ ] Advanced filters (certification, runtime range)
+- [ ] Group chat in swipe sessions
+- [ ] Advanced filters (certification, runtime range, release date)
 - [ ] Offline mode with cached data
-- [ ] Push notifications for new releases
+- [ ] Push notifications for new releases and matches
 - [ ] Multi-language app interface
+- [ ] Password reset page (currently generates token only)
 
 ---
 

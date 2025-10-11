@@ -1,0 +1,674 @@
+import React, { useState, useEffect } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Alert,
+  ActivityIndicator,
+  Modal,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
+import { FlashList } from '@shopify/flash-list';
+import { useAuth } from '../contexts/AuthContext';
+import axios from 'axios';
+
+const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL || '';
+
+interface Friend {
+  id: string;
+  name: string;
+  email: string;
+  picture?: string;
+}
+
+interface FriendRequest {
+  id: string;
+  sender: {
+    id: string;
+    name: string;
+    email: string;
+    picture?: string;
+  };
+  receiver: {
+    id: string;
+    name: string;
+    email: string;
+    picture?: string;
+  };
+  status: 'pending' | 'accepted' | 'declined';
+  created_at: string;
+}
+
+export default function TinderScreen() {
+  const [friends, setFriends] = useState<Friend[]>([]);
+  const [receivedRequests, setReceivedRequests] = useState<FriendRequest[]>([]);
+  const [sentRequests, setSentRequests] = useState<FriendRequest[]>([]);
+  const [showPendingInvites, setShowPendingInvites] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [showModal, setShowModal] = useState(false);
+  const [selectedFriend, setSelectedFriend] = useState<Friend | null>(null);
+  const [sessionData, setSessionData] = useState<any>(null);
+  const { user, isAuthenticated } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      router.replace('/auth');
+      return;
+    }
+    
+    loadData();
+  }, [isAuthenticated]);
+
+  const loadData = async () => {
+    setIsLoading(true);
+    try {
+      const [friendsResponse, receivedResponse, sentResponse] = await Promise.all([
+        axios.get(`${BACKEND_URL}/api/friends`),
+        axios.get(`${BACKEND_URL}/api/friends/requests`),
+        axios.get(`${BACKEND_URL}/api/friends/requests/sent`),
+      ]);
+      
+      setFriends(friendsResponse.data);
+      setReceivedRequests(receivedResponse.data);
+      setSentRequests(sentResponse.data);
+    } catch (error) {
+      console.error('Failed to load data:', error);
+      Alert.alert('Error', 'Failed to load data');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const respondToRequest = async (requestId: string, accept: boolean) => {
+    try {
+      await axios.post(`${BACKEND_URL}/api/friends/respond`, {
+        request_id: requestId,
+        accept,
+      });
+      
+      Alert.alert(
+        'Success',
+        accept ? 'Friend request accepted!' : 'Friend request declined!'
+      );
+      
+      // Reload data
+      loadData();
+    } catch (error: any) {
+      const message = error.response?.data?.detail || 'Failed to respond to friend request';
+      Alert.alert('Error', message);
+    }
+  };
+
+  const handleFriendClick = async (friend: Friend) => {
+    console.log('Button clicked for friend:', friend.name);
+    setIsLoading(true);
+    try {
+      console.log('Making API call to:', `${BACKEND_URL}/api/swipe/session/${friend.id}`);
+      
+      // Get or create session with this friend
+      const response = await axios.get(`${BACKEND_URL}/api/swipe/session/${friend.id}`);
+      const sessionData = response.data;
+      
+      console.log('Session data received:', sessionData);
+      
+      // Show custom modal instead of Alert (better for web)
+      setSelectedFriend(friend);
+      setSessionData(sessionData);
+      setShowModal(true);
+    } catch (error: any) {
+      console.error('Failed to get session:', error);
+      console.error('Error response:', error.response?.data);
+      Alert.alert('Error', `Failed to load session: ${error.response?.data?.detail || error.message}`);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const addFriend = () => {
+    router.push('/add-friend');
+  };
+
+  const renderFriend = ({ item }: { item: Friend }) => (
+    <View style={styles.friendCard}>
+      <View style={styles.friendInfo}>
+        <View style={styles.avatar}>
+          <Text style={styles.avatarText}>{item.name.charAt(0).toUpperCase()}</Text>
+        </View>
+        <View style={styles.friendDetails}>
+          <Text style={styles.friendName}>{item.name}</Text>
+          <Text style={styles.friendEmail}>{item.email}</Text>
+        </View>
+      </View>
+      <TouchableOpacity
+        style={styles.swipeButton}
+        onPress={() => handleFriendClick(item)}
+        disabled={isLoading}
+      >
+        <Ionicons name="heart" size={20} color="#fff" />
+        <Text style={styles.swipeButtonText}>Swipe Movies</Text>
+      </TouchableOpacity>
+    </View>
+  );
+
+  if (!isAuthenticated) {
+    return null;
+  }
+
+  if (isLoading) {
+    return (
+      <SafeAreaView style={styles.container} edges={['top']}>
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#fff" />
+          <Text style={styles.loadingText}>Loading...</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  const totalPendingCount = receivedRequests.length + sentRequests.length;
+
+  return (
+    <SafeAreaView style={styles.container} edges={['top']}>
+      {/* Header */}
+      <View style={styles.header}>
+        <Text style={styles.title}>Movie Tinder</Text>
+        <Text style={styles.subtitle}>Swipe movies with your friends</Text>
+      </View>
+
+      {/* Pending Invites Section */}
+      {totalPendingCount > 0 && (
+        <View style={styles.pendingSection}>
+          <TouchableOpacity
+            style={styles.pendingHeader}
+            onPress={() => setShowPendingInvites(!showPendingInvites)}
+          >
+            <View style={styles.pendingHeaderLeft}>
+              <Ionicons
+                name={showPendingInvites ? 'chevron-down' : 'chevron-forward'}
+                size={20}
+                color="#fff"
+              />
+              <Text style={styles.pendingTitle}>Pending Invites</Text>
+              <View style={styles.badge}>
+                <Text style={styles.badgeText}>{totalPendingCount}</Text>
+              </View>
+            </View>
+            <Ionicons name="people" size={20} color="#888" />
+          </TouchableOpacity>
+
+          {showPendingInvites && (
+            <View style={styles.pendingContent}>
+              {/* Received Requests */}
+              {receivedRequests.length > 0 && (
+                <View style={styles.requestGroup}>
+                  <Text style={styles.requestGroupTitle}>
+                    Received ({receivedRequests.length})
+                  </Text>
+                  {receivedRequests.map((request) => (
+                    <View key={request.id} style={styles.requestCard}>
+                      <View style={styles.requestInfo}>
+                        <View style={styles.avatar}>
+                          <Text style={styles.avatarText}>
+                            {request.sender.name.charAt(0).toUpperCase()}
+                          </Text>
+                        </View>
+                        <View style={styles.requestDetails}>
+                          <Text style={styles.requestName}>{request.sender.name}</Text>
+                          <Text style={styles.requestEmail}>{request.sender.email}</Text>
+                        </View>
+                      </View>
+                      <View style={styles.requestActions}>
+                        <TouchableOpacity
+                          style={[styles.actionButton, styles.acceptButton]}
+                          onPress={() => respondToRequest(request.id, true)}
+                        >
+                          <Ionicons name="checkmark" size={18} color="#fff" />
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                          style={[styles.actionButton, styles.declineButton]}
+                          onPress={() => respondToRequest(request.id, false)}
+                        >
+                          <Ionicons name="close" size={18} color="#fff" />
+                        </TouchableOpacity>
+                      </View>
+                    </View>
+                  ))}
+                </View>
+              )}
+
+              {/* Sent Requests */}
+              {sentRequests.length > 0 && (
+                <View style={[styles.requestGroup, receivedRequests.length > 0 && { marginTop: 16 }]}>
+                  <Text style={styles.requestGroupTitle}>
+                    Sent ({sentRequests.length})
+                  </Text>
+                  {sentRequests.map((request) => (
+                    <View key={request.id} style={styles.requestCard}>
+                      <View style={styles.requestInfo}>
+                        <View style={styles.avatar}>
+                          <Text style={styles.avatarText}>
+                            {request.receiver.name.charAt(0).toUpperCase()}
+                          </Text>
+                        </View>
+                        <View style={styles.requestDetails}>
+                          <Text style={styles.requestName}>{request.receiver.name}</Text>
+                          <Text style={styles.requestEmail}>{request.receiver.email}</Text>
+                        </View>
+                      </View>
+                      <View style={styles.pendingStatus}>
+                        <Ionicons name="time-outline" size={18} color="#888" />
+                        <Text style={styles.pendingStatusText}>Pending</Text>
+                      </View>
+                    </View>
+                  ))}
+                </View>
+              )}
+            </View>
+          )}
+        </View>
+      )}
+
+      {/* Content */}
+      <View style={styles.content}>
+        {friends.length === 0 ? (
+          <View style={styles.emptyState}>
+            <Ionicons name="people-outline" size={64} color="#666" />
+            <Text style={styles.emptyTitle}>No Friends Yet</Text>
+            <Text style={styles.emptyText}>
+              Add friends to start swiping movies together!
+            </Text>
+            <TouchableOpacity style={styles.addButton} onPress={addFriend}>
+              <Text style={styles.addButtonText}>Add Friends</Text>
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <>
+            <FlashList
+              data={friends}
+              renderItem={renderFriend}
+              keyExtractor={(item) => item.id}
+              estimatedItemSize={80}
+              contentContainerStyle={styles.listContent}
+            />
+            <TouchableOpacity style={styles.fab} onPress={addFriend}>
+              <Ionicons name="add" size={24} color="#fff" />
+            </TouchableOpacity>
+          </>
+        )}
+      </View>
+
+      {/* Custom Modal for Options */}
+      <Modal
+        visible={showModal}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setShowModal(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>
+              Swipe with {selectedFriend?.name}
+            </Text>
+            <Text style={styles.modalSubtitle}>
+              You have {sessionData?.match_count || 0} matches together
+            </Text>
+
+            <TouchableOpacity
+              style={styles.modalButton}
+              onPress={() => {
+                console.log('Continue Swiping selected');
+                setShowModal(false);
+                router.push({
+                  pathname: '/swipe-session',
+                  params: { sessionId: sessionData.session_id },
+                });
+              }}
+            >
+              <Ionicons name="heart" size={24} color="#fff" />
+              <Text style={styles.modalButtonText}>Continue Swiping</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.modalButton, styles.modalButtonSecondary]}
+              onPress={() => {
+                console.log('View Matches selected');
+                setShowModal(false);
+                router.push({
+                  pathname: '/session-summary',
+                  params: { sessionId: sessionData.session_id },
+                });
+              }}
+            >
+              <Ionicons name="eye" size={24} color="#e50914" />
+              <Text style={[styles.modalButtonText, styles.modalButtonTextSecondary]}>
+                View Matches
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.modalCancelButton}
+              onPress={() => {
+                console.log('Cancelled');
+                setShowModal(false);
+              }}
+            >
+              <Text style={styles.modalCancelText}>Cancel</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+    </SafeAreaView>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#0c0c0c',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    color: '#888',
+    fontSize: 16,
+    marginTop: 16,
+  },
+  header: {
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    paddingBottom: 24,
+  },
+  title: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    color: '#fff',
+    marginBottom: 4,
+  },
+  subtitle: {
+    fontSize: 16,
+    color: '#888',
+  },
+  content: {
+    flex: 1,
+    paddingHorizontal: 16,
+  },
+  listContent: {
+    paddingBottom: 80,
+  },
+  emptyState: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 32,
+  },
+  emptyTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#fff',
+    marginTop: 16,
+    marginBottom: 8,
+  },
+  emptyText: {
+    fontSize: 16,
+    color: '#888',
+    textAlign: 'center',
+    marginBottom: 32,
+  },
+  addButton: {
+    backgroundColor: '#e50914',
+    paddingVertical: 16,
+    paddingHorizontal: 32,
+    borderRadius: 12,
+  },
+  addButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  friendCard: {
+    backgroundColor: '#1a1a1a',
+    padding: 16,
+    borderRadius: 12,
+    marginBottom: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  friendInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  avatar: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: '#e50914',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
+  },
+  avatarText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  friendDetails: {
+    flex: 1,
+  },
+  friendName: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#fff',
+    marginBottom: 4,
+  },
+  friendEmail: {
+    fontSize: 14,
+    color: '#888',
+  },
+  swipeButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#e50914',
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    gap: 6,
+  },
+  swipeButtonText: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  fab: {
+    position: 'absolute',
+    right: 16,
+    bottom: 16,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: '#e50914',
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  modalContent: {
+    backgroundColor: '#1a1a1a',
+    borderRadius: 16,
+    padding: 24,
+    width: '100%',
+    maxWidth: 320,
+    alignItems: 'center',
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#fff',
+    textAlign: 'center',
+    marginBottom: 8,
+  },
+  modalSubtitle: {
+    fontSize: 14,
+    color: '#888',
+    textAlign: 'center',
+    marginBottom: 24,
+  },
+  modalButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#e50914',
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+    borderRadius: 12,
+    width: '100%',
+    justifyContent: 'center',
+    marginBottom: 12,
+    gap: 8,
+  },
+  modalButtonSecondary: {
+    backgroundColor: 'transparent',
+    borderWidth: 2,
+    borderColor: '#e50914',
+  },
+  modalButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  modalButtonTextSecondary: {
+    color: '#e50914',
+  },
+  modalCancelButton: {
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    marginTop: 8,
+  },
+  modalCancelText: {
+    color: '#888',
+    fontSize: 16,
+  },
+  pendingSection: {
+    marginHorizontal: 16,
+    marginBottom: 12,
+    backgroundColor: '#1a1a1a',
+    borderRadius: 12,
+    overflow: 'hidden',
+  },
+  pendingHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 16,
+  },
+  pendingHeaderLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  pendingTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#fff',
+  },
+  badge: {
+    backgroundColor: '#e50914',
+    borderRadius: 12,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    minWidth: 24,
+    alignItems: 'center',
+  },
+  badgeText: {
+    color: '#fff',
+    fontSize: 12,
+    fontWeight: 'bold',
+  },
+  pendingContent: {
+    paddingHorizontal: 16,
+    paddingBottom: 16,
+  },
+  requestGroup: {
+    gap: 8,
+  },
+  requestGroupTitle: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#888',
+    marginBottom: 8,
+  },
+  requestCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 12,
+    backgroundColor: '#0c0c0c',
+    borderRadius: 8,
+  },
+  requestInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  requestDetails: {
+    flex: 1,
+  },
+  requestName: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#fff',
+    marginBottom: 2,
+  },
+  requestEmail: {
+    fontSize: 12,
+    color: '#888',
+  },
+  requestActions: {
+    flexDirection: 'row',
+    gap: 6,
+  },
+  actionButton: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  acceptButton: {
+    backgroundColor: '#22c55e',
+  },
+  declineButton: {
+    backgroundColor: '#ef4444',
+  },
+  pendingStatus: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    backgroundColor: '#1a1a1a',
+    borderRadius: 8,
+  },
+  pendingStatusText: {
+    fontSize: 12,
+    color: '#888',
+    fontWeight: '500',
+  },
+});
