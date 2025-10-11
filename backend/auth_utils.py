@@ -108,3 +108,97 @@ async def cleanup_expired_sessions(db: AsyncIOMotorDatabase):
         logger.info(f"Cleaned up {result.deleted_count} expired sessions")
     except Exception as e:
         logger.error(f"Error cleaning up sessions: {str(e)}")
+
+def send_password_reset_email(email: str, reset_token: str, app_url: str = "https://findflix-2.emergent.host"):
+    """
+    Send password reset email using SMTP
+    Supports Gmail, SendGrid, or any SMTP server
+    """
+    try:
+        # Get email configuration from environment variables
+        smtp_server = os.getenv("SMTP_SERVER", "smtp.gmail.com")
+        smtp_port = int(os.getenv("SMTP_PORT", "587"))
+        smtp_username = os.getenv("SMTP_USERNAME", "")
+        smtp_password = os.getenv("SMTP_PASSWORD", "")
+        from_email = os.getenv("FROM_EMAIL", smtp_username)
+        
+        if not smtp_username or not smtp_password:
+            logger.warning("SMTP credentials not configured. Email not sent.")
+            return False
+        
+        # Create reset link
+        reset_link = f"{app_url}/reset-password?token={reset_token}"
+        
+        # Create email message
+        message = MIMEMultipart("alternative")
+        message["Subject"] = "FindFlix - Password Reset Request"
+        message["From"] = from_email
+        message["To"] = email
+        
+        # Email body (HTML)
+        html = f"""
+        <html>
+          <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+            <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
+              <h2 style="color: #e50914;">FindFlix Password Reset</h2>
+              <p>Hi there,</p>
+              <p>We received a request to reset your password. Click the button below to create a new password:</p>
+              <div style="text-align: center; margin: 30px 0;">
+                <a href="{reset_link}" 
+                   style="background-color: #e50914; color: white; padding: 12px 30px; 
+                          text-decoration: none; border-radius: 5px; display: inline-block;">
+                  Reset Password
+                </a>
+              </div>
+              <p>Or copy and paste this link into your browser:</p>
+              <p style="background-color: #f5f5f5; padding: 10px; border-radius: 5px; word-break: break-all;">
+                {reset_link}
+              </p>
+              <p><strong>This link will expire in 1 hour.</strong></p>
+              <p>If you didn't request this password reset, please ignore this email.</p>
+              <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
+              <p style="color: #999; font-size: 12px;">
+                FindFlix - Find your next movie to watch<br>
+                This is an automated message, please do not reply.
+              </p>
+            </div>
+          </body>
+        </html>
+        """
+        
+        # Plain text version
+        text = f"""
+        FindFlix Password Reset
+        
+        Hi there,
+        
+        We received a request to reset your password. Click the link below to create a new password:
+        
+        {reset_link}
+        
+        This link will expire in 1 hour.
+        
+        If you didn't request this password reset, please ignore this email.
+        
+        ---
+        FindFlix - Find your next movie to watch
+        """
+        
+        # Attach both versions
+        part1 = MIMEText(text, "plain")
+        part2 = MIMEText(html, "html")
+        message.attach(part1)
+        message.attach(part2)
+        
+        # Send email
+        with smtplib.SMTP(smtp_server, smtp_port) as server:
+            server.starttls()
+            server.login(smtp_username, smtp_password)
+            server.sendmail(from_email, email, message.as_string())
+        
+        logger.info(f"Password reset email sent to {email}")
+        return True
+        
+    except Exception as e:
+        logger.error(f"Error sending password reset email: {str(e)}")
+        return False
