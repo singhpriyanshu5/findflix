@@ -1,17 +1,35 @@
 # FindFlix 🎬
 
-**Find your next movie/tv show to watch**
+**Find your next movie/tv show to watch - Now with Tinder-style matching!**
 
-FindFlix is a comprehensive native mobile application built with React Native (Expo) that helps users discover movies and TV shows, view detailed information including ratings from multiple sources, and find where to stream them in the US.
+FindFlix is a comprehensive native mobile application built with React Native (Expo) that helps users discover movies and TV shows, view detailed information including ratings from multiple sources, find where to stream them in the US, and swipe through movies with friends to find perfect matches!
 
 ## ✨ Features
 
+### 🎯 NEW: Tinder-Style Movie Matching
+- **Swipe Sessions**: Create movie swipe sessions with friends
+- **Social Discovery**: Swipe right on movies you like, left on ones you don't
+- **Instant Matches**: See movies both you and your friends swiped right on
+- **Friend System**: Add friends and create private swipe sessions
+- **Session History**: View all your past sessions and matches
+- **Smart Navigation**: Tap any matched movie to view full details
+
+### 🔐 User Authentication
+- **Email/Password**: Secure JWT-based authentication
+- **OAuth Integration**: Sign in with Google via Emergent Auth
+- **Forgot Password**: Email-based password reset with secure tokens
+- **Session Management**: 7-day sessions with auto-cleanup
+- **Secure Storage**: PBKDF2-HMAC-SHA256 password hashing with salt
+
 ### 🔍 Advanced Search & Discovery
 - **Multi-scope Search**: Search by Title, Cast, or Director
+- **Fuzzy Search**: Typo-tolerant search with smart corrections (e.g., "spidermn" → "spider-man")
+- **Empty Query Search**: Filter by genre/language without text input
 - **Genre Filter**: 18 popular genres including Action, Comedy, Drama, Horror, Sci-Fi, and more
 - **Language Filter**: 38+ languages including English, Hindi, Telugu, Tamil, Spanish, French, Japanese, Korean
 - **Content Type Filter**: Filter by Movies only, TV Shows only, or All content
-- **Smart Person Search**: Automatically selects the most popular person when searching by cast/director (e.g., "Akshay Kumar" returns the Bollywood actor, not namesakes)
+- **Smart Person Search**: Automatically selects the most popular person when searching by cast/director
+- **Unreleased Tags**: Orange badges for upcoming movies not yet released
 
 ### 📊 Comprehensive Ratings
 - **TMDB Rating**: Community-driven ratings
