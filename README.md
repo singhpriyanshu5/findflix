@@ -56,10 +56,12 @@ FindFlix is a comprehensive native mobile application built with React Native (E
 - **Deep Links**: Direct links to streaming platforms
 
 ### 🎭 Rich Movie/TV Details
+- **Trailer Player**: Watch movie/show trailers directly in the app (YouTube integration)
 - **Hit/Flop Indicator**: Based on box office vs budget analysis
 - **Movie Info**: Runtime, budget, box office revenue, production companies
 - **TV Show Info**: Number of seasons, total episodes, average episode runtime
 - **Cast & Crew**: Top 5 cast members with character names, directors, producers
+- **Clickable Cast**: Tap any actor's name to see their entire filmography (newest first)
 - **Original Language**: Display with icon in Facts section
 
 ### 📜 Smart Search History
