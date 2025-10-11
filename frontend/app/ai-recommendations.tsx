@@ -167,8 +167,7 @@ export default function AIRecommendationsScreen() {
               return token;
             }
           },
-          theme: 'dark',
-          accentColor: '#e50914'
+          theme: 'dark'
         });
         
         console.log('ChatKit options set successfully!');
