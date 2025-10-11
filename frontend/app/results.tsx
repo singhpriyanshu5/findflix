@@ -65,6 +65,10 @@ export default function ResultsScreen() {
       return response.data;
     },
     enabled: !!query,
+    staleTime: 10 * 60 * 1000, // 10 minutes - keep results fresh
+    gcTime: 30 * 60 * 1000, // 30 minutes - keep in cache
+    refetchOnMount: false, // Don't refetch when remounting
+    refetchOnWindowFocus: false, // Don't refetch when window gains focus
   });
 
   const handleItemPress = (item: SearchResult) => {
