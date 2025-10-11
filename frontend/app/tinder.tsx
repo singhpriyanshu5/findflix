@@ -565,4 +565,110 @@ const styles = StyleSheet.create({
     color: '#888',
     fontSize: 16,
   },
+  pendingSection: {
+    marginHorizontal: 16,
+    marginBottom: 12,
+    backgroundColor: '#1a1a1a',
+    borderRadius: 12,
+    overflow: 'hidden',
+  },
+  pendingHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 16,
+  },
+  pendingHeaderLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  pendingTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#fff',
+  },
+  badge: {
+    backgroundColor: '#e50914',
+    borderRadius: 12,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    minWidth: 24,
+    alignItems: 'center',
+  },
+  badgeText: {
+    color: '#fff',
+    fontSize: 12,
+    fontWeight: 'bold',
+  },
+  pendingContent: {
+    paddingHorizontal: 16,
+    paddingBottom: 16,
+  },
+  requestGroup: {
+    gap: 8,
+  },
+  requestGroupTitle: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#888',
+    marginBottom: 8,
+  },
+  requestCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 12,
+    backgroundColor: '#0c0c0c',
+    borderRadius: 8,
+  },
+  requestInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  requestDetails: {
+    flex: 1,
+  },
+  requestName: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#fff',
+    marginBottom: 2,
+  },
+  requestEmail: {
+    fontSize: 12,
+    color: '#888',
+  },
+  requestActions: {
+    flexDirection: 'row',
+    gap: 6,
+  },
+  actionButton: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  acceptButton: {
+    backgroundColor: '#22c55e',
+  },
+  declineButton: {
+    backgroundColor: '#ef4444',
+  },
+  pendingStatus: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    backgroundColor: '#1a1a1a',
+    borderRadius: 8,
+  },
+  pendingStatusText: {
+    fontSize: 12,
+    color: '#888',
+    fontWeight: '500',
+  },
 });
