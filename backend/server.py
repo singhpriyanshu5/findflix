@@ -983,13 +983,52 @@ async def fuzzy_search_tmdb(query: str, search_type: str = "multi", page: int = 
         if data.get("results") and len(data["results"]) > 0:
             return data
         
-        # If no results, try relaxed search (remove special chars, extra spaces)
+        # If no results, try various fuzzy search strategies
+        query_variations = []
+        
+        # Clean up query (remove special chars, extra spaces)
         cleaned_query = " ".join(query.strip().split())
         if cleaned_query != query:
-            search_params["query"] = cleaned_query
-            data = await fetch_tmdb_data(endpoint, search_params)
-            if data.get("results") and len(data["results"]) > 0:
-                return data
+            query_variations.append(cleaned_query)
+        
+        # Try common typo corrections for popular terms
+        typo_corrections = {
+            "spidermn": "spider-man",
+            "spiderman": "spider-man",
+            "batmn": "batman",
+            "supermn": "superman",
+            "ironmn": "iron man",
+            "captian": "captain",
+            "avengrs": "avengers",
+            "transformrs": "transformers",
+            "jurasic": "jurassic",
+            "harrypotter": "harry potter",
+            "lordoftherings": "lord of the rings",
+            "starwrs": "star wars",
+            "startrek": "star trek"
+        }
+        
+        query_lower = query.lower().replace(" ", "").replace("-", "")
+        for typo, correction in typo_corrections.items():
+            if typo in query_lower:
+                corrected = query.lower().replace(typo, correction)
+                query_variations.append(corrected)
+        
+        # Try removing common words that might cause issues
+        common_words = ["the", "a", "an", "of", "and", "or", "but", "in", "on", "at", "to", "for", "with"]
+        words = query.lower().split()
+        if len(words) > 1:
+            filtered_words = [w for w in words if w not in common_words]
+            if len(filtered_words) > 0 and len(filtered_words) < len(words):
+                query_variations.append(" ".join(filtered_words))
+        
+        # Try each variation
+        for variation in query_variations:
+            if variation and variation != query:
+                search_params["query"] = variation
+                data = await fetch_tmdb_data(endpoint, search_params)
+                if data.get("results") and len(data["results"]) > 0:
+                    return data
         
         # Return empty results if nothing found
         return {"results": [], "total_pages": 0}
