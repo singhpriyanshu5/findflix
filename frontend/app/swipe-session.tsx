@@ -16,6 +16,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useAuth } from '../contexts/AuthContext';
 import axios from 'axios';
+import YoutubePlayer from 'react-native-youtube-iframe';
 
 const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL || '';
 const TMDB_IMAGE_BASE = 'https://image.tmdb.org/t/p/w500';
