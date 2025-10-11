@@ -131,14 +131,26 @@ FindFlix is a comprehensive native mobile application built with React Native (E
 FindFlix/
 ├── backend/
 │   ├── server.py              # FastAPI application with all endpoints
+│   ├── auth_utils.py          # Authentication utilities and helpers
+│   ├── models.py              # Pydantic models for user, session, friends, swipes
 │   ├── requirements.txt       # Python dependencies
 │   └── .env                   # Backend environment variables
 ├── frontend/
 │   ├── app/
 │   │   ├── _layout.tsx        # Root layout with navigation setup
 │   │   ├── index.tsx          # Search screen (home)
-│   │   ├── results.tsx        # Search results with sorting
-│   │   └── details.tsx        # Movie/TV details screen
+│   │   ├── results.tsx        # Search results with sorting & caching
+│   │   ├── details.tsx        # Movie/TV details with trailers & clickable cast
+│   │   ├── auth.tsx           # Login/Register screen
+│   │   ├── profile.tsx        # User profile with stats
+│   │   ├── recent-searches.tsx # Search history page
+│   │   ├── tinder.tsx         # Movie Tinder home (friends & sessions)
+│   │   ├── add-friend.tsx     # Add friends by email
+│   │   ├── create-session.tsx # Create swipe session
+│   │   ├── swipe-session.tsx  # Swipe interface with trailers
+│   │   └── session-summary.tsx # View matches from session
+│   ├── contexts/
+│   │   └── AuthContext.tsx    # Authentication context provider
 │   ├── utils/
 │   │   ├── languages.ts       # Language codes and utilities
 │   │   └── genres.ts          # Genre IDs and utilities
