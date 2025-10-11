@@ -1418,6 +1418,8 @@ async def create_chatkit_session(current_user: User = Depends(get_current_user))
         openai_api_key = "sk-emergent-c21A48b819eDb2720C"
         workflow_id = "wf_68e5cff942888190aa154df1857b377a00f2b918184ecd24"
         
+        logger.info(f"Creating ChatKit session for user: {current_user.id}")
+        
         async with httpx.AsyncClient() as client:
             response = await client.post(
                 "https://api.openai.com/v1/chatkit/sessions",
@@ -1433,16 +1435,23 @@ async def create_chatkit_session(current_user: User = Depends(get_current_user))
                 timeout=30.0
             )
             
+            logger.info(f"ChatKit API response status: {response.status_code}")
+            logger.info(f"ChatKit API response: {response.text}")
+            
             if response.status_code != 200:
                 logger.error(f"ChatKit session creation failed: {response.text}")
-                raise HTTPException(status_code=response.status_code, detail="Failed to create ChatKit session")
+                raise HTTPException(status_code=response.status_code, detail=f"Failed to create ChatKit session: {response.text}")
             
             data = response.json()
-            return {"client_secret": data.get("client_secret")}
+            logger.info(f"ChatKit session created successfully")
+            return {"client_secret": data.get("client_secret"), "workflow_id": workflow_id}
             
+    except httpx.HTTPError as e:
+        logger.error(f"ChatKit HTTP error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"ChatKit connection error: {str(e)}")
     except Exception as e:
         logger.error(f"ChatKit session error: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=f"ChatKit error: {str(e)}")
 
 @api_router.get("/trailer/{title_id}")
 async def get_trailer(title_id: int, media_type: str = Query(..., description="Type: movie or tv")):
