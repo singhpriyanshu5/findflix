@@ -1439,6 +1439,77 @@ async def get_genres():
         logger.error(f"Genres error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+@api_router.get("/search/fuzzy")
+async def fuzzy_search_endpoint(query: str, media_type: str = "multi", page: int = 1):
+    """
+    Fuzzy search endpoint with typo tolerance
+    Supports: multi, movie, tv, person
+    """
+    try:
+        if not query or len(query.strip()) < 2:
+            raise HTTPException(status_code=400, detail="Query must be at least 2 characters")
+        
+        # Validate media_type
+        valid_types = ["multi", "movie", "tv", "person"]
+        if media_type not in valid_types:
+            raise HTTPException(status_code=400, detail=f"Invalid media_type. Must be one of: {valid_types}")
+        
+        # Use fuzzy search
+        data = await fuzzy_search_tmdb(query.strip(), media_type, page)
+        results = data.get("results", [])
+        total_pages = data.get("total_pages", 1)
+        
+        # Format results similar to regular search
+        formatted_results = []
+        for item in results:
+            item_media_type = item.get("media_type", media_type if media_type != "multi" else "movie")
+            
+            if item_media_type not in ["movie", "tv", "person"]:
+                continue
+            
+            if item_media_type == "person":
+                formatted_item = {
+                    "id": item.get("id"),
+                    "name": item.get("name", ""),
+                    "media_type": "person",
+                    "profile_path": item.get("profile_path"),
+                    "known_for_department": item.get("known_for_department", ""),
+                    "popularity": item.get("popularity", 0)
+                }
+            else:
+                title = item.get("title") or item.get("name", "")
+                year = (item.get("release_date") or item.get("first_air_date", ""))[:4]
+                
+                formatted_item = {
+                    "id": item.get("id"),
+                    "title": title,
+                    "year": year,
+                    "media_type": item_media_type,
+                    "poster_path": item.get("poster_path"),
+                    "genres": item.get("genre_ids", []),
+                    "vote_average": item.get("vote_average", 0),
+                    "overview": item.get("overview", ""),
+                    "original_language": item.get("original_language", ""),
+                    "popularity": item.get("popularity", 0)
+                }
+            
+            formatted_results.append(formatted_item)
+        
+        return {
+            "results": formatted_results,
+            "page": page,
+            "total_pages": total_pages,
+            "query": query,
+            "media_type": media_type,
+            "fuzzy_search": True
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Fuzzy search endpoint error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 # Health check
 @api_router.get("/")
 async def root():
