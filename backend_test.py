@@ -280,6 +280,37 @@ class FindFlixAPITester:
             self.log_test("Get Friends List", False, f"Error: {str(e)}")
             return False
 
+    def test_chatkit_session_creation(self):
+        """Test POST /api/chatkit/session - Create ChatKit session for AI recommendations"""
+        try:
+            if not self.auth_token:
+                self.log_test("ChatKit Session Creation", False, "Missing authentication token")
+                return False
+                
+            headers = {"Authorization": f"Bearer {self.auth_token}"}
+            response = self.session.post(f"{self.base_url}/chatkit/session", headers=headers)
+            
+            if response.status_code == 200:
+                data = response.json()
+                if "client_secret" in data and "workflow_id" in data:
+                    # Verify client_secret is not empty
+                    if data["client_secret"] and data["workflow_id"]:
+                        self.log_test("ChatKit Session Creation", True, 
+                                    f"ChatKit session created successfully with client_secret and workflow_id: {data['workflow_id']}")
+                        return True
+                    else:
+                        self.log_test("ChatKit Session Creation", False, "Empty client_secret or workflow_id")
+                        return False
+                else:
+                    self.log_test("ChatKit Session Creation", False, f"Missing required fields in response: {data}")
+                    return False
+            else:
+                self.log_test("ChatKit Session Creation", False, f"HTTP {response.status_code}: {response.text}")
+                return False
+        except Exception as e:
+            self.log_test("ChatKit Session Creation", False, f"Error: {str(e)}")
+            return False
+
     def test_logout(self):
         """Test POST /api/auth/logout - User logout"""
         try:
