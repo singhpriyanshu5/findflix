@@ -446,7 +446,7 @@ export default function DetailsScreen() {
                 key={idx}
                 style={styles.castItem}
                 onPress={() => {
-                  router.push(`/?query=${encodeURIComponent(member.name)}&scope=cast`);
+                  router.push(`/results?query=${encodeURIComponent(member.name)}&scope=cast&sort_by=year_desc&from=details&detailsId=${id}&detailsMediaType=${mediaType}`);
                 }}
                 activeOpacity={0.7}
               >
