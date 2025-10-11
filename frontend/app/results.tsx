@@ -106,10 +106,17 @@ export default function ResultsScreen() {
             <Text style={styles.title} numberOfLines={2}>
               {item.title}
             </Text>
-            <View style={styles.badge}>
-              <Text style={styles.badgeText}>
-                {item.media_type === 'movie' ? 'Movie' : 'TV'}
-              </Text>
+            <View style={styles.badgeContainer}>
+              <View style={styles.badge}>
+                <Text style={styles.badgeText}>
+                  {item.media_type === 'movie' ? 'Movie' : 'TV'}
+                </Text>
+              </View>
+              {item.release_date && new Date(item.release_date) > new Date() && (
+                <View style={styles.unreleasedBadge}>
+                  <Text style={styles.unreleasedBadgeText}>Unreleased</Text>
+                </View>
+              )}
             </View>
           </View>
 
