@@ -236,6 +236,12 @@ export default function AuthScreen() {
               />
             </View>
 
+            {isLogin && (
+              <TouchableOpacity onPress={() => setShowForgotPassword(true)} style={styles.forgotPassword}>
+                <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+              </TouchableOpacity>
+            )}
+
             <TouchableOpacity
               style={styles.primaryButton}
               onPress={handleEmailAuth}
