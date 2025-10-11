@@ -332,13 +332,23 @@ export default function SwipeSessionScreen() {
                   }
                 }}
                 initialPlayerParams={{
+                  controls: false,
+                  modestbranding: true,
+                  rel: false,
+                  showinfo: false,
                   preventFullScreen: false,
                   start: 0,
                 }}
+                mute={true}
                 webViewStyle={{
                   opacity: 0.99, // Fix for Android
                 }}
               />
+              {/* Muted indicator */}
+              <View style={styles.muteIndicator}>
+                <Ionicons name="volume-mute" size={16} color="#fff" />
+                <Text style={styles.muteText}>Tap to unmute</Text>
+              </View>
             </View>
           ) : (
             <>
