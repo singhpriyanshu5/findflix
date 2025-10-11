@@ -359,6 +359,7 @@ export default function SwipeSessionScreen() {
                   console.log('Video state:', state);
                   if (state === 'playing') {
                     console.log('Video is now playing!');
+                    setShowPlayOverlay(false);
                   }
                 }}
                 initialPlayerParams={{
@@ -380,6 +381,20 @@ export default function SwipeSessionScreen() {
                   domStorageEnabled: true,
                 }}
               />
+              
+              {/* Tap to Play Overlay - iOS autoplay workaround */}
+              {showPlayOverlay && (
+                <TouchableOpacity
+                  style={styles.playOverlay}
+                  onPress={handlePlayButtonPress}
+                  activeOpacity={0.9}
+                >
+                  <View style={styles.playButton}>
+                    <Ionicons name="play" size={48} color="#fff" />
+                  </View>
+                  <Text style={styles.playText}>Tap to watch trailer</Text>
+                </TouchableOpacity>
+              )}
             </View>
           ) : (
             <>
