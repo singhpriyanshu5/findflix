@@ -1414,8 +1414,8 @@ async def create_chatkit_session(current_user: User = Depends(get_current_user))
     try:
         import httpx
         
-        # Use Emergent LLM key for OpenAI
-        openai_api_key = "sk-emergent-c21A48b819eDb2720C"
+        # Use user's OpenAI API key with ChatKit beta access
+        openai_api_key = "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"
         workflow_id = "wf_68e5cff942888190aa154df1857b377a00f2b918184ecd24"
         
         logger.info(f"Creating ChatKit session for user: {current_user.id}")
