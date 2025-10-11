@@ -332,7 +332,7 @@ frontend:
           comment: "User reported that after clicking 'AI Recommendations', page loads but shows 'Waiting for chatkit-root custom element...' and no chat UI appears"
         - working: "NA"
           agent: "main"
-          comment: "Fixed ChatKit integration: Changed from <chatkit-root> to <openai-chatkit> custom element (correct element per 2025 docs). Updated authentication to use setOptions({auth: {token}}) instead of getClientSecret callback. Added better error handling and event listeners. Needs retesting."
+          comment: "Fixed ChatKit integration: Changed from <chatkit-root> to <openai-chatkit> custom element (correct element per 2025 docs). Updated authentication to use setOptions({auth: {token}}) instead of getClientSecret callback. Added better error handling and event listeners. Frontend service restarted to pick up changes. Ready for testing."
 
 agent_communication:
     - agent: "testing"
