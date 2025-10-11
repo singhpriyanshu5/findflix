@@ -1195,7 +1195,7 @@ async def fuzzy_search_tmdb(query: str, search_type: str = "multi", page: int = 
 # ===== Original Movie/TV Endpoints =====
 
 @api_router.post("/search")
-async def search_titles(request: SearchRequest):
+async def search_titles(request: SearchRequest, current_user: User = Depends(get_current_user)):
     """Search for movies/TV shows with filters"""
     try:
         # Save to search history (only if user is authenticated)
