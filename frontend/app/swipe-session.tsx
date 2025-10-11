@@ -319,16 +319,41 @@ export default function SwipeSessionScreen() {
           ]}
           {...panResponder.panHandlers}
         >
-          {currentMovie.poster_path ? (
-            <Image
-              source={{ uri: `${TMDB_IMAGE_BASE}${currentMovie.poster_path}` }}
-              style={styles.moviePoster}
-              resizeMode="cover"
-            />
-          ) : (
-            <View style={[styles.moviePoster, styles.placeholderPoster]}>
-              <Ionicons name="film-outline" size={64} color="#666" />
+          {/* Show trailer if available and ready, otherwise show poster */}
+          {showTrailer && trailerKey ? (
+            <View style={styles.trailerContainer}>
+              <YoutubePlayer
+                height={SCREEN_HEIGHT * 0.6}
+                play={isTrailerPlaying}
+                videoId={trailerKey}
+                onChangeState={(state) => {
+                  if (state === 'ended') {
+                    setIsTrailerPlaying(false);
+                  }
+                }}
+                initialPlayerParams={{
+                  preventFullScreen: false,
+                  start: 0,
+                }}
+                webViewStyle={{
+                  opacity: 0.99, // Fix for Android
+                }}
+              />
             </View>
+          ) : (
+            <>
+              {currentMovie.poster_path ? (
+                <Image
+                  source={{ uri: `${TMDB_IMAGE_BASE}${currentMovie.poster_path}` }}
+                  style={styles.moviePoster}
+                  resizeMode="cover"
+                />
+              ) : (
+                <View style={[styles.moviePoster, styles.placeholderPoster]}>
+                  <Ionicons name="film-outline" size={64} color="#666" />
+                </View>
+              )}
+            </>
           )}
           
           <View style={styles.movieInfo}>
