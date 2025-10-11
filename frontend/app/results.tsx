@@ -72,10 +72,8 @@ export default function ResultsScreen() {
   });
 
   const handleItemPress = (item: SearchResult) => {
-    router.push({
-      pathname: '/details',
-      params: { id: item.id, mediaType: item.media_type },
-    });
+    // Pass current search context to details page for proper back navigation
+    router.push(`/details?id=${item.id}&mediaType=${item.media_type}&fromResults=true&resultsQuery=${encodeURIComponent(query || '')}&resultsScope=${scope}&resultsGenre=${genre}&resultsLanguage=${language}&resultsContentType=${contentType}&resultsSortBy=${sortBy}&resultsPage=${page}`);
   };
 
   const loadMore = useCallback(() => {
