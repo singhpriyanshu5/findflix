@@ -92,7 +92,6 @@ export default function SwipeSessionScreen() {
     setTrailerKey(null);
     setIsTrailerPlaying(false);
     setPlayerReady(false);
-    setShowPlayOverlay(true);
     
     // Clear any existing timers
     if (posterTimerRef.current) {
@@ -114,9 +113,9 @@ export default function SwipeSessionScreen() {
       if (response.data.trailer_key) {
         setTrailerKey(response.data.trailer_key);
         
-        // Show poster for 1.5 seconds, then show trailer with overlay
+        // Show poster for 1.5 seconds, then show trailer
         posterTimerRef.current = setTimeout(() => {
-          console.log('Showing trailer with tap-to-play overlay');
+          console.log('Showing trailer');
           setShowTrailer(true);
         }, 1500);
       }
@@ -124,19 +123,6 @@ export default function SwipeSessionScreen() {
       console.error('Failed to load trailer:', error);
       // Silently fail - just show poster
     }
-  };
-
-  const handlePlayerReady = () => {
-    console.log('Player is ready');
-    setPlayerReady(true);
-    // Try autoplay, but it will likely fail on iOS
-    setIsTrailerPlaying(true);
-  };
-
-  const handlePlayButtonPress = () => {
-    console.log('User tapped play button');
-    setShowPlayOverlay(false);
-    setIsTrailerPlaying(true);
   };
 
   const loadMovies = async () => {
