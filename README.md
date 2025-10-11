@@ -306,6 +306,35 @@ After configuration, test the forgot password flow:
 
 ## 📡 API Endpoints
 
+### Authentication
+```http
+POST /api/auth/register
+POST /api/auth/login
+POST /api/auth/logout
+POST /api/auth/forgot-password
+GET  /api/auth/me
+POST /api/auth/oauth/session
+```
+
+### Friend System
+```http
+POST /api/friends/request        # Send friend request
+GET  /api/friends/requests       # Get pending requests
+POST /api/friends/respond        # Accept/decline request
+GET  /api/friends                # Get friends list
+```
+
+### Swipe System
+```http
+GET  /api/swipe/session/{friend_id}    # Get/create swipe session
+GET  /api/swipe/sessions               # Get all sessions
+GET  /api/swipe/content/{session_id}   # Get movies to swipe
+POST /api/swipe                        # Submit swipe
+GET  /api/swipe/matches/{session_id}   # Get matches
+GET  /api/swipe/summary/{session_id}   # Get session summary
+POST /api/swipe/session/{session_id}/end
+```
+
 ### Search
 ```http
 POST /api/search
@@ -335,6 +364,11 @@ GET /api/streaming/{tmdb_id}?media_type=movie
 ### Popular Titles
 ```http
 GET /api/popular?page=1
+```
+
+### Fuzzy Search
+```http
+GET /api/search/fuzzy?query=spidermn&media_type=multi&page=1
 ```
 
 ### Search History
