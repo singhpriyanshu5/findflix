@@ -77,7 +77,11 @@ export default function AIRecommendationsScreen() {
 <html>
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="https://cdn.platform.openai.com/deployments/chatkit/chatkit.js"></script>
+  <script 
+    src="https://cdn.platform.openai.com/deployments/chatkit/chatkit.js"
+    onload="console.log('ChatKit script loaded successfully')"
+    onerror="console.error('Failed to load ChatKit script from CDN')"
+  ></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { 
