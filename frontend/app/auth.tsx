@@ -38,20 +38,21 @@ export default function AuthScreen() {
     }
 
     setIsLoading(true);
-    let success = false;
+    let result;
 
     if (isLogin) {
-      success = await login(email, password);
+      result = await login(email, password);
     } else {
-      success = await register(name, email, password);
+      result = await register(name, email, password);
     }
 
     setIsLoading(false);
 
-    if (success) {
+    if (result.success) {
       router.replace('/');
     } else {
-      Alert.alert('Error', isLogin ? 'Login failed' : 'Registration failed');
+      // Show specific error message
+      Alert.alert('Error', result.error || (isLogin ? 'Login failed' : 'Registration failed'));
     }
   };
 
