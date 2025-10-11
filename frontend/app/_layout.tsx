@@ -88,6 +88,12 @@ export default function RootLayout() {
                 title: 'Details',
               }}
             />
+            <Stack.Screen 
+              name="profile" 
+              options={{
+                title: 'Profile',
+              }}
+            />
           </Stack>
         </AuthProvider>
       </QueryClientProvider>
