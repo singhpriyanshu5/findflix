@@ -99,17 +99,13 @@ export default function AIRecommendationsScreen() {
       flex: 1; 
       width: 100%; 
       height: 100%;
+      display: block;
     }
     openai-chatkit {
       --ck-accent-color: #e50914;
-    }
-    .loading {
-      display: flex;
-      justify-content: center;
-      align-items: center;
       height: 100%;
-      color: #888;
-      font-size: 14px;
+      width: 100%;
+      display: block;
     }
   </style>
 </head>
@@ -119,8 +115,7 @@ export default function AIRecommendationsScreen() {
       <div class="header-title">🎬 AI Movie Recommendations</div>
       <div class="header-subtitle">Get personalized movie suggestions</div>
     </div>
-    <div id="loading-message" class="loading">Initializing AI chat...</div>
-    <openai-chatkit id="chatkit" style="height:100%;width:100%;display:none;"></openai-chatkit>
+    <openai-chatkit id="chatkit"></openai-chatkit>
   </div>
   
   <script>
@@ -136,11 +131,6 @@ export default function AIRecommendationsScreen() {
         console.log('openai-chatkit element is defined!');
         
         const chatkit = document.getElementById('chatkit');
-        const loadingMessage = document.getElementById('loading-message');
-        const token = '${clientSecret}';
-        
-        console.log('Token available:', !!token);
-        console.log('Token length:', token ? token.length : 0);
         
         if (!chatkit) {
           console.error('ChatKit element not found in DOM');
@@ -153,19 +143,33 @@ export default function AIRecommendationsScreen() {
         // Set authentication and theme options
         chatkit.setOptions({
           api: {
-            getClientSecret: async () => {
-              console.log('getClientSecret called, returning token');
-              return token;
+            getClientSecret: async (existingSecret) => {
+              console.log('getClientSecret called');
+              try {
+                const response = await fetch('${BACKEND_URL}/api/chatkit/session', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json'
+                  }
+                });
+                
+                if (!response.ok) {
+                  throw new Error('Failed to fetch client secret');
+                }
+                
+                const data = await response.json();
+                console.log('Got client secret from backend');
+                return data.client_secret;
+              } catch (error) {
+                console.error('Error fetching client secret:', error);
+                throw error;
+              }
             }
           },
           theme: 'dark'
         });
         
         console.log('ChatKit options set successfully!');
-        
-        // Hide loading message and show chat
-        if (loadingMessage) loadingMessage.style.display = 'none';
-        chatkit.style.display = 'block';
         
         // Add event listeners for debugging
         chatkit.addEventListener('chatkit.ready', () => {
@@ -182,11 +186,6 @@ export default function AIRecommendationsScreen() {
         
       } catch (error) {
         console.error('Error initializing ChatKit:', error);
-        const loadingMessage = document.getElementById('loading-message');
-        if (loadingMessage) {
-          loadingMessage.textContent = 'Failed to load chat. Please try again.';
-          loadingMessage.style.color = '#e50914';
-        }
       }
     }
     
