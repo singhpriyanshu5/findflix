@@ -1257,12 +1257,16 @@ async def search_titles(request: SearchRequest):
                     credits = await fetch_tmdb_data(f"person/{person_id}/combined_credits")
                     cast_results = credits.get("cast", [])
                     
-                    # Filter to only include main cast (order < 15 indicates top billing)
-                    # order field: 0 = lead role, 1-5 = main cast, 6-15 = supporting cast
-                    # This filters out cameos, special appearances, and minor roles
+                    # Filter to only include MAIN CAST (order < 15 indicates top billing)
+                    # TMDB's 'order' field represents billing position in credits:
+                    #   0 = lead role (main protagonist)
+                    #   1-5 = main cast (primary characters)
+                    #   6-14 = supporting cast (secondary characters)
+                    #   15+ = minor roles, cameos, special appearances
+                    # This prevents showing movies where actor had only a cameo or uncredited role
                     main_cast_results = [
                         movie for movie in cast_results 
-                        if movie.get("order", 999) < 15
+                        if movie.get("order", 999) < 15  # Default 999 filters out entries without order field
                     ]
                     
                     main_cast_results.sort(key=lambda x: x.get("popularity", 0), reverse=True)
