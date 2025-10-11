@@ -1065,6 +1065,7 @@ async def fuzzy_search_tmdb(query: str, search_type: str = "multi", page: int = 
     """
     Perform fuzzy search with typo tolerance
     Returns TMDB search results even with typos
+    Enhanced for person name searches (actors, directors)
     """
     # First try exact search
     search_params = {
@@ -1090,8 +1091,43 @@ async def fuzzy_search_tmdb(query: str, search_type: str = "multi", page: int = 
         if cleaned_query != query:
             query_variations.append(cleaned_query)
         
-        # Try common typo corrections for popular terms
-        typo_corrections = {
+        # Person-specific typo corrections (actors, directors)
+        person_typo_corrections = {
+            # Common actor/director name typos
+            "leornado": "leonardo",
+            "dicapro": "dicaprio",
+            "dicaprio": "dicaprio",
+            "tom cruse": "tom cruise",
+            "tomcruise": "tom cruise",
+            "robert downy": "robert downey",
+            "scarlet johanson": "scarlett johansson",
+            "scarlett johansen": "scarlett johansson",
+            "chris prat": "chris pratt",
+            "bradpit": "brad pitt",
+            "angelina joli": "angelina jolie",
+            "jhonny depp": "johnny depp",
+            "johnny dep": "johnny depp",
+            "will smith": "will smith",
+            "willsmith": "will smith",
+            "denzel washington": "denzel washington",
+            "morgan freeman": "morgan freeman",
+            "samuel jackson": "samuel l jackson",
+            "samuel l jackson": "samuel l jackson",
+            "christopher nolen": "christopher nolan",
+            "nolen": "nolan",
+            "steven spielburg": "steven spielberg",
+            "spielburg": "spielberg",
+            "quentin tarentino": "quentin tarantino",
+            "tarentino": "tarantino",
+            "martin scorcese": "martin scorsese",
+            "scorcese": "scorsese",
+            "ridley scot": "ridley scott",
+            "james camron": "james cameron",
+            "camron": "cameron",
+        }
+        
+        # Try common typo corrections for movie titles
+        title_typo_corrections = {
             "spidermn": "spider-man",
             "spiderman": "spider-man",
             "batmn": "batman",
@@ -1104,14 +1140,32 @@ async def fuzzy_search_tmdb(query: str, search_type: str = "multi", page: int = 
             "harrypotter": "harry potter",
             "lordoftherings": "lord of the rings",
             "starwrs": "star wars",
-            "startrek": "star trek"
+            "startrek": "star trek",
+            "incepton": "inception",
+            "intersteller": "interstellar",
         }
         
-        query_lower = query.lower().replace(" ", "").replace("-", "")
+        # Combine all typo corrections
+        typo_corrections = {**person_typo_corrections, **title_typo_corrections}
+        
+        # Apply typo corrections
+        query_lower = query.lower()
         for typo, correction in typo_corrections.items():
             if typo in query_lower:
-                corrected = query.lower().replace(typo, correction)
+                corrected = query_lower.replace(typo, correction)
                 query_variations.append(corrected)
+        
+        # For person searches, try partial matches (first name or last name only)
+        if search_type == "person":
+            words = query.split()
+            if len(words) >= 2:
+                # Try first name only
+                query_variations.append(words[0])
+                # Try last name only
+                query_variations.append(words[-1])
+                # Try without middle initials/names
+                if len(words) > 2:
+                    query_variations.append(f"{words[0]} {words[-1]}")
         
         # Try removing common words that might cause issues
         common_words = ["the", "a", "an", "of", "and", "or", "but", "in", "on", "at", "to", "for", "with"]
@@ -1123,10 +1177,12 @@ async def fuzzy_search_tmdb(query: str, search_type: str = "multi", page: int = 
         
         # Try each variation
         for variation in query_variations:
-            if variation and variation != query:
+            if variation and variation != query and variation != query.lower():
                 search_params["query"] = variation
                 data = await fetch_tmdb_data(endpoint, search_params)
                 if data.get("results") and len(data["results"]) > 0:
+                    # Log the correction for debugging
+                    logger.info(f"Fuzzy search: '{query}' corrected to '{variation}'")
                     return data
         
         # Return empty results if nothing found
