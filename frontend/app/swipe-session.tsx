@@ -79,6 +79,9 @@ export default function SwipeSessionScreen() {
       if (posterTimerRef.current) {
         clearTimeout(posterTimerRef.current);
       }
+      if (playTimerRef.current) {
+        clearTimeout(playTimerRef.current);
+      }
     };
   }, [currentIndex, movies]);
 
@@ -106,37 +109,18 @@ export default function SwipeSessionScreen() {
         `${BACKEND_URL}/api/trailer/${currentMovie.id}?media_type=${currentMovie.media_type}`
       );
       
-      console.log('Trailer loaded:', response.data.trailer_key);
-      
       if (response.data.trailer_key) {
         setTrailerKey(response.data.trailer_key);
         
-        // Show poster for 2 seconds, then show trailer
+        // Show poster for 1.5 seconds, then immediately show and play trailer
         posterTimerRef.current = setTimeout(() => {
-          console.log('Showing trailer');
           setShowTrailer(true);
-          // Wait a bit for player to be ready before starting playback
-          playTimerRef.current = setTimeout(() => {
-            console.log('Starting playback');
-            setIsTrailerPlaying(true);
-          }, 500);
-        }, 2000);
+          setIsTrailerPlaying(true);
+        }, 1500);
       }
     } catch (error) {
       console.error('Failed to load trailer:', error);
       // Silently fail - just show poster
-    }
-  };
-
-  const handlePlayerReady = () => {
-    console.log('Player ready');
-    setPlayerReady(true);
-  };
-
-  const handlePlayerStateChange = (state: string) => {
-    console.log('Player state:', state);
-    if (state === 'ended') {
-      setIsTrailerPlaying(false);
     }
   };
 
