@@ -158,8 +158,11 @@ export default function AIRecommendationsScreen() {
         
         // Set authentication and theme options
         chatkit.setOptions({
-          auth: {
-            token: token
+          api: {
+            getClientSecret: async () => {
+              console.log('getClientSecret called, returning token');
+              return token;
+            }
           },
           theme: 'dark',
           accentColor: '#e50914'
