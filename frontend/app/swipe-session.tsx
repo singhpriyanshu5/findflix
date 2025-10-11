@@ -66,6 +66,54 @@ export default function SwipeSessionScreen() {
     loadMovies();
   }, [isAuthenticated, sessionId]);
 
+  // Load trailer when current movie changes
+  useEffect(() => {
+    if (movies.length > 0 && currentIndex < movies.length) {
+      loadTrailerForCurrentMovie();
+    }
+    
+    // Cleanup timer on unmount or index change
+    return () => {
+      if (posterTimerRef.current) {
+        clearTimeout(posterTimerRef.current);
+      }
+    };
+  }, [currentIndex, movies]);
+
+  const loadTrailerForCurrentMovie = async () => {
+    // Reset trailer state
+    setShowTrailer(false);
+    setTrailerKey(null);
+    setIsTrailerPlaying(false);
+    
+    if (posterTimerRef.current) {
+      clearTimeout(posterTimerRef.current);
+    }
+
+    const currentMovie = movies[currentIndex];
+    if (!currentMovie) return;
+
+    try {
+      // Fetch trailer
+      const response = await axios.get(
+        `${BACKEND_URL}/api/trailer/${currentMovie.id}?media_type=${currentMovie.media_type}`
+      );
+      
+      if (response.data.trailer_key) {
+        setTrailerKey(response.data.trailer_key);
+        
+        // Show poster for 2 seconds, then show trailer
+        posterTimerRef.current = setTimeout(() => {
+          setShowTrailer(true);
+          setIsTrailerPlaying(true);
+        }, 2000);
+      }
+    } catch (error) {
+      console.error('Failed to load trailer:', error);
+      // Silently fail - just show poster
+    }
+  };
+
   const loadMovies = async () => {
     setIsLoading(true);
     try {
