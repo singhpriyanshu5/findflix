@@ -378,6 +378,24 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#0c0c0c',
   },
+  centerContent: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  messageText: {
+    color: '#fff',
+    fontSize: 18,
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  linkText: {
+    color: '#e50914',
+    fontSize: 16,
+    fontWeight: '600',
+    textDecorationLine: 'underline',
+  },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
