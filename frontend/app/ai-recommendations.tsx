@@ -284,7 +284,7 @@ export default function AIRecommendationsScreen() {
     }
   </script>
 </body>
-</html>`;
+</html>`, [clientSecret, BACKEND_URL]);
 
   // For web platform, use iframe with message listener
   if (Platform.OS === 'web') {
