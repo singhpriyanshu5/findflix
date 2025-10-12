@@ -23,23 +23,14 @@ const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL || '';
 export default function AIRecommendationsScreen() {
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const { isAuthenticated } = useAuth();
   const router = useRouter();
-
-  useEffect(() => {
-    if (!isAuthenticated) {
-      Alert.alert('Login Required', 'Please login to use AI recommendations', [
-        { text: 'OK', onPress: () => router.replace('/auth') }
-      ]);
-      return;
-    }
-    
-    initializeChatKit();
-  }, [isAuthenticated, router]);
 
   const initializeChatKit = async () => {
     try {
       setIsLoading(true);
+      setError(null);
       console.log('Fetching ChatKit session from backend...');
       
       const response = await axios.post(`${BACKEND_URL}/api/chatkit/session`);
@@ -51,13 +42,32 @@ export default function AIRecommendationsScreen() {
       console.error('Failed to initialize ChatKit:', error);
       console.error('Error response:', error.response?.data);
       const message = error.response?.data?.detail || 'Failed to load AI chat';
-      Alert.alert('Error', message);
+      setError(message);
       setIsLoading(false);
     }
   };
 
+  useEffect(() => {
+    if (isAuthenticated) {
+      initializeChatKit();
+    }
+  }, [isAuthenticated]);
+
+  // Show login prompt if not authenticated
   if (!isAuthenticated) {
-    return null;
+    return (
+      <SafeAreaView style={styles.container} edges={['top']}>
+        <View style={styles.centerContent}>
+          <Text style={styles.messageText}>Please login to use AI recommendations</Text>
+          <Text 
+            style={styles.linkText}
+            onPress={() => router.push('/auth')}
+          >
+            Go to Login
+          </Text>
+        </View>
+      </SafeAreaView>
+    );
   }
 
   if (isLoading || !clientSecret) {
