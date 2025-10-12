@@ -205,6 +205,12 @@ You'll need to obtain the following API keys (all have free tiers):
    - Subscribe: https://rapidapi.com/movie-of-the-night-movie-of-the-night-default/api/streaming-availability
    - Select "Basic" plan (FREE - 100 requests/day)
 
+5. **OpenAI API Key** (for AI Recommendations)
+   - Sign up: https://platform.openai.com/signup
+   - Get API key: https://platform.openai.com/api-keys
+   - Create ChatKit workflow: https://platform.openai.com/chatkit
+   - Free tier: Pay-as-you-go pricing (typically ~$0.01-0.03 per conversation)
+
 ---
 
 ## ⚙️ Installation
