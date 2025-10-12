@@ -105,14 +105,18 @@ export default function AIRecommendationsScreen() {
     #chatkit { 
       flex: 1; 
       width: 100%; 
-      height: 100%;
-      display: block;
+      min-height: 500px;
+      display: flex;
+      flex-direction: column;
     }
     openai-chatkit {
       --ck-accent-color: #e50914;
       height: 100%;
       width: 100%;
-      display: block;
+      min-height: 500px;
+      display: block !important;
+      visibility: visible !important;
+      opacity: 1 !important;
     }
   </style>
 </head>
