@@ -249,6 +249,27 @@ export default function AIRecommendationsScreen() {
     );
   }
 
+  // Handler for WebView messages
+  const handleWebViewMessage = (event: any) => {
+    try {
+      const message = JSON.parse(event.nativeEvent.data);
+      console.log('Received message from WebView:', message);
+      
+      if (message.type === 'navigate' && message.screen === 'details') {
+        // Navigate to movie details screen
+        router.push({
+          pathname: '/details',
+          params: {
+            id: message.params.id,
+            mediaType: message.params.mediaType
+          }
+        });
+      }
+    } catch (error) {
+      console.error('Error parsing WebView message:', error);
+    }
+  };
+
   // For native platforms (iOS/Android), use WebView
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
@@ -258,6 +279,7 @@ export default function AIRecommendationsScreen() {
         javaScriptEnabled={true}
         domStorageEnabled={true}
         startInLoadingState={true}
+        onMessage={handleWebViewMessage}
         renderLoading={() => (
           <View style={styles.webviewLoading}>
             <ActivityIndicator size="large" color="#e50914" />
