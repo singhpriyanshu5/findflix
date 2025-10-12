@@ -295,6 +295,10 @@ RAPIDAPI_KEY="your_rapidapi_key_here"
 OMDB_API_KEY="your_omdb_api_key_here"
 WATCHMODE_API_KEY="your_watchmode_api_key_here"
 
+# OpenAI Configuration (for AI Recommendations)
+OPENAI_API_KEY="your_openai_api_key_here"
+CHATKIT_WORKFLOW_ID="your_chatkit_workflow_id_here"
+
 # Email Configuration (Optional - for password reset emails)
 SMTP_SERVER="smtp.gmail.com"
 SMTP_PORT="587"
