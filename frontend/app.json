@@ -21,7 +21,15 @@
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/favicon.png",
+      "name": "FindFlix",
+      "shortName": "FindFlix",
+      "description": "Discover movies and TV shows with friends",
+      "themeColor": "#e50914",
+      "backgroundColor": "#000000",
+      "display": "standalone",
+      "startUrl": "/",
+      "scope": "/"
     },
     "plugins": [
       "expo-router",
