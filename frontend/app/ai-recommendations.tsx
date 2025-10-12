@@ -162,17 +162,7 @@ export default function AIRecommendationsScreen() {
               return clientSecret;
             }
           },
-          theme: {
-            colorScheme: 'dark',
-            color: {
-              accent: {
-                primary: '#e50914',  // FindFlix red
-                level: 2
-              }
-            },
-            radius: 'md',
-            density: 'compact'
-          },
+          theme: 'dark',
           widgets: {
             async onAction(action, item) {
               console.log('Widget action triggered:', action);
