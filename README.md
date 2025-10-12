@@ -439,6 +439,18 @@ GET /api/search/history?limit=10
 DELETE /api/search/history
 ```
 
+### AI Recommendations
+```http
+POST /api/chatkit/session
+Authorization: Bearer {jwt_token}
+
+# Returns:
+{
+  "client_secret": "chatkit_session_token",
+  "workflow_id": "wf_xxxxx"
+}
+```
+
 ### Genres
 ```http
 GET /api/genres
