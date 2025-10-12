@@ -147,24 +147,46 @@ export default function AIRecommendationsScreen() {
         theme: 'dark',
         widgets: {
           async onAction(action) {
+            console.log('🔵 Widget action triggered:', action);
+            console.log('🔵 Action type:', action.type);
+            console.log('🔵 Action payload:', action.payload);
+            
             if (action.type === 'view_movie_details' && action.payload?.movie_name) {
+              const movieName = action.payload.movie_name;
+              console.log('🔍 Searching for movie:', movieName);
+              
               try {
                 const res = await fetch('${BACKEND_URL}/api/search', {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({ query: action.payload.movie_name, scope: 'title', page: 1 })
+                  body: JSON.stringify({ query: movieName, scope: 'title', page: 1 })
                 });
+                
+                console.log('🔍 Search response status:', res.status);
                 const data = await res.json();
+                console.log('🔍 Search results:', data);
+                
                 if (data.results?.[0]) {
-                  window.parent.postMessage({
+                  const movie = data.results[0];
+                  console.log('✅ Found movie:', movie);
+                  
+                  const message = {
                     type: 'navigate',
                     screen: 'details',
-                    params: { id: data.results[0].id, mediaType: data.results[0].media_type }
-                  }, '*');
+                    params: { id: movie.id, mediaType: movie.media_type }
+                  };
+                  console.log('📤 Sending message to parent:', message);
+                  
+                  window.parent.postMessage(message, '*');
+                  console.log('✅ Message sent successfully');
+                } else {
+                  console.warn('⚠️ No results found for:', movieName);
                 }
               } catch (e) {
-                console.error(e);
+                console.error('❌ Error in onAction:', e);
               }
+            } else {
+              console.warn('⚠️ Action not handled:', action);
             }
           }
         }
