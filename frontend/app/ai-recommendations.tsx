@@ -178,18 +178,50 @@ export default function AIRecommendationsScreen() {
               console.log('Widget action triggered:', action);
               
               // Handle movie card clicks
-              if (action.type === 'view_movie_details' && action.tmdb_id) {
-                console.log('Navigating to movie details:', action.tmdb_id);
+              if (action.type === 'view_movie_details' && action.movie_name) {
+                console.log('Searching for movie:', action.movie_name);
                 
-                // Send message to React Native to navigate
-                window.ReactNativeWebView?.postMessage(JSON.stringify({
-                  type: 'navigate',
-                  screen: 'details',
-                  params: {
-                    id: action.tmdb_id,
-                    mediaType: action.media_type || 'movie'
+                try {
+                  // Search for the movie by name to get TMDB ID
+                  const searchResponse = await fetch('${BACKEND_URL}/api/search', {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                      query: action.movie_name,
+                      scope: 'title',
+                      page: 1
+                    })
+                  });
+                  
+                  if (!searchResponse.ok) {
+                    console.error('Search failed');
+                    return;
                   }
-                }));
+                  
+                  const searchData = await searchResponse.json();
+                  console.log('Search results:', searchData);
+                  
+                  if (searchData.results && searchData.results.length > 0) {
+                    const movie = searchData.results[0];
+                    console.log('Found movie:', movie);
+                    
+                    // Send message to React Native to navigate
+                    window.ReactNativeWebView?.postMessage(JSON.stringify({
+                      type: 'navigate',
+                      screen: 'details',
+                      params: {
+                        id: movie.id,
+                        mediaType: movie.media_type
+                      }
+                    }));
+                  } else {
+                    console.log('No results found for:', action.movie_name);
+                  }
+                } catch (error) {
+                  console.error('Error searching for movie:', error);
+                }
               }
             }
           }
