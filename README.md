@@ -555,6 +555,9 @@ For questions or suggestions, please open an issue on GitHub.
 ## 🎯 Recent Updates & Bug Fixes
 
 ### ✅ Implemented (Latest)
+- **🤖 AI Movie Recommendations**: GPT-4 powered chat for personalized suggestions
+- **OpenAI ChatKit Integration**: Natural language movie discovery
+- **Mode Selector**: Toggle between traditional search and AI chat
 - **Tinder-Style Social Feature**: Swipe movies with friends and find matches
 - **Complete Auth System**: Email/password registration, login, forgot password
 - **Friend System**: Send/accept friend requests, manage friendships
