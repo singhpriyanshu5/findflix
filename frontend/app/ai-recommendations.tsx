@@ -170,6 +170,11 @@ export default function AIRecommendationsScreen() {
         // Add event listeners for debugging
         chatkit.addEventListener('chatkit.ready', () => {
           console.log('ChatKit is ready!');
+          console.log('ChatKit element computed style:', window.getComputedStyle(chatkit).display);
+          console.log('ChatKit element offsetHeight:', chatkit.offsetHeight);
+          console.log('ChatKit element offsetWidth:', chatkit.offsetWidth);
+          console.log('ChatKit element children:', chatkit.children.length);
+          console.log('ChatKit shadowRoot:', chatkit.shadowRoot);
         });
         
         chatkit.addEventListener('chatkit.error', (e) => {
