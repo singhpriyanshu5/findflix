@@ -133,6 +133,7 @@ FindFlix is a comprehensive native mobile application built with React Native (E
 - **OMDb API**: IMDb ratings, vote counts, Rotten Tomatoes scores, Metacritic ratings
 - **WatchMode API**: US streaming availability with deep links
 - **Streaming Availability API (RapidAPI)**: Alternative streaming data source
+- **OpenAI ChatKit API**: GPT-4 powered AI movie recommendations
 
 ---
 
