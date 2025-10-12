@@ -64,7 +64,7 @@ export default function SearchScreen() {
   const { data: searchHistory, refetch: refetchHistory } = useQuery<SearchHistoryItem[]>({
     queryKey: ['searchHistory'],
     queryFn: async () => {
-      const response = await axios.get(`${BACKEND_URL}/api/search/history?limit=5`);
+      const response = await axios.get(`${BACKEND_URL}/api/search/history?limit=3`);
       return response.data;
     },
   });
