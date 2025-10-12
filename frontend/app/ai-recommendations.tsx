@@ -60,11 +60,22 @@ export default function AIRecommendationsScreen() {
   // Handle navigation messages
   React.useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
+      console.log('📥 Parent received message:', event.data);
+      
       if (event.data?.type === 'navigate' && event.data?.screen === 'details') {
-        router.push({
-          pathname: '/details',
-          params: event.data.params
-        });
+        console.log('🚀 Navigating to details:', event.data.params);
+        
+        try {
+          router.push({
+            pathname: '/details',
+            params: event.data.params
+          });
+          console.log('✅ Navigation successful');
+        } catch (error) {
+          console.error('❌ Navigation error:', error);
+        }
+      } else {
+        console.log('⚠️ Message ignored (not navigation)');
       }
     };
 
