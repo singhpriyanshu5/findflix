@@ -171,10 +171,13 @@ export default function AIRecommendationsScreen() {
           widgets: {
             async onAction(action, item) {
               console.log('Widget action triggered:', action);
+              console.log('Action type:', action.type);
+              console.log('Action payload:', action.payload);
               
-              // Handle movie card clicks
-              if (action.type === 'view_movie_details' && action.movie_name) {
-                console.log('Searching for movie:', action.movie_name);
+              // Handle movie card clicks - payload contains the data
+              if (action.type === 'view_movie_details' && action.payload?.movie_name) {
+                const movieName = action.payload.movie_name;
+                console.log('Searching for movie:', movieName);
                 
                 try {
                   // Search for the movie by name to get TMDB ID
@@ -184,14 +187,14 @@ export default function AIRecommendationsScreen() {
                       'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                      query: action.movie_name,
+                      query: movieName,
                       scope: 'title',
                       page: 1
                     })
                   });
                   
                   if (!searchResponse.ok) {
-                    console.error('Search failed');
+                    console.error('Search failed with status:', searchResponse.status);
                     return;
                   }
                   
@@ -203,20 +206,30 @@ export default function AIRecommendationsScreen() {
                     console.log('Found movie:', movie);
                     
                     // Send message to React Native to navigate
-                    window.ReactNativeWebView?.postMessage(JSON.stringify({
+                    const message = {
                       type: 'navigate',
                       screen: 'details',
                       params: {
                         id: movie.id,
                         mediaType: movie.media_type
                       }
-                    }));
+                    };
+                    console.log('Sending navigation message:', message);
+                    
+                    if (window.ReactNativeWebView) {
+                      window.ReactNativeWebView.postMessage(JSON.stringify(message));
+                      console.log('Message sent to React Native');
+                    } else {
+                      console.warn('ReactNativeWebView not available');
+                    }
                   } else {
-                    console.log('No results found for:', action.movie_name);
+                    console.log('No results found for:', movieName);
                   }
                 } catch (error) {
                   console.error('Error searching for movie:', error);
                 }
+              } else {
+                console.log('Action not handled or missing payload');
               }
             }
           }
