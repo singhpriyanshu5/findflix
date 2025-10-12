@@ -217,10 +217,15 @@ export default function AIRecommendationsScreen() {
                     console.log('Sending navigation message:', message);
                     
                     if (window.ReactNativeWebView) {
+                      // Native mobile (WebView)
                       window.ReactNativeWebView.postMessage(JSON.stringify(message));
-                      console.log('Message sent to React Native');
+                      console.log('Message sent to React Native WebView');
+                    } else if (window.parent) {
+                      // Web (iframe)
+                      window.parent.postMessage(message, '*');
+                      console.log('Message sent to parent window');
                     } else {
-                      console.warn('ReactNativeWebView not available');
+                      console.warn('No message handler available');
                     }
                   } else {
                     console.log('No results found for:', movieName);
