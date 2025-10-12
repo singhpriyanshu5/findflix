@@ -110,13 +110,18 @@ export default function AIRecommendationsScreen() {
       flex-direction: column;
     }
     openai-chatkit {
+      --ck-accent: #e50914;
       --ck-accent-color: #e50914;
+      --ck-primary: #e50914;
       height: 100%;
       width: 100%;
       min-height: 500px;
       display: block !important;
       visibility: visible !important;
       opacity: 1 !important;
+    }
+    openai-chatkit::part(badge) {
+      background-color: #e50914;
     }
   </style>
 </head>
