@@ -284,16 +284,20 @@ export default function AIRecommendationsScreen() {
         
         if (event.data && event.data.type === 'navigate' && event.data.screen === 'details') {
           console.log('Navigating to details:', event.data.params);
-          router.push({
-            pathname: '/details',
-            params: event.data.params
-          });
+          try {
+            router.push({
+              pathname: '/details',
+              params: event.data.params
+            });
+          } catch (error) {
+            console.error('Navigation error:', error);
+          }
         }
       };
       
       window.addEventListener('message', handleMessage);
       return () => window.removeEventListener('message', handleMessage);
-    }, []);
+    }, [router]);
 
     return (
       <SafeAreaView style={styles.container} edges={['top']}>
