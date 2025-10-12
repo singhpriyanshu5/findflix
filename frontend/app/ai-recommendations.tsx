@@ -149,18 +149,30 @@ export default function AIRecommendationsScreen() {
   </div>
   <script>
     (async function() {
-      await customElements.whenDefined('openai-chatkit');
-      const chatkit = document.getElementById('chatkit');
-      chatkit.setOptions({
-        api: {
-          getClientSecret: async () => '${state.secret}'
-        },
-        theme: 'dark',
-        widgets: {
-          async onAction(action) {
-            console.log('🔵 Widget action triggered:', action);
-            console.log('🔵 Action type:', action.type);
-            console.log('🔵 Action payload:', action.payload);
+      console.log('⚙️ ChatKit script starting...');
+      
+      try {
+        console.log('⏳ Waiting for openai-chatkit element...');
+        await customElements.whenDefined('openai-chatkit');
+        console.log('✅ openai-chatkit element defined');
+        
+        const chatkit = document.getElementById('chatkit');
+        console.log('📍 ChatKit element:', chatkit);
+        console.log('📍 setOptions available:', typeof chatkit.setOptions);
+        
+        chatkit.setOptions({
+          api: {
+            getClientSecret: async () => {
+              console.log('🔑 getClientSecret called');
+              return '${state.secret}';
+            }
+          },
+          theme: 'dark',
+          widgets: {
+            async onAction(action) {
+              console.log('🔵 Widget action triggered:', action);
+              console.log('🔵 Action type:', action.type);
+              console.log('🔵 Action payload:', action.payload);
             
             if (action.type === 'view_movie_details' && action.payload?.movie_name) {
               const movieName = action.payload.movie_name;
