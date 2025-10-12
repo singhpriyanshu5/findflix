@@ -156,6 +156,7 @@ FindFlix/
 │   │   ├── auth.tsx           # Login/Register screen
 │   │   ├── profile.tsx        # User profile with stats
 │   │   ├── recent-searches.tsx # Search history page
+│   │   ├── ai-recommendations.tsx # AI-powered movie chat
 │   │   ├── tinder.tsx         # Movie Tinder home (friends & sessions)
 │   │   ├── add-friend.tsx     # Add friends by email
 │   │   ├── create-session.tsx # Create swipe session
