@@ -1408,6 +1408,54 @@ async def search_titles(request: SearchRequest, current_user: User = Depends(get
         logger.error(f"Search error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+@api_router.post("/chatkit/actions")
+async def handle_chatkit_action(action_data: dict):
+    """Handle ChatKit widget actions (button clicks)"""
+    try:
+        action_type = action_data.get("type")
+        payload = action_data.get("payload", {})
+        
+        logger.info(f"Received ChatKit action: {action_type}, payload: {payload}")
+        
+        if action_type == "view_movie_details":
+            movie_name = payload.get("movie_name")
+            if not movie_name:
+                return {"error": "Missing movie_name in payload"}
+            
+            # Search for the movie using existing search endpoint
+            logger.info(f"Searching for movie: {movie_name}")
+            search_results = await search_content(
+                query=movie_name,
+                scope="title",
+                page=1
+            )
+            
+            if search_results.get("results") and len(search_results["results"]) > 0:
+                movie = search_results["results"][0]
+                movie_id = movie.get("id")
+                media_type = movie.get("media_type", "movie")
+                
+                logger.info(f"Found movie: {movie.get('title')} (ID: {movie_id})")
+                
+                # Return navigation data
+                return {
+                    "navigate": True,
+                    "screen": "details",
+                    "params": {
+                        "id": movie_id,
+                        "mediaType": media_type
+                    }
+                }
+            else:
+                logger.warning(f"No results found for movie: {movie_name}")
+                return {"error": f"Movie not found: {movie_name}"}
+        
+        return {"error": f"Unknown action type: {action_type}"}
+        
+    except Exception as e:
+        logger.error(f"Error handling ChatKit action: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Action error: {str(e)}")
+
 @api_router.post("/chatkit/session")
 async def create_chatkit_session(current_user: User = Depends(get_current_user)):
     """Create a ChatKit session for AI movie recommendations"""
