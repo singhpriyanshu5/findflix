@@ -6,7 +6,18 @@ FindFlix is a comprehensive native mobile application built with React Native (E
 
 ## ✨ Features
 
-### 🎯 NEW: Tinder-Style Movie Matching
+### 🤖 NEW: AI Movie Recommendations
+- **OpenAI ChatKit Integration**: Powered by GPT-4 for intelligent movie suggestions
+- **Natural Conversations**: Chat naturally about your movie preferences
+- **Personalized Suggestions**: Get recommendations based on mood, genre, themes, actors
+- **Interactive Chat**: Ask follow-up questions, refine suggestions, discuss movies
+- **Dark Theme**: Seamlessly integrated with FindFlix's design aesthetic
+- **Examples**: 
+  - "Suggest a mind-bending sci-fi movie like Inception"
+  - "What's a good comedy to watch with family?"
+  - "Movies like The Dark Knight but not superhero films"
+
+### 🎯 Tinder-Style Movie Matching
 - **Swipe Sessions**: Create movie swipe sessions with friends
 - **Social Discovery**: Swipe right on movies you like, left on ones you don't
 - **Instant Matches**: See movies both you and your friends swiped right on
