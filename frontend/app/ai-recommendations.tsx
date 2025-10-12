@@ -28,13 +28,14 @@ export default function AIRecommendationsScreen() {
 
   useEffect(() => {
     if (!isAuthenticated) {
-      Alert.alert('Login Required', 'Please login to use AI recommendations');
-      router.replace('/auth');
+      Alert.alert('Login Required', 'Please login to use AI recommendations', [
+        { text: 'OK', onPress: () => router.replace('/auth') }
+      ]);
       return;
     }
     
     initializeChatKit();
-  }, [isAuthenticated]);
+  }, [isAuthenticated, router]);
 
   const initializeChatKit = async () => {
     try {
