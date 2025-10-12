@@ -275,8 +275,26 @@ export default function AIRecommendationsScreen() {
 </body>
 </html>`;
 
-  // For web platform, use iframe
+  // For web platform, use iframe with message listener
   if (Platform.OS === 'web') {
+    // Add message listener for iframe communication
+    React.useEffect(() => {
+      const handleMessage = (event: MessageEvent) => {
+        console.log('Parent received message:', event.data);
+        
+        if (event.data && event.data.type === 'navigate' && event.data.screen === 'details') {
+          console.log('Navigating to details:', event.data.params);
+          router.push({
+            pathname: '/details',
+            params: event.data.params
+          });
+        }
+      };
+      
+      window.addEventListener('message', handleMessage);
+      return () => window.removeEventListener('message', handleMessage);
+    }, []);
+
     return (
       <SafeAreaView style={styles.container} edges={['top']}>
         <iframe
