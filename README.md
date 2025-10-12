@@ -579,13 +579,13 @@ For questions or suggestions, please open an issue on GitHub.
 
 ### 🎯 Future Enhancements
 - [ ] Personal watchlists and favorites
-- [ ] AI-powered personalized recommendations
-- [ ] Movie trailers integration
 - [ ] Group chat in swipe sessions
 - [ ] Advanced filters (certification, runtime range, release date)
 - [ ] Offline mode with cached data
 - [ ] Push notifications for new releases and matches
 - [ ] Multi-language app interface
+- [ ] AI chat history and saved conversations
+- [ ] Voice input for AI recommendations
 - [ ] Password reset page (currently generates token only)
 
 ---
