@@ -237,6 +237,8 @@ TMDB_API_KEY="your_tmdb_api_key"
 RAPIDAPI_KEY="your_rapidapi_key"
 OMDB_API_KEY="your_omdb_api_key"
 WATCHMODE_API_KEY="your_watchmode_api_key"
+OPENAI_API_KEY="your_openai_api_key"
+CHATKIT_WORKFLOW_ID="your_chatkit_workflow_id"
 EOF
 
 # Start MongoDB (if local)
