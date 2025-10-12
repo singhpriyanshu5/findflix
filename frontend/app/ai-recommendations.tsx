@@ -82,6 +82,30 @@ export default function AIRecommendationsScreen() {
   }
 
   // HTML content that will be loaded with ChatKit - memoized to prevent re-renders
+  // Message listener for web platform iframe communication - MUST be unconditional hook
+  React.useEffect(() => {
+    if (Platform.OS !== 'web') return;
+    
+    const handleMessage = (event: MessageEvent) => {
+      console.log('Parent received message:', event.data);
+      
+      if (event.data && event.data.type === 'navigate' && event.data.screen === 'details') {
+        console.log('Navigating to details:', event.data.params);
+        try {
+          router.push({
+            pathname: '/details',
+            params: event.data.params
+          });
+        } catch (error) {
+          console.error('Navigation error:', error);
+        }
+      }
+    };
+    
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, [router]);
+
   const htmlContent = React.useMemo(() => `<!DOCTYPE html>
 <html>
 <head>
