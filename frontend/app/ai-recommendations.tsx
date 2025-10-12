@@ -162,7 +162,37 @@ export default function AIRecommendationsScreen() {
               return clientSecret;
             }
           },
-          theme: 'dark'
+          theme: {
+            colorScheme: 'dark',
+            color: {
+              accent: {
+                primary: '#e50914',  // FindFlix red
+                level: 2
+              }
+            },
+            radius: 'md',
+            density: 'compact'
+          },
+          widgets: {
+            async onAction(action, item) {
+              console.log('Widget action triggered:', action);
+              
+              // Handle movie card clicks
+              if (action.type === 'view_movie_details' && action.tmdb_id) {
+                console.log('Navigating to movie details:', action.tmdb_id);
+                
+                // Send message to React Native to navigate
+                window.ReactNativeWebView?.postMessage(JSON.stringify({
+                  type: 'navigate',
+                  screen: 'details',
+                  params: {
+                    id: action.tmdb_id,
+                    mediaType: action.media_type || 'movie'
+                  }
+                }));
+              }
+            }
+          }
         });
         
         console.log('ChatKit options set successfully!');
