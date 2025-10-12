@@ -81,8 +81,8 @@ export default function AIRecommendationsScreen() {
     );
   }
 
-  // HTML content that will be loaded with ChatKit
-  const htmlContent = `<!DOCTYPE html>
+  // HTML content that will be loaded with ChatKit - memoized to prevent re-renders
+  const htmlContent = React.useMemo(() => `<!DOCTYPE html>
 <html>
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
