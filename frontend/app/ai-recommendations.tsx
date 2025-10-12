@@ -214,6 +214,13 @@ export default function AIRecommendationsScreen() {
           }
         }
       });
+      
+      console.log('✅ ChatKit setOptions completed');
+      console.log('✅ ChatKit initialization finished');
+      
+    } catch (error) {
+      console.error('❌ ChatKit initialization error:', error);
+    }
     })();
   </script>
 </body>
