@@ -366,6 +366,50 @@ After configuration, test the forgot password flow:
 
 ---
 
+## 🤖 ChatKit Configuration (AI Recommendations)
+
+To enable the AI Movie Recommendations feature, you need to set up an OpenAI ChatKit workflow:
+
+### 1. Create ChatKit Workflow
+1. Go to https://platform.openai.com/chatkit
+2. Create a new workflow
+3. Configure the workflow:
+   - **Model**: GPT-4 or GPT-4o (recommended)
+   - **System Instructions**: Add context about movie recommendations
+   - **Deployment**: Publish the workflow
+
+### 2. Configure Allowed Domains
+1. In workflow settings, go to **Security** section
+2. Add your app's domain to **Allowed Origins**:
+   - For local development: `http://localhost:3000`
+   - For production: `https://your-app-domain.com`
+
+### 3. Update Environment Variables
+```bash
+# In backend/.env
+OPENAI_API_KEY="sk-proj-..."
+CHATKIT_WORKFLOW_ID="wf_xxxxx..."
+```
+
+### 4. Example System Prompt for ChatKit
+```
+You are a movie recommendation assistant for FindFlix. Help users discover movies and TV shows based on their preferences. Consider:
+- Mood and themes they're interested in
+- Similar movies/shows they've enjoyed
+- Genres, actors, directors they like
+- Where content is available to stream (US)
+
+Provide personalized, conversational recommendations with brief explanations of why each suggestion fits their criteria.
+```
+
+### Testing
+After configuration:
+1. Login to your FindFlix app
+2. On home screen, select "AI Recommendations" mode
+3. Start chatting: "Suggest a thriller like Inception"
+
+---
+
 ## 📡 API Endpoints
 
 ### Authentication
