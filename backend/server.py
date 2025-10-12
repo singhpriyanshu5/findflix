@@ -1413,10 +1413,14 @@ async def create_chatkit_session(current_user: User = Depends(get_current_user))
     """Create a ChatKit session for AI movie recommendations"""
     try:
         import httpx
+        import os
         
-        # Use user's OpenAI API key with ChatKit beta access
-        openai_api_key = "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"
-        workflow_id = "wf_68e5cff942888190aa154df1857b377a00f2b918184ecd24"
+        # Load API key and workflow ID from environment variables
+        openai_api_key = os.environ.get('OPENAI_API_KEY')
+        workflow_id = os.environ.get('CHATKIT_WORKFLOW_ID', 'wf_68e5cff942888190aa154df1857b377a00f2b918184ecd24')
+        
+        if not openai_api_key:
+            raise HTTPException(status_code=500, detail="OpenAI API key not configured")
         
         logger.info(f"Creating ChatKit session for user: {current_user.id}")
         
